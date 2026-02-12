@@ -7,7 +7,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700" rel="stylesheet">
 
 <style>
 
@@ -31,6 +31,21 @@ padding:16px;
 }
 
 .tela.ativa{display:flex}
+
+/* ===== BOTÃO VOLTAR GLOBAL ===== */
+
+.btnVoltarGlobal{
+position:fixed;
+bottom:14px;
+left:14px;
+z-index:2000;
+background:#333;
+color:white;
+border:none;
+border-radius:14px;
+padding:12px 16px;
+font-weight:700;
+}
 
 /* ===== INICIAL ===== */
 
@@ -252,16 +267,23 @@ font-weight:700;
 </head>
 <body>
 
+<button class="btnVoltarGlobal"
+onclick="voltarUniversal()">
+← VOLTAR
+</button>
+
 <!-- ===== TELA INICIAL ===== -->
 
 <div id="telaInicial" class="tela ativa">
 <div class="logo">🥟 Recanto do Pastel</div>
-<button class="btnPrincipal" onclick="abrirCardapio()">
+<button class="btnPrincipal"
+onclick="abrirCardapio()">
 FAZER PEDIDO
 </button>
 
-<button style="margin-top:12px"
-class="btn" onclick="loginAdmin()">
+<button class="btn btnSec"
+style="margin-top:12px"
+onclick="loginAdmin()">
 PAINEL ADMIN
 </button>
 </div>
@@ -308,7 +330,9 @@ FINALIZAR
 
 <div id="telaCheckout" class="tela">
 
-<h2 style="margin-bottom:10px">Finalizar Pedido</h2>
+<h2 style="margin-bottom:10px">
+Finalizar Pedido
+</h2>
 
 <div class="form">
 
@@ -337,26 +361,34 @@ FINALIZAR
 <input id="troco" placeholder="Troco para quanto?">
 </div>
 
-<div id="boxPix" style="display:none">
-PIX: <b id="pixTxt"></b>
+<!-- PIX VISUAL SOMENTE -->
+<div id="boxPix" style="
+display:none;
+background:#e8f5e9;
+padding:10px;
+border-radius:10px;
+font-weight:700;
+">
+PIX da loja:<br>
+<span id="pixChaveTxt"></span><br>
+Valor do PIX:<br>
+R$ <span id="pixValorTxt">0.00</span>
 </div>
 
-<input id="frete" placeholder="Frete R$" value="0">
+<input id="frete"
+placeholder="Frete R$"
+value="0"
+readonly>
 
 <button class="btn btnPrim"
 onclick="finalizarPedido()">
 ENVIAR PEDIDO
 </button>
 
-<button class="btn btnSec"
-onclick="voltarCardapio()">
-VOLTAR
-</button>
-
 </div>
 </div>
 
-<!-- ===== ADMIN ===== -->
+<!-- ===== ADMIN SIMPLIFICADO ===== -->
 
 <div id="telaAdmin" class="tela">
 
@@ -379,41 +411,31 @@ Novo Item
 </button>
 
 <button class="adminBtn"
-onclick="adminEditarItem()">
-Editar Item
+onclick="abrirEditorItens()">
+Editar / Remover Itens
 </button>
 
+</div>
+
+<div class="adminBox">
+
+<b>Promoções</b>
+
 <button class="adminBtn"
-onclick="adminRemoverItem()">
-Remover Item
+onclick="adminBanner()">
+Banner Promo
 </button>
 
 <button class="adminBtn"
 onclick="adminPromoItem()">
-Marcar Promoção
-</button>
-
-<button class="adminBtn"
-onclick="adminImagemItem()">
-Imagem do Item
+Marcar Item Promo
 </button>
 
 </div>
 
 <div class="adminBox">
 
-<b>Banner Promo</b>
-
-<button class="adminBtn"
-onclick="adminBanner()">
-Definir Banner
-</button>
-
-</div>
-
-<div class="adminBox">
-
-<b>Pedidos Ao Vivo</b>
+<b>Pedidos ao Vivo</b>
 <div id="adminPedidos"></div>
 
 </div>
@@ -424,17 +446,17 @@ Definir Banner
 
 <button class="adminBtn"
 onclick="relatorioHoje()">
-Total Hoje
+Hoje
 </button>
 
 <button class="adminBtn"
 onclick="relatorioMes()">
-Total Mês
+Mês
 </button>
 
 <button class="adminBtn"
 onclick="relatorioAno()">
-Total Ano
+Ano
 </button>
 
 <button class="adminBtn"
@@ -444,19 +466,32 @@ Exportar Excel
 
 <button class="adminBtn"
 onclick="zerarRelatorios()">
-Zerar Relatórios
+Zerar
 </button>
 
 </div>
 
-<button class="btn btnSec"
-onclick="voltarInicial()">
-Sair Admin
-</button>
+</div>
+
+<!-- ===== TELA EDITAR / REMOVER ===== -->
+
+<div id="telaEditorItens" class="tela">
+
+<h2 style="margin-bottom:10px">
+Editar / Remover Itens
+</h2>
+
+<div id="listaEditor"
+style="
+width:100%;
+max-width:520px;
+overflow:auto;
+">
+</div>
 
 </div>
 
-<!-- ===== BANNER PROMO TOPO ===== -->
+<!-- ===== BANNER PROMO ===== -->
 
 <div id="bannerPromo"
 style="
@@ -481,41 +516,31 @@ CONFIG
 ====================================== */
 
 const ADMIN_SENHA = "1234"
-let WHATSAPP_LOJA = "5599999999999" // editar depois
+let WHATSAPP_LOJA = "5599999999999" // editar
 let PIX_CHAVE = "SUA_CHAVE_PIX"
 
 /* ======================================
-ESTADO GLOBAL
+ESTADO
 ====================================== */
 
-let carrinho = []
-let abaAtual = null
-let mesaDetectada = null
+let carrinho=[]
+let abaAtual=null
+let mesaDetectada=null
+let pedidosCache=[]
 
-let pedidosCache = []
+let historicoTelas=["telaInicial"]
 
-let cardapio = {
+let cardapio={
 "Pastéis":[
 {nome:"Pastel Carne",preco:12},
 {nome:"Pastel Queijo",preco:11}
 ],
-"Lanches":[
-{nome:"X-Burger",preco:18}
-],
-"Porções":[
-{nome:"Batata",preco:22}
-],
-"Tábuas":[],
-"Bebidas":[
-{nome:"Refri",preco:6}
-]
+"Lanches":[{nome:"X-Burger",preco:18}],
+"Porções":[{nome:"Batata",preco:22}],
+"Bebidas":[{nome:"Refri",preco:6}]
 }
 
-/* ======================================
-FRETE POR BAIRRO
-====================================== */
-
-const FRETES = {
+const FRETES={
 Centro:5,
 Industrial:8,
 Jardim:6
@@ -531,6 +556,22 @@ function mostrar(id){
 document.querySelectorAll(".tela")
 .forEach(t=>t.classList.remove("ativa"))
 qs(id).classList.add("ativa")
+historicoTelas.push(id)
+}
+
+/* ======================================
+VOLTAR UNIVERSAL
+====================================== */
+
+window.voltarUniversal=()=>{
+
+historicoTelas.pop()
+
+let ultima = historicoTelas.pop()
+if(!ultima) ultima="telaInicial"
+
+mostrar(ultima)
+
 }
 
 /* ======================================
@@ -540,22 +581,12 @@ ZOOM OFF
 document.addEventListener("dblclick",
 e=>e.preventDefault(),{passive:false})
 
-document.addEventListener("gesturestart",
-e=>e.preventDefault())
-
 /* ======================================
 QR MESA
 ====================================== */
 
-function detectarMesa(){
-let u = new URL(location.href)
-mesaDetectada = u.searchParams.get("mesa")
-if(mesaDetectada){
-qs("tipoPedido").value="local"
-}
-}
-
-detectarMesa()
+let u=new URL(location.href)
+mesaDetectada=u.searchParams.get("mesa")
 
 /* ======================================
 TELAS
@@ -566,12 +597,10 @@ mostrar("telaCardapio")
 renderAbas()
 }
 
-window.voltarInicial=()=>{
-mostrar("telaInicial")
-}
-
-window.voltarCardapio=()=>{
-mostrar("telaCardapio")
+window.loginAdmin=()=>{
+let s=prompt("Senha admin")
+if(s!==ADMIN_SENHA) return
+mostrar("telaAdmin")
 }
 
 /* ======================================
@@ -580,12 +609,12 @@ ABAS
 
 function renderAbas(){
 
-let d = qs("abas")
+let d=qs("abas")
 d.innerHTML=""
 
 Object.keys(cardapio).forEach(nome=>{
 
-let b = document.createElement("button")
+let b=document.createElement("button")
 b.className="aba"
 b.innerText=nome
 
@@ -599,12 +628,12 @@ return
 }
 
 abaAtual=nome
-
 document.querySelectorAll(".aba")
 .forEach(x=>x.classList.remove("ativa"))
 b.classList.add("ativa")
 
 renderItens(cardapio[nome])
+
 }
 
 d.appendChild(b)
@@ -619,12 +648,12 @@ ITENS
 
 function renderItens(lista){
 
-let d = qs("lista")
+let d=qs("lista")
 d.innerHTML=""
 
 lista.forEach(item=>{
 
-let el = document.createElement("div")
+let el=document.createElement("div")
 el.className="item"
 if(item.promocao) el.classList.add("promocao")
 
@@ -632,8 +661,8 @@ el.innerHTML=`
 <div class="itemInfo">
 ${item.img?`<img src="${item.img}">`:""}
 <div>
-<div><b>${item.promocao?"🔥 ":""}${item.nome}</b></div>
-<div>R$ ${item.preco.toFixed(2)}</div>
+<b>${item.promocao?"🔥 ":""}${item.nome}</b><br>
+R$ ${item.preco.toFixed(2)}
 </div>
 </div>
 <button class="btnAdd">+</button>
@@ -652,33 +681,42 @@ d.appendChild(el)
 CARRINHO
 ====================================== */
 
+function abrirCarrinhoAuto(){
+qs("carrinho").classList.add("aberto")
+}
+
 window.toggleCarrinho=()=>{
 qs("carrinho").classList.toggle("aberto")
-renderCarrinho()
 }
 
 function addCarrinho(item){
 
-let ex = carrinho.find(
+let ex=carrinho.find(
 i=>i.nome===item.nome)
 
 if(ex) ex.qtd++
 else carrinho.push({...item,qtd:1})
 
+abrirCarrinhoAuto()
 renderCarrinho()
+
 }
 
-function removerItem(nome){
-carrinho = carrinho.filter(
+window.removerItem=(nome)=>{
+
+carrinho=carrinho.filter(
 i=>i.nome!==nome)
+
 renderCarrinho()
+
 if(!carrinho.length)
 qs("carrinho").classList.remove("aberto")
+
 }
 
 function renderCarrinho(){
 
-let d = qs("cLista")
+let d=qs("cLista")
 d.innerHTML=""
 
 let total=0
@@ -686,19 +724,17 @@ let qtd=0
 
 carrinho.forEach(i=>{
 
-total += i.preco*i.qtd
-qtd += i.qtd
+total+=i.preco*i.qtd
+qtd+=i.qtd
 
-let row = document.createElement("div")
+let row=document.createElement("div")
 row.className="cItem"
 
 row.innerHTML=`
 <span>${i.qtd}x ${i.nome}</span>
 <span>
 R$ ${(i.preco*i.qtd).toFixed(2)}
-<button onclick="removerItem('${i.nome}')">
-x
-</button>
+<button onclick="removerItem('${i.nome}')">x</button>
 </span>
 `
 
@@ -709,33 +745,51 @@ d.appendChild(row)
 qs("total").innerText=total.toFixed(2)
 qs("qtd").innerText=qtd
 
+atualizarPixPreview(total)
+
 }
 
 /* ======================================
-CHECKOUT UI DINÂMICA
+PIX PREVIEW
+====================================== */
+
+function atualizarPixPreview(total){
+
+let frete=parseFloat(qs("frete").value||0)
+let v = total + frete
+qs("pixValorTxt").innerText=v.toFixed(2)
+
+}
+
+/* ======================================
+CHECKOUT UI
 ====================================== */
 
 qs("tipoPedido").onchange=e=>{
-let ent = e.target.value==="entrega"
+let ent=e.target.value==="entrega"
 qs("boxEndereco").style.display=
 ent?"block":"none"
-if(!ent) qs("frete").value=0
+qs("frete").value = ent?5:0
+renderCarrinho()
 }
 
 qs("bairro").onchange=e=>{
-let v = FRETES[e.target.value]
+let v=FRETES[e.target.value]
 if(v) qs("frete").value=v
+renderCarrinho()
 }
 
 qs("pagamento").onchange=e=>{
 
-let p = e.target.value
+let p=e.target.value
 
 qs("boxPix").style.display=
 (p==="PIX")?"block":"none"
 
 qs("boxTroco").style.display=
 (p==="Dinheiro")?"block":"none"
+
+qs("pixChaveTxt").innerText=PIX_CHAVE
 
 }
 
@@ -745,50 +799,98 @@ CHECKOUT
 
 window.irCheckout=()=>{
 if(!carrinho.length) return
-qs("pixTxt").innerText = PIX_CHAVE
 mostrar("telaCheckout")
+renderCarrinho()
 }
 
 /* ======================================
-RELATÓRIOS BASE
+ADMIN — EDITOR ITENS
 ====================================== */
 
-function somaPeriodo(fn){
-return pedidosCache
-.filter(fn)
-.reduce((s,p)=>s+p.total,0)
+window.abrirEditorItens=()=>{
+
+let div=qs("listaEditor")
+div.innerHTML=""
+
+Object.keys(cardapio)
+.forEach(aba=>{
+
+cardapio[aba]
+.forEach(item=>{
+
+let row=document.createElement("div")
+row.className="item"
+
+row.innerHTML=`
+<div>
+<b>${aba}</b><br>
+${item.nome}<br>
+R$ ${item.preco}
+</div>
+<div>
+<button onclick="editarItem('${aba}','${item.nome}')">
+Editar
+</button>
+<button onclick="removerItemAdmin('${aba}','${item.nome}')">
+Remover
+</button>
+</div>
+`
+
+div.appendChild(row)
+
+})
+
+})
+
+mostrar("telaEditorItens")
+
 }
 
-window.relatorioHoje=()=>{
-let hoje = new Date().toDateString()
-alert("Hoje R$ "+
-somaPeriodo(p=>
-new Date(p.data)
-.toDateString()===hoje
-).toFixed(2))
-}
+window.editarItem=(aba,nome)=>{
 
-window.relatorioMes=()=>{
-let m=new Date().getMonth()
-alert("Mês R$ "+
-somaPeriodo(p=>
-new Date(p.data).getMonth()===m
-).toFixed(2))
-}
+let i=cardapio[aba]
+.find(x=>x.nome===nome)
+if(!i) return
 
-window.relatorioAno=()=>{
-let a=new Date().getFullYear()
-alert("Ano R$ "+
-somaPeriodo(p=>
-new Date(p.data).getFullYear()===a
-).toFixed(2))
-}
+i.preco=parseFloat(
+prompt("Preço:",i.preco))
 
-window.zerarRelatorios=()=>{
-if(confirm("Confirma limpar?")){
-pedidosCache=[]
 salvarLocal()
+abrirEditorItens()
+
 }
+
+window.removerItemAdmin=(aba,nome)=>{
+
+cardapio[aba]=cardapio[aba]
+.filter(x=>x.nome!==nome)
+
+salvarLocal()
+abrirEditorItens()
+
+}
+
+/* ======================================
+ADMIN BASICO
+====================================== */
+
+window.adminNovaAba=()=>{
+let n=prompt("Nome aba")
+if(!n) return
+cardapio[n]=[]
+salvarLocal()
+renderAbas()
+}
+
+window.adminNovoItem=()=>{
+let a=prompt("Aba")
+if(!cardapio[a]) return
+let n=prompt("Nome")
+let p=parseFloat(prompt("Preço"))
+cardapio[a].push({nome:n,preco:p})
+salvarLocal()
+renderItens(cardapio[a])
 }
 
 /* ======================================
@@ -803,9 +905,9 @@ JSON.stringify({cardapio,pedidosCache})
 }
 
 function carregarLocal(){
-let d = localStorage.getItem("recanto_data")
+let d=localStorage.getItem("recanto_data")
 if(d){
-let o = JSON.parse(d)
+let o=JSON.parse(d)
 cardapio=o.cardapio||cardapio
 pedidosCache=o.pedidosCache||[]
 }
@@ -815,7 +917,7 @@ carregarLocal()
 renderAbas()
 
 /* ======================================
-FIREBASE SDK
+FIREBASE
 ====================================== */
 
 import { initializeApp } from
@@ -826,8 +928,6 @@ getFirestore, collection, addDoc,
 onSnapshot, updateDoc, doc
 } from
 "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-
-/* ===== COLE SUAS CHAVES ===== */
 
 const firebaseConfig = {
 apiKey: "COLE_AQUI",
@@ -847,23 +947,23 @@ FINALIZAR PEDIDO
 
 window.finalizarPedido = async ()=>{
 
-let nome = qs("nome").value
-let tel = qs("telefone").value
-let tipo = qs("tipoPedido").value
-let pag = qs("pagamento").value
+let nome=qs("nome").value
+let tel=qs("telefone").value
+let tipo=qs("tipoPedido").value
+let pag=qs("pagamento").value
 
-if(!nome || !tel){
+if(!nome||!tel){
 alert("Preencha nome e telefone")
 return
 }
 
-let total = carrinho.reduce(
+let totalItens = carrinho.reduce(
 (s,i)=>s+i.preco*i.qtd,0)
 
-let frete = parseFloat(qs("frete").value||0)
-if(tipo==="entrega") total+=frete
+let frete=parseFloat(qs("frete").value||0)
+let total = totalItens + frete
 
-let pedido = {
+let pedido={
 cliente:{nome,tel},
 mesa:mesaDetectada,
 tipo,
@@ -880,41 +980,40 @@ data:new Date().toISOString(),
 status:"novo"
 }
 
-/* salvar firebase */
-
 await addDoc(
 collection(db,"pedidos"),
 pedido
 )
 
-/* salvar local */
-
 pedidosCache.push(pedido)
 salvarLocal()
 
-/* montar whatsapp */
+/* ===== WHATSAPP TEXTO ===== */
 
-let txt = "🥟 RECANTO DO PASTEL\n\n"
+let txt="🥟 RECANTO DO PASTEL\n\n"
 
 carrinho.forEach(i=>{
-txt += `${i.qtd}x ${i.nome} — R$ ${(i.qtd*i.preco).toFixed(2)}\n`
+txt+=`${i.qtd}x ${i.nome} — R$ ${(i.qtd*i.preco).toFixed(2)}\n`
 })
 
-txt += `\nTotal R$ ${total.toFixed(2)}\n`
-txt += `Pagamento: ${pag}\n`
-txt += `Cliente: ${nome}\n`
+txt+=`\nFrete: R$ ${frete.toFixed(2)}`
+txt+=`\nTOTAL: R$ ${total.toFixed(2)}`
+txt+=`\nPagamento: ${pag}`
+txt+=`\nCliente: ${nome}`
 
 if(tipo==="entrega"){
-txt += `Entrega:\n${pedido.endereco.rua}, `
-+ `${pedido.endereco.numero}\n`
-+ `${pedido.endereco.bairro}\n`
+txt+=`\nEntrega: ${pedido.endereco.rua}, `
++ `${pedido.endereco.numero} `
++ `- ${pedido.endereco.bairro}`
 }
 
-if(pag==="PIX")
-txt += `PIX: ${PIX_CHAVE}\n`
+if(pag==="PIX"){
+txt+=`\nPIX: ${PIX_CHAVE}`
+}
 
-if(pag==="Dinheiro" && pedido.troco)
-txt += `Troco: ${pedido.troco}\n`
+if(pag==="Dinheiro" && pedido.troco){
+txt+=`\nTroco: ${pedido.troco}`
+}
 
 window.open(
 `https://wa.me/${WHATSAPP_LOJA}?text=${
@@ -924,42 +1023,27 @@ encodeURIComponent(txt)}`)
 
 carrinho=[]
 renderCarrinho()
+qs("carrinho").classList.remove("aberto")
 mostrar("telaInicial")
 
 }
 
 /* ======================================
-ADMIN LOGIN
-====================================== */
-
-window.loginAdmin=()=>{
-
-let s = prompt("Senha admin")
-if(s!==ADMIN_SENHA){
-alert("Senha incorreta")
-return
-}
-
-mostrar("telaAdmin")
-
-}
-
-/* ======================================
-PEDIDOS AO VIVO
+PEDIDOS AO VIVO ADMIN
 ====================================== */
 
 onSnapshot(
 collection(db,"pedidos"),
 snap=>{
 
-let div = qs("adminPedidos")
+let div=qs("adminPedidos")
 div.innerHTML=""
 
 snap.forEach(d=>{
 
-let p = d.data()
+let p=d.data()
 
-let box = document.createElement("div")
+let box=document.createElement("div")
 box.style.background="#616161"
 box.style.padding="8px"
 box.style.marginBottom="6px"
@@ -987,64 +1071,23 @@ div.appendChild(box)
 MARCAR PRONTO
 ====================================== */
 
-window.marcarPronto = async (id,tel)=>{
+window.marcarPronto=async(id,tel)=>{
 
 await updateDoc(
 doc(db,"pedidos",id),
 {status:"pronto"}
 )
 
-let msg = encodeURIComponent(
-"Seu pedido está pronto! 🥟")
-
 window.open(
-`https://wa.me/${tel}?text=${msg}`
+`https://wa.me/${tel}?text=${
+encodeURIComponent("Seu pedido está pronto! 🥟")}`
 )
 
 }
 
 /* ======================================
-ADMIN CRUD
+PROMO / BANNER
 ====================================== */
-
-window.adminNovaAba=()=>{
-let n=prompt("Nome aba")
-if(!n) return
-cardapio[n]=[]
-salvarLocal()
-renderAbas()
-}
-
-window.adminNovoItem=()=>{
-let a=prompt("Aba")
-if(!cardapio[a]) return
-let n=prompt("Nome")
-let p=parseFloat(prompt("Preço"))
-cardapio[a].push({nome:n,preco:p})
-salvarLocal()
-renderItens(cardapio[a])
-}
-
-window.adminEditarItem=()=>{
-let a=prompt("Aba")
-let n=prompt("Item")
-let i=cardapio[a]
-.find(x=>x.nome===n)
-if(!i) return
-i.preco=parseFloat(
-prompt("Preço",i.preco))
-salvarLocal()
-renderItens(cardapio[a])
-}
-
-window.adminRemoverItem=()=>{
-let a=prompt("Aba")
-let n=prompt("Item")
-cardapio[a]=cardapio[a]
-.filter(x=>x.nome!==n)
-salvarLocal()
-renderItens(cardapio[a])
-}
 
 window.adminPromoItem=()=>{
 let a=prompt("Aba")
@@ -1056,32 +1099,55 @@ salvarLocal()
 renderItens(cardapio[a])
 }
 
-window.adminImagemItem=()=>{
-let a=prompt("Aba")
-let n=prompt("Item")
-let i=cardapio[a]
-.find(x=>x.nome===n)
-if(!i) return
-i.img = prompt("URL imagem")
-salvarLocal()
-renderItens(cardapio[a])
-}
-
-/* ======================================
-BANNER
-====================================== */
-
 window.adminBanner=()=>{
-let t = prompt("Texto banner")
-let b = qs("bannerPromo")
+let t=prompt("Texto banner")
+let b=qs("bannerPromo")
 if(!t){b.style.display="none";return}
 b.innerText=t
 b.style.display="block"
 }
 
 /* ======================================
-EXPORTAR CSV
+RELATÓRIOS + CSV
 ====================================== */
+
+function soma(fn){
+return pedidosCache
+.filter(fn)
+.reduce((s,p)=>s+p.total,0)
+}
+
+window.relatorioHoje=()=>{
+let h=new Date().toDateString()
+alert("Hoje R$ "+
+soma(p=>
+new Date(p.data)
+.toDateString()===h
+).toFixed(2))
+}
+
+window.relatorioMes=()=>{
+let m=new Date().getMonth()
+alert("Mês R$ "+
+soma(p=>
+new Date(p.data).getMonth()===m
+).toFixed(2))
+}
+
+window.relatorioAno=()=>{
+let a=new Date().getFullYear()
+alert("Ano R$ "+
+soma(p=>
+new Date(p.data).getFullYear()===a
+).toFixed(2))
+}
+
+window.zerarRelatorios=()=>{
+if(confirm("Zerar dados?")){
+pedidosCache=[]
+salvarLocal()
+}
+}
 
 window.exportarCSV=()=>{
 
