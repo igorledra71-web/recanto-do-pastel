@@ -13,6 +13,8 @@ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins}
 html,body{height:100%;background:#fff7e6}
 
+/* telas */
+
 .tela{
 position:fixed;
 inset:0;
@@ -23,6 +25,8 @@ padding:14px;
 overflow:auto;
 }
 .tela.ativa{display:flex}
+
+/* voltar */
 
 .btnVoltarGlobal{
 position:fixed;
@@ -36,6 +40,23 @@ border-radius:14px;
 padding:12px 16px;
 font-weight:700;
 }
+
+/* engrenagem admin */
+
+.btnConfig{
+position:fixed;
+top:10px;
+right:12px;
+z-index:4000;
+font-size:26px;
+background:white;
+border:none;
+border-radius:12px;
+padding:8px 10px;
+box-shadow:0 2px 6px rgba(0,0,0,.2);
+}
+
+/* inicial */
 
 #telaInicial{
 justify-content:center;
@@ -61,6 +82,8 @@ border:none;
 width:100%;
 max-width:320px;
 }
+
+/* cardápio */
 
 .topo{
 width:100%;
@@ -104,8 +127,7 @@ padding:10px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
-gap:10px;
+box-shadow:0 2px 6px rgba(0,0,0,.1);
 }
 
 .btnAdd{
@@ -117,6 +139,8 @@ padding:10px 14px;
 font-weight:700;
 }
 
+/* botões */
+
 .btn{
 border:none;
 border-radius:12px;
@@ -127,7 +151,9 @@ max-width:680px;
 }
 
 .btnPrim{background:#ff5722;color:white}
-.btnSec{background:#ccc;color:#000}
+.btnSec{background:#ccc}
+
+/* carrinho */
 
 #carrinho{
 position:fixed;
@@ -137,7 +163,7 @@ width:100%;
 max-width:420px;
 height:100%;
 background:white;
-box-shadow:-4px 0 12px rgba(0,0,0,0.25);
+box-shadow:-4px 0 12px rgba(0,0,0,.25);
 transition:.3s;
 display:flex;
 flex-direction:column;
@@ -147,6 +173,8 @@ z-index:2000;
 
 .cLista{flex:1;overflow:auto;padding:10px}
 .cItem{display:flex;justify-content:space-between;margin-bottom:8px}
+
+/* form */
 
 .form{
 width:100%;
@@ -163,6 +191,8 @@ border:1px solid #ccc;
 font-size:16px;
 width:100%;
 }
+
+/* admin */
 
 #telaAdmin{background:#212121;color:white}
 
@@ -185,9 +215,15 @@ margin-top:6px;
 width:100%;
 font-weight:700;
 }
+
 </style>
 </head>
 <body>
+<!-- BOTÃO CONFIG (ENGRENAGEM) -->
+
+<button class="btnConfig"
+onclick="abrirConfig()">⚙️</button>
+
 <button class="btnVoltarGlobal"
 onclick="voltarUniversal()">← VOLTAR</button>
 
@@ -202,14 +238,6 @@ TELA INICIAL
 <button class="btnPrincipal"
 onclick="abrirCardapio()">
 FAZER PEDIDO
-</button>
-
-<!-- CONFIGURAÇÃO COM SENHA -->
-
-<button class="btn btnSec"
-style="margin-top:12px"
-onclick="abrirConfig()">
-CONFIGURAÇÃO
 </button>
 
 </div>
@@ -343,7 +371,7 @@ placeholder="Troco para quanto?">
 
 </div>
 
-<!-- PIX AUTO MOSTRAR -->
+<!-- PIX AUTO -->
 
 <div id="boxPix"
 style="
@@ -364,7 +392,7 @@ R$ <span id="pixValorTxt">0.00</span>
 
 </div>
 
-<!-- FRETE TRAVADO -->
+<!-- FRETE -->
 
 <input id="frete"
 value="0"
@@ -379,7 +407,7 @@ ENVIAR PEDIDO
 </div>
 <!-- =========================
 PAINEL ADMIN
-(acesso só via CONFIGURAÇÃO + senha)
+(acesso pela ⚙️ com senha)
 ========================= -->
 
 <div id="telaAdmin" class="tela">
@@ -495,7 +523,7 @@ let WHATSAPP_LOJA="5599999999999"
 let PIX_CHAVE="pix-recanto-exemplo@pix"
 
 /* =========================
-FIREBASE (cole suas chaves depois)
+FIREBASE
 ========================= */
 
 import { initializeApp } from
@@ -508,12 +536,12 @@ onSnapshot, updateDoc, doc
 "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 const firebaseConfig={
-apiKey:"COLE_AQUI",
-authDomain:"COLE_AQUI",
-projectId:"COLE_AQUI",
-storageBucket:"COLE_AQUI",
-messagingSenderId:"COLE_AQUI",
-appId:"COLE_AQUI"
+apiKey:"AIzaSyCE6daBipSq0Xjxt3ofW9anxMdN-AecI4w",
+authDomain:"recanto-do-pastel-bcea2.firebaseapp.com",
+projectId:"recanto-do-pastel-bcea2",
+storageBucket:"recanto-do-pastel-bcea2.firebasestorage.app",
+messagingSenderId:"304374292790",
+appId:"1:304374292790:web:5bd235b7c0419a8dfe1397"
 }
 
 let db=null
@@ -521,7 +549,7 @@ try{
 const app=initializeApp(firebaseConfig)
 db=getFirestore(app)
 }catch(e){
-console.log("Firebase não configurado ainda")
+console.log("firebase não ativo")
 }
 
 /* =========================
@@ -561,11 +589,11 @@ mostrar(prev)
 }
 
 /* =========================
-CONFIGURAÇÃO (ADMIN)
+ADMIN (⚙️)
 ========================= */
 
 window.abrirConfig=()=>{
-let s=prompt("Senha de configuração")
+let s=prompt("Senha admin")
 if(s!==ADMIN_SENHA){
 alert("Senha incorreta")
 return
@@ -716,7 +744,7 @@ atualizarPixPreview()
 }
 
 /* =========================
-FINALIZAR PEDIDO (NÃO TRAVA)
+FINALIZAR (não trava)
 ========================= */
 
 window.finalizarPedido = async ()=>{
@@ -737,17 +765,11 @@ total:totalGeral(),
 data:new Date().toISOString()
 }
 
-/* tenta salvar se firebase ok */
-
 try{
-if(db && firebaseConfig.apiKey!=="COLE_AQUI"){
-await addDoc(collection(db,"pedidos"),pedido)
-}
+if(db) await addDoc(collection(db,"pedidos"),pedido)
 }catch(e){
-console.log("Firebase indisponível — seguindo")
+console.log("firestore off — segue")
 }
-
-/* whatsapp */
 
 let txt="🥟 RECANTO DO PASTEL\n\n"
 
@@ -769,7 +791,7 @@ mostrar("telaInicial")
 }
 
 /* =========================
-ADMIN BÁSICO
+ADMIN AÇÕES
 ========================= */
 
 window.adminNovaAba=()=>{
@@ -808,6 +830,27 @@ mostrar("telaEditorItens")
 window.removerItemAdmin=(a,n)=>{
 cardapio[a]=cardapio[a].filter(x=>x.nome!==n)
 abrirEditorItens()
+}
+
+/* =========================
+PEDIDOS AO VIVO
+========================= */
+
+if(db){
+onSnapshot(collection(db,"pedidos"),snap=>{
+let div=qs("adminPedidos")
+if(!div) return
+div.innerHTML=""
+snap.forEach(d=>{
+let p=d.data()
+let el=document.createElement("div")
+el.className="adminBox"
+el.innerHTML=`
+${p.cliente.nome}<br>
+R$ ${p.total.toFixed(2)}`
+div.appendChild(el)
+})
+})
 }
 
 /* =========================
