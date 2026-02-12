@@ -245,6 +245,18 @@ margin-top:6px;
 width:100%;
 font-weight:700;
 }
+
+/* comprovante pix */
+
+.pixProofBox{
+background:#fff3e0;
+border-radius:14px;
+padding:12px;
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
 </style>
 </head>
 <body>
@@ -380,14 +392,12 @@ Entrega
 
 </select>
 
-<!-- MESA (LOCAL) -->
+<!-- MESA -->
 
 <div id="boxMesa">
 <input id="mesaInput"
 placeholder="Número da mesa (opcional)">
 </div>
-
-<!-- CLIENTE -->
 
 <input id="nome"
 placeholder="Nome do cliente">
@@ -397,69 +407,64 @@ placeholder="Telefone">
 
 <!-- ENDEREÇO ENTREGA -->
 
-<div id="boxEndereco"
-style="display:none">
+<div id="boxEndereco" style="display:none">
 
-<input id="rua"
-placeholder="Rua">
-
-<input id="bairro"
-placeholder="Bairro">
-
-<input id="numero"
-placeholder="Número">
+<input id="rua" placeholder="Rua">
+<input id="bairro" placeholder="Bairro">
+<input id="numero" placeholder="Número">
 
 </div>
 
 <!-- PAGAMENTO -->
 
 <select id="pagamento">
-
 <option>PIX</option>
 <option>Débito</option>
 <option>Crédito</option>
 <option>Dinheiro</option>
-
 </select>
 
 <!-- TROCO -->
 
-<div id="boxTroco"
-style="display:none">
-
-<input id="troco"
-placeholder="Troco para quanto?">
-
+<div id="boxTroco" style="display:none">
+<input id="troco" placeholder="Troco para quanto?">
 </div>
 
 <!-- PIX BOX -->
 
-<div id="boxPix"
-style="
-display:none;
-background:#e8f5e9;
-padding:14px;
-border-radius:14px;
-font-weight:700;
-">
+<div id="boxPix" style="display:none" class="pixProofBox">
 
-Chave PIX:<br>
+<div>
+<b>Chave PIX</b><br>
 <span id="pixChaveTxt"></span>
+</div>
 
-<br><br>
-
-Valor PIX:<br>
+<div>
+<b>Valor PIX</b><br>
 R$ <span id="pixValorTxt">0.00</span>
+</div>
+
+<button class="adminBtn"
+style="background:#25d366"
+onclick="abrirZapComprovante()">
+Enviar comprovante no WhatsApp
+</button>
+
+<label style="display:flex;gap:8px;align-items:center">
+<input type="checkbox" id="pixJaEnviei">
+Já enviei comprovante
+</label>
+
+<input type="file"
+id="pixArquivo"
+accept="image/*,application/pdf">
 
 </div>
 
-<!-- FRETE (AUTO) -->
+<input id="frete" value="0" readonly>
 
-<input id="frete"
-value="0"
-readonly>
-
-<button class="btnPrincipal"
+<button id="btnFinalizarPedido"
+class="btnPrincipal"
 style="background:#ff5722;color:white"
 onclick="finalizarPedido()">
 ENVIAR PEDIDO
@@ -477,8 +482,6 @@ PAINEL ADMIN
 Painel Admin
 </h2>
 
-<!-- ABAS -->
-
 <div class="adminBox">
 
 <b>Abas do Cardápio</b>
@@ -489,20 +492,18 @@ Nova Aba
 </button>
 
 <button class="adminBtn"
-onclick="adminRemoverAba()">
-Remover Aba
+onclick="abrirRemoverAbaUI()">
+Remover Aba (lista)
 </button>
 
 </div>
-
-<!-- ITENS -->
 
 <div class="adminBox">
 
 <b>Produtos</b>
 
 <button class="adminBtn"
-onclick="adminNovoItem()">
+onclick="abrirNovoProdutoUI()">
 Adicionar Produto
 </button>
 
@@ -513,43 +514,31 @@ Editar / Remover Produtos
 
 </div>
 
-<!-- PEDIDOS -->
-
 <div class="adminBox">
 
 <b>Pedidos ao Vivo</b>
-
-<div id="adminPedidos"
-style="margin-top:8px;font-size:14px">
-</div>
+<div id="adminPedidos"></div>
 
 </div>
-
-<!-- RELATÓRIOS -->
 
 <div class="adminBox">
 
 <b>Relatórios</b>
 
 <button class="adminBtn"
-onclick="relatorioHoje()">
-Hoje
-</button>
+onclick="relatorioHoje()">Hoje</button>
 
 <button class="adminBtn"
-onclick="relatorioMes()">
-Mês
-</button>
+onclick="relatorioMes()">Mês</button>
 
 <button class="adminBtn"
-onclick="relatorioAno()">
-Ano
-</button>
+onclick="relatorioAno()">Ano</button>
 
 <button class="adminBtn"
-onclick="zerarRelatorios()">
-Zerar Dados
-</button>
+onclick="exportarExcel()">Exportar Excel</button>
+
+<button class="adminBtn"
+onclick="zerarRelatorios()">Zerar Dados</button>
 
 </div>
 
@@ -561,12 +550,46 @@ EDITOR PRODUTOS
 
 <div id="telaEditorItens" class="tela">
 
-<h2 style="margin-bottom:12px">
-Editor de Produtos
-</h2>
+<h2>Editor de Produtos</h2>
+<div id="listaEditor" class="lista"></div>
 
-<div id="listaEditor"
-class="lista"></div>
+</div>
+
+<!-- =========================
+UI REMOVER ABA
+========================= -->
+
+<div id="uiRemoverAba" class="tela">
+
+<h2>Remover Aba</h2>
+<div id="listaAbasRemover" class="lista"></div>
+
+</div>
+
+<!-- =========================
+UI NOVO PRODUTO
+========================= -->
+
+<div id="uiNovoProduto" class="tela">
+
+<h2>Novo Produto</h2>
+
+<div class="form">
+
+<input id="novoProdNome"
+placeholder="Nome do produto">
+
+<input id="novoProdPreco"
+placeholder="Preço">
+
+<select id="novoProdAba"></select>
+
+<button class="btnPrincipal"
+onclick="confirmarNovoProduto()">
+Salvar Produto
+</button>
+
+</div>
 
 </div>
 <script type="module">
@@ -611,6 +634,7 @@ ESTADO
 let carrinho=[]
 let pedidosCache=[]
 let historico=["telaInicial"]
+let pixComprovanteOK=false
 
 let cardapio={
 "Pastéis":[
@@ -675,25 +699,16 @@ function renderItens(lista){
 qs("lista").innerHTML=""
 
 lista.forEach(it=>{
-
 let el=document.createElement("div")
 el.className="item"
 
 el.innerHTML=`
 <div>
-<div style="font-weight:700;font-size:18px">
-${it.nome}
-</div>
-
-<div style="
-font-size:16px;
-color:#ff5722;
-font-weight:700;
-margin-top:4px">
+<div style="font-weight:700;font-size:18px">${it.nome}</div>
+<div style="color:#ff5722;font-weight:700">
 R$ ${it.preco.toFixed(2)}
 </div>
 </div>
-
 <button class="btnAdd">+</button>
 `
 
@@ -701,7 +716,6 @@ el.querySelector("button").onclick=
 ()=>addCarrinho(it)
 
 qs("lista").appendChild(el)
-
 })
 }
 
@@ -712,11 +726,9 @@ CARRINHO
 function totalItens(){
 return carrinho.reduce((s,i)=>s+i.preco*i.qtd,0)
 }
-
 function freteAtual(){
 return parseFloat(qs("frete").value||0)
 }
-
 function totalGeral(){
 return totalItens()+freteAtual()
 }
@@ -745,32 +757,17 @@ qs("cLista").innerHTML=""
 let q=0
 
 carrinho.forEach(i=>{
-
 q+=i.qtd
-
 let r=document.createElement("div")
 r.className="cItem"
-
 r.innerHTML=`
 <div>
 <b>${i.qtd}x ${i.nome}</b><br>
 R$ ${(i.qtd*i.preco).toFixed(2)}
 </div>
-
-<button onclick="removerItem('${i.nome}')"
-style="
-background:#e53935;
-color:white;
-border:none;
-border-radius:10px;
-padding:8px 10px;
-font-weight:700">
-X
-</button>
+<button onclick="removerItem('${i.nome}')">X</button>
 `
-
 qs("cLista").appendChild(r)
-
 })
 
 qs("qtd").innerText=q
@@ -786,7 +783,7 @@ atualizarPix()
 }
 
 /* =========================
-CHECKOUT UI
+CHECKOUT
 ========================= */
 
 qs("tipoPedido").onchange=e=>{
@@ -799,15 +796,46 @@ renderCarrinho()
 
 qs("pagamento").onchange=e=>{
 let p=e.target.value
-qs("boxPix").style.display=p==="PIX"?"block":"none"
-qs("boxTroco").style.display=p==="Dinheiro"?"block":"none"
+
+qs("boxPix").style.display=
+(p==="PIX")?"block":"none"
+
+qs("boxTroco").style.display=
+(p==="Dinheiro")?"block":"none"
+
+pixComprovanteOK=false
+qs("pixJaEnviei").checked=false
 atualizarPix()
 }
 
 function atualizarPix(){
-qs("pixValorTxt").innerText=totalGeral().toFixed(2)
-qs("pixChaveTxt").innerText=PIX_CHAVE
+qs("pixValorTxt").innerText=
+totalGeral().toFixed(2)
+qs("pixChaveTxt").innerText=
+PIX_CHAVE
 }
+
+/* comprovante */
+
+qs("pixArquivo").onchange=()=>{
+if(qs("pixArquivo").files.length>0)
+pixComprovanteOK=true
+}
+
+qs("pixJaEnviei").onchange=e=>{
+pixComprovanteOK=e.target.checked
+}
+
+window.abrirZapComprovante=()=>{
+let v=totalGeral().toFixed(2)
+let txt=`Comprovante PIX pedido — valor R$ ${v}`
+window.open(
+`https://wa.me/${WHATSAPP_LOJA}?text=${encodeURIComponent(txt)}`)
+}
+
+/* =========================
+FINALIZAR
+========================= */
 
 window.irCheckout=()=>{
 if(!carrinho.length) return
@@ -815,17 +843,20 @@ mostrar("telaCheckout")
 atualizarPix()
 }
 
-/* =========================
-FINALIZAR PEDIDO
-========================= */
-
 window.finalizarPedido=async()=>{
 
 let nome=qs("nome").value
 let tel=qs("telefone").value
-
 if(!nome||!tel)
-return alert("Preencha nome e telefone")
+return alert("Preencha dados")
+
+let tipo=qs("tipoPedido").value
+let pag=qs("pagamento").value
+
+if(tipo==="entrega" && pag==="PIX" && !pixComprovanteOK){
+alert("Envie o comprovante PIX")
+return
+}
 
 let pedido={
 cliente:{nome,tel},
@@ -839,11 +870,7 @@ if(db) await addDoc(collection(db,"pedidos"),pedido)
 }catch(e){}
 
 let txt="🥟 RECANTO DO PASTEL\n\n"
-
-carrinho.forEach(i=>{
-txt+=`${i.qtd}x ${i.nome}\n`
-})
-
+carrinho.forEach(i=>txt+=`${i.qtd}x ${i.nome}\n`)
 txt+=`\nTotal R$ ${pedido.total.toFixed(2)}`
 
 window.open(
@@ -857,7 +884,7 @@ mostrar("telaInicial")
 }
 
 /* =========================
-ADMIN — ABAS
+ADMIN ABAS UI
 ========================= */
 
 window.adminNovaAba=()=>{
@@ -867,23 +894,43 @@ cardapio[n]=[]
 renderAbas()
 }
 
-window.adminRemoverAba=()=>{
-let n=prompt("Nome da aba remover")
-if(cardapio[n]) delete cardapio[n]
+window.abrirRemoverAbaUI=()=>{
+qs("listaAbasRemover").innerHTML=""
+Object.keys(cardapio).forEach(a=>{
+let b=document.createElement("button")
+b.className="adminBtn"
+b.innerText=a
+b.onclick=()=>{
+delete cardapio[a]
+mostrar("telaAdmin")
 renderAbas()
+}
+qs("listaAbasRemover").appendChild(b)
+})
+mostrar("uiRemoverAba")
 }
 
 /* =========================
-ADMIN — NOVO ITEM
+NOVO PRODUTO UI
 ========================= */
 
-window.adminNovoItem=()=>{
-let nome=prompt("Nome produto")
-let preco=parseFloat(prompt("Preço"))
-let aba=prompt("Qual aba?")
-if(!cardapio[aba]) return alert("Aba não existe")
+window.abrirNovoProdutoUI=()=>{
+qs("novoProdAba").innerHTML=""
+Object.keys(cardapio).forEach(a=>{
+let o=document.createElement("option")
+o.innerText=a
+qs("novoProdAba").appendChild(o)
+})
+mostrar("uiNovoProduto")
+}
+
+window.confirmarNovoProduto=()=>{
+let nome=qs("novoProdNome").value
+let preco=parseFloat(qs("novoProdPreco").value)
+let aba=qs("novoProdAba").value
+if(!nome||isNaN(preco)) return
 cardapio[aba].push({nome,preco})
-renderItens(cardapio[aba])
+mostrar("telaAdmin")
 }
 
 /* =========================
@@ -892,32 +939,20 @@ EDITOR ITENS
 
 window.abrirEditorItens=()=>{
 qs("listaEditor").innerHTML=""
-
 Object.keys(cardapio).forEach(a=>{
 cardapio[a].forEach(i=>{
-
 let el=document.createElement("div")
 el.className="item"
-
 el.innerHTML=`
+<div><b>${a}</b><br>${i.nome}<br>R$ ${i.preco}</div>
 <div>
-<b>${a}</b><br>
-${i.nome}<br>
-R$ ${i.preco.toFixed(2)}
-</div>
-
-<div style="display:flex;gap:6px">
 <button onclick="editNome('${a}','${i.nome}')">Nome</button>
 <button onclick="editPreco('${a}','${i.nome}')">Preço</button>
 <button onclick="remItem('${a}','${i.nome}')">X</button>
-</div>
-`
-
+</div>`
 qs("listaEditor").appendChild(el)
-
 })
 })
-
 mostrar("telaEditorItens")
 }
 
@@ -941,56 +976,56 @@ abrirEditorItens()
 }
 
 /* =========================
-RELATÓRIOS
+RELATÓRIOS + EXCEL
 ========================= */
 
 if(db){
 onSnapshot(collection(db,"pedidos"),snap=>{
-
 pedidosCache=[]
 qs("adminPedidos").innerHTML=""
-
 snap.forEach(d=>{
 let p=d.data()
-p._id=d.id
 pedidosCache.push(p)
-
 qs("adminPedidos").innerHTML+=
 `${p.cliente.nome} — R$ ${p.total}<br>`
 })
-
 })
 }
 
 function soma(fn){
-return pedidosCache
-.filter(fn)
+return pedidosCache.filter(fn)
 .reduce((s,p)=>s+p.total,0)
 }
 
 window.relatorioHoje=()=>{
 let h=new Date().toDateString()
-alert("Hoje R$ "+soma(
-p=>new Date(p.data).toDateString()===h
-).toFixed(2))
+alert(soma(p=>new Date(p.data).toDateString()===h))
 }
 
 window.relatorioMes=()=>{
 let m=new Date().getMonth()
-alert("Mês R$ "+soma(
-p=>new Date(p.data).getMonth()===m
-).toFixed(2))
+alert(soma(p=>new Date(p.data).getMonth()===m))
 }
 
 window.relatorioAno=()=>{
 let a=new Date().getFullYear()
-alert("Ano R$ "+soma(
-p=>new Date(p.data).getFullYear()===a
-).toFixed(2))
+alert(soma(p=>new Date(p.data).getFullYear()===a))
+}
+
+window.exportarExcel=()=>{
+let csv="nome,total,data\n"
+pedidosCache.forEach(p=>{
+csv+=`${p.cliente.nome},${p.total},${p.data}\n`
+})
+let blob=new Blob([csv])
+let a=document.createElement("a")
+a.href=URL.createObjectURL(blob)
+a.download="relatorio.csv"
+a.click()
 }
 
 window.zerarRelatorios=async()=>{
-if(!confirm("Apagar todos pedidos?")) return
+if(!confirm("Apagar todos?")) return
 let s=await getDocs(collection(db,"pedidos"))
 s.forEach(d=>deleteDoc(d.ref))
 }
