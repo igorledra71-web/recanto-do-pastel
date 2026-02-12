@@ -26,19 +26,19 @@ overflow:auto;
 }
 .tela.ativa{display:flex}
 
-/* admin engrenagem */
+/* engrenagem */
 
 .btnConfig{
 position:fixed;
-top:10px;
-right:12px;
+top:12px;
+right:14px;
 z-index:4000;
 font-size:26px;
 background:white;
 border:none;
-border-radius:12px;
-padding:8px 10px;
-box-shadow:0 2px 6px rgba(0,0,0,.2);
+border-radius:14px;
+padding:10px;
+box-shadow:0 4px 12px rgba(0,0,0,.2);
 }
 
 /* voltar */
@@ -114,10 +114,11 @@ max-width:680px;
 .aba{
 background:#ffe0b2;
 border:none;
-padding:10px 14px;
+padding:12px 16px;
 border-radius:20px;
 font-weight:600;
 white-space:nowrap;
+font-size:15px;
 }
 
 .lista{
@@ -125,8 +126,8 @@ width:100%;
 max-width:680px;
 display:flex;
 flex-direction:column;
-gap:10px;
-padding-bottom:120px;
+gap:14px;
+padding-bottom:140px;
 }
 
 .item{
@@ -155,22 +156,53 @@ font-size:18px;
 
 #carrinho{
 position:fixed;
-right:-100%;
 top:0;
-width:100%;
+right:-100%;
+width:92%;
 max-width:420px;
 height:100%;
-background:white;
-box-shadow:-4px 0 12px rgba(0,0,0,.25);
-transition:.3s;
+background:#f7f7f7;
+box-shadow:-8px 0 24px rgba(0,0,0,.25);
+transition:.35s;
 display:flex;
 flex-direction:column;
 z-index:2000;
+border-top-left-radius:18px;
+border-bottom-left-radius:18px;
 }
+
 #carrinho.aberto{right:0}
 
-.cLista{flex:1;overflow:auto;padding:10px}
-.cItem{display:flex;justify-content:space-between;margin-bottom:8px}
+.cLista{
+flex:1;
+overflow:auto;
+padding:16px;
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.cItem{
+background:white;
+border-radius:14px;
+padding:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:0 2px 8px rgba(0,0,0,.12);
+font-size:16px;
+}
+
+.btnFinalizarCarrinho{
+margin:12px;
+padding:16px;
+border-radius:14px;
+font-size:18px;
+font-weight:700;
+background:#ff5722;
+color:white;
+border:none;
+}
 
 /* form */
 
@@ -213,7 +245,6 @@ margin-top:6px;
 width:100%;
 font-weight:700;
 }
-
 </style>
 </head>
 <body>
@@ -252,9 +283,7 @@ FAZER PEDIDO
 </button>
 
 </div>
-
 </div>
-
 
 <!-- =========================
 CARDÁPIO
@@ -265,8 +294,8 @@ CARDÁPIO
 <div class="topo">
 <b>Cardápio</b>
 
-<button class="btn btnPrim"
-style="max-width:180px"
+<button class="adminBtn"
+style="max-width:180px;background:#ff5722"
 onclick="toggleCarrinho()">
 Carrinho (<span id="qtd">0</span>)
 </button>
@@ -283,10 +312,25 @@ CARRINHO
 
 <div id="carrinho">
 
-<div style="padding:16px;font-weight:700">
+<div style="
+padding:16px;
+font-weight:700;
+font-size:18px;
+display:flex;
+justify-content:space-between;
+align-items:center">
+
 Seu Pedido
-<button style="float:right"
-onclick="toggleCarrinho()">X</button>
+
+<button onclick="toggleCarrinho()"
+style="
+background:#ccc;
+border:none;
+border-radius:10px;
+padding:8px 10px">
+X
+</button>
+
 </div>
 
 <div id="cLista" class="cLista"></div>
@@ -299,14 +343,14 @@ Frete: R$
 <span id="freteCarrinhoTxt">0.00</span>
 </div>
 
-<b>
+<b style="font-size:18px">
 Total R$
 <span id="total">0.00</span>
 </b>
 
 </div>
 
-<button class="btn btnPrim"
+<button class="btnFinalizarCarrinho"
 onclick="irCheckout()">
 FINALIZAR
 </button>
@@ -318,7 +362,7 @@ CHECKOUT
 
 <div id="telaCheckout" class="tela">
 
-<h2 style="margin-bottom:10px">
+<h2 style="margin-bottom:12px">
 Finalizar Pedido
 </h2>
 
@@ -336,12 +380,14 @@ Entrega
 
 </select>
 
-<!-- MESA -->
+<!-- MESA (LOCAL) -->
 
 <div id="boxMesa">
 <input id="mesaInput"
 placeholder="Número da mesa (opcional)">
 </div>
+
+<!-- CLIENTE -->
 
 <input id="nome"
 placeholder="Nome do cliente">
@@ -349,7 +395,7 @@ placeholder="Nome do cliente">
 <input id="telefone"
 placeholder="Telefone">
 
-<!-- ENDEREÇO -->
+<!-- ENDEREÇO ENTREGA -->
 
 <div id="boxEndereco"
 style="display:none">
@@ -365,6 +411,8 @@ placeholder="Número">
 
 </div>
 
+<!-- PAGAMENTO -->
+
 <select id="pagamento">
 
 <option>PIX</option>
@@ -374,6 +422,8 @@ placeholder="Número">
 
 </select>
 
+<!-- TROCO -->
+
 <div id="boxTroco"
 style="display:none">
 
@@ -382,12 +432,14 @@ placeholder="Troco para quanto?">
 
 </div>
 
+<!-- PIX BOX -->
+
 <div id="boxPix"
 style="
 display:none;
 background:#e8f5e9;
-padding:12px;
-border-radius:12px;
+padding:14px;
+border-radius:14px;
 font-weight:700;
 ">
 
@@ -401,11 +453,14 @@ R$ <span id="pixValorTxt">0.00</span>
 
 </div>
 
+<!-- FRETE (AUTO) -->
+
 <input id="frete"
 value="0"
 readonly>
 
-<button class="btn btnPrim"
+<button class="btnPrincipal"
+style="background:#ff5722;color:white"
 onclick="finalizarPedido()">
 ENVIAR PEDIDO
 </button>
@@ -418,13 +473,15 @@ PAINEL ADMIN
 
 <div id="telaAdmin" class="tela">
 
-<h2 style="margin-bottom:12px">
+<h2 style="margin-bottom:14px">
 Painel Admin
 </h2>
 
+<!-- ABAS -->
+
 <div class="adminBox">
 
-<b>ABAS</b>
+<b>Abas do Cardápio</b>
 
 <button class="adminBtn"
 onclick="adminNovaAba()">
@@ -438,9 +495,11 @@ Remover Aba
 
 </div>
 
+<!-- ITENS -->
+
 <div class="adminBox">
 
-<b>ITENS</b>
+<b>Produtos</b>
 
 <button class="adminBtn"
 onclick="adminNovoItem()">
@@ -454,12 +513,19 @@ Editar / Remover Produtos
 
 </div>
 
+<!-- PEDIDOS -->
+
 <div class="adminBox">
 
 <b>Pedidos ao Vivo</b>
-<div id="adminPedidos"></div>
+
+<div id="adminPedidos"
+style="margin-top:8px;font-size:14px">
+</div>
 
 </div>
+
+<!-- RELATÓRIOS -->
 
 <div class="adminBox">
 
@@ -490,12 +556,12 @@ Zerar Dados
 </div>
 
 <!-- =========================
-EDITOR ITENS
+EDITOR PRODUTOS
 ========================= -->
 
 <div id="telaEditorItens" class="tela">
 
-<h2 style="margin-bottom:10px">
+<h2 style="margin-bottom:12px">
 Editor de Produtos
 </h2>
 
@@ -536,9 +602,7 @@ appId:"1:304374292790:web:5bd235b7c0419a8dfe1397"
 }
 
 let db=null
-try{
-db=getFirestore(initializeApp(firebaseConfig))
-}catch(e){}
+try{ db=getFirestore(initializeApp(firebaseConfig)) }catch(e){}
 
 /* =========================
 ESTADO
@@ -549,8 +613,13 @@ let pedidosCache=[]
 let historico=["telaInicial"]
 
 let cardapio={
-"Pastéis":[{nome:"Pastel Carne",preco:12},{nome:"Pastel Queijo",preco:11}],
-"Bebidas":[{nome:"Refri",preco:6}]
+"Pastéis":[
+{nome:"Pastel Carne",preco:12},
+{nome:"Pastel Queijo",preco:11}
+],
+"Bebidas":[
+{nome:"Refri",preco:6}
+]
 }
 
 /* =========================
@@ -636,7 +705,6 @@ qs("lista").appendChild(el)
 })
 }
 
-
 /* =========================
 CARRINHO
 ========================= */
@@ -644,9 +712,11 @@ CARRINHO
 function totalItens(){
 return carrinho.reduce((s,i)=>s+i.preco*i.qtd,0)
 }
+
 function freteAtual(){
 return parseFloat(qs("frete").value||0)
 }
+
 function totalGeral(){
 return totalItens()+freteAtual()
 }
@@ -661,7 +731,8 @@ renderCarrinho()
 window.removerItem=n=>{
 carrinho=carrinho.filter(i=>i.nome!==n)
 renderCarrinho()
-if(!carrinho.length) qs("carrinho").classList.remove("aberto")
+if(!carrinho.length)
+qs("carrinho").classList.remove("aberto")
 }
 
 window.toggleCarrinho=()=>{
@@ -674,15 +745,32 @@ qs("cLista").innerHTML=""
 let q=0
 
 carrinho.forEach(i=>{
+
 q+=i.qtd
+
 let r=document.createElement("div")
 r.className="cItem"
+
 r.innerHTML=`
-<span>${i.qtd}x ${i.nome}</span>
-<span>R$ ${(i.qtd*i.preco).toFixed(2)}
-<button onclick="removerItem('${i.nome}')">x</button>
-</span>`
+<div>
+<b>${i.qtd}x ${i.nome}</b><br>
+R$ ${(i.qtd*i.preco).toFixed(2)}
+</div>
+
+<button onclick="removerItem('${i.nome}')"
+style="
+background:#e53935;
+color:white;
+border:none;
+border-radius:10px;
+padding:8px 10px;
+font-weight:700">
+X
+</button>
+`
+
 qs("cLista").appendChild(r)
+
 })
 
 qs("qtd").innerText=q
@@ -728,14 +816,16 @@ atualizarPix()
 }
 
 /* =========================
-FINALIZAR
+FINALIZAR PEDIDO
 ========================= */
 
 window.finalizarPedido=async()=>{
 
 let nome=qs("nome").value
 let tel=qs("telefone").value
-if(!nome||!tel) return alert("Preencha dados")
+
+if(!nome||!tel)
+return alert("Preencha nome e telefone")
 
 let pedido={
 cliente:{nome,tel},
@@ -744,13 +834,21 @@ total:totalGeral(),
 data:new Date().toISOString()
 }
 
-try{ if(db) await addDoc(collection(db,"pedidos"),pedido) }catch(e){}
+try{
+if(db) await addDoc(collection(db,"pedidos"),pedido)
+}catch(e){}
 
 let txt="🥟 RECANTO DO PASTEL\n\n"
-carrinho.forEach(i=>txt+=`${i.qtd}x ${i.nome}\n`)
+
+carrinho.forEach(i=>{
+txt+=`${i.qtd}x ${i.nome}\n`
+})
+
 txt+=`\nTotal R$ ${pedido.total.toFixed(2)}`
 
-window.open(`https://wa.me/${WHATSAPP_LOJA}?text=${encodeURIComponent(txt)}`)
+window.open(
+`https://wa.me/${WHATSAPP_LOJA}?text=${
+encodeURIComponent(txt)}`)
 
 carrinho=[]
 renderCarrinho()
@@ -770,7 +868,7 @@ renderAbas()
 }
 
 window.adminRemoverAba=()=>{
-let n=prompt("Qual aba remover?")
+let n=prompt("Nome da aba remover")
 if(cardapio[n]) delete cardapio[n]
 renderAbas()
 }
@@ -789,11 +887,12 @@ renderItens(cardapio[aba])
 }
 
 /* =========================
-ADMIN — EDITOR
+EDITOR ITENS
 ========================= */
 
 window.abrirEditorItens=()=>{
 qs("listaEditor").innerHTML=""
+
 Object.keys(cardapio).forEach(a=>{
 cardapio[a].forEach(i=>{
 
@@ -802,18 +901,23 @@ el.className="item"
 
 el.innerHTML=`
 <div>
-<b>${a}</b><br>${i.nome}<br>R$ ${i.preco.toFixed(2)}
+<b>${a}</b><br>
+${i.nome}<br>
+R$ ${i.preco.toFixed(2)}
 </div>
+
 <div style="display:flex;gap:6px">
 <button onclick="editNome('${a}','${i.nome}')">Nome</button>
 <button onclick="editPreco('${a}','${i.nome}')">Preço</button>
 <button onclick="remItem('${a}','${i.nome}')">X</button>
-</div>`
+</div>
+`
 
 qs("listaEditor").appendChild(el)
 
 })
 })
+
 mostrar("telaEditorItens")
 }
 
@@ -842,40 +946,51 @@ RELATÓRIOS
 
 if(db){
 onSnapshot(collection(db,"pedidos"),snap=>{
+
 pedidosCache=[]
 qs("adminPedidos").innerHTML=""
+
 snap.forEach(d=>{
 let p=d.data()
 p._id=d.id
 pedidosCache.push(p)
+
 qs("adminPedidos").innerHTML+=
 `${p.cliente.nome} — R$ ${p.total}<br>`
 })
+
 })
 }
 
 function soma(fn){
-return pedidosCache.filter(fn)
+return pedidosCache
+.filter(fn)
 .reduce((s,p)=>s+p.total,0)
 }
 
 window.relatorioHoje=()=>{
 let h=new Date().toDateString()
-alert(soma(p=>new Date(p.data).toDateString()===h))
+alert("Hoje R$ "+soma(
+p=>new Date(p.data).toDateString()===h
+).toFixed(2))
 }
 
 window.relatorioMes=()=>{
 let m=new Date().getMonth()
-alert(soma(p=>new Date(p.data).getMonth()===m))
+alert("Mês R$ "+soma(
+p=>new Date(p.data).getMonth()===m
+).toFixed(2))
 }
 
 window.relatorioAno=()=>{
 let a=new Date().getFullYear()
-alert(soma(p=>new Date(p.data).getFullYear()===a))
+alert("Ano R$ "+soma(
+p=>new Date(p.data).getFullYear()===a
+).toFixed(2))
 }
 
 window.zerarRelatorios=async()=>{
-if(!confirm("Apagar todos?")) return
+if(!confirm("Apagar todos pedidos?")) return
 let s=await getDocs(collection(db,"pedidos"))
 s.forEach(d=>deleteDoc(d.ref))
 }
@@ -887,5 +1002,3 @@ renderAbas()
 </script>
 </body>
 </html>
-
-
