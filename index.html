@@ -10,20 +10,10 @@ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700" rel="stylesheet">
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins}
+html,body{height:100%;background:#fff7e6}
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Poppins
-}
-
-html,body{
-height:100%;
-background:#fff7e6;
-}
-
-/* ===== RESPONSIVO BASE ===== */
+/* ===== TELAS ===== */
 
 .tela{
 position:fixed;
@@ -34,7 +24,6 @@ align-items:center;
 padding:14px;
 overflow:auto;
 }
-
 .tela.ativa{display:flex}
 
 /* ===== BOTÃO VOLTAR ===== */
@@ -79,7 +68,7 @@ width:100%;
 max-width:320px;
 }
 
-/* ===== TOPO ===== */
+/* ===== CARDÁPIO ===== */
 
 .topo{
 width:100%;
@@ -91,21 +80,12 @@ margin-bottom:10px;
 gap:8px;
 }
 
-.titulo{
-font-size:22px;
-font-weight:700;
-color:#e65100;
-}
-
-/* ===== ABAS ===== */
-
 .abas{
 display:flex;
 gap:8px;
 overflow-x:auto;
 width:100%;
 max-width:680px;
-padding-bottom:6px;
 }
 
 .aba{
@@ -116,13 +96,6 @@ border-radius:20px;
 font-weight:600;
 white-space:nowrap;
 }
-
-.aba.ativa{
-background:#ff9800;
-color:white;
-}
-
-/* ===== LISTA ===== */
 
 .lista{
 width:100%;
@@ -140,26 +113,8 @@ padding:10px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-gap:10px;
 box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
-
-.itemInfo{
-display:flex;
 gap:10px;
-align-items:center;
-}
-
-.itemInfo img{
-width:56px;
-height:56px;
-border-radius:10px;
-object-fit:cover;
-}
-
-.item.promocao{
-border:2px solid #ff5722;
-background:#fff3e0;
 }
 
 .btnAdd{
@@ -183,7 +138,7 @@ max-width:680px;
 }
 
 .btnPrim{background:#ff5722;color:white}
-.btnSec{background:#ccc}
+.btnSec{background:#ccc;color:#000}
 
 /* ===== CARRINHO ===== */
 
@@ -201,17 +156,7 @@ display:flex;
 flex-direction:column;
 z-index:2000;
 }
-
 #carrinho.aberto{right:0}
-
-.cTop{
-padding:16px;
-font-weight:700;
-font-size:20px;
-display:flex;
-justify-content:space-between;
-color:#e65100;
-}
 
 .cLista{
 flex:1;
@@ -224,12 +169,6 @@ display:flex;
 justify-content:space-between;
 margin-bottom:8px;
 gap:8px;
-}
-
-.total{
-padding:12px;
-font-size:20px;
-font-weight:700;
 }
 
 /* ===== FORM ===== */
@@ -280,9 +219,11 @@ font-weight:700;
 </style>
 </head>
 <body>
+<button class="btnVoltarGlobal" onclick="voltarUniversal()">← VOLTAR</button>
 
-<button class="btnVoltarGlobal"
-onclick="voltarUniversal()">← VOLTAR</button>
+<!-- =========================
+TELA INICIAL
+========================= -->
 
 <div id="telaInicial" class="tela ativa">
 <div class="logo">🥟 Recanto do Pastel</div>
@@ -298,38 +239,56 @@ onclick="loginAdmin()">
 PAINEL ADMIN
 </button>
 </div>
-<!-- ===== CARDÁPIO ===== -->
+
+<!-- =========================
+CARDÁPIO
+========================= -->
 
 <div id="telaCardapio" class="tela">
 
 <div class="topo">
-<div class="titulo">Cardápio</div>
+<b>Cardápio</b>
 
 <button class="btn btnPrim"
-style="max-width:160px"
+style="max-width:180px"
 onclick="toggleCarrinho()">
 Carrinho (<span id="qtd">0</span>)
 </button>
 </div>
 
 <div id="abas" class="abas"></div>
+
 <div id="lista" class="lista"></div>
 
 </div>
 
-<!-- ===== CARRINHO ===== -->
+<!-- =========================
+CARRINHO LATERAL
+========================= -->
 
 <div id="carrinho">
 
-<div class="cTop">
+<div style="padding:16px;font-weight:700">
 Seu Pedido
-<button onclick="toggleCarrinho()">X</button>
+<button style="float:right"
+onclick="toggleCarrinho()">X</button>
 </div>
 
 <div id="cLista" class="cLista"></div>
 
-<div class="total">
-Total R$ <span id="total">0.00</span>
+<div style="padding:12px">
+
+<div id="linhaFreteCarrinho"
+style="display:none;margin-bottom:6px">
+Frete: R$
+<span id="freteCarrinhoTxt">0.00</span>
+</div>
+
+<b>
+Total R$
+<span id="total">0.00</span>
+</b>
+
 </div>
 
 <button class="btn btnPrim"
@@ -338,8 +297,9 @@ FINALIZAR
 </button>
 
 </div>
-
-<!-- ===== CHECKOUT ===== -->
+<!-- =========================
+CHECKOUT
+========================= -->
 
 <div id="telaCheckout" class="tela">
 
@@ -350,33 +310,67 @@ Finalizar Pedido
 <div class="form">
 
 <select id="tipoPedido">
-<option value="local">Consumir no local</option>
-<option value="entrega">Entrega</option>
+<option value="local">
+Consumir no local
+</option>
+
+<option value="entrega">
+Entrega
+</option>
 </select>
 
-<input id="nome" placeholder="Nome do cliente">
-<input id="telefone" placeholder="Telefone">
+<!-- MESA OPCIONAL -->
 
-<div id="boxEndereco" style="display:none">
-<input id="rua" placeholder="Rua">
-<input id="bairro" placeholder="Bairro">
-<input id="numero" placeholder="Número">
+<div id="boxMesa">
+<input id="mesaInput"
+placeholder="Número da mesa (opcional)">
+</div>
+
+<input id="nome"
+placeholder="Nome do cliente">
+
+<input id="telefone"
+placeholder="Telefone">
+
+<!-- ENDEREÇO ENTREGA -->
+
+<div id="boxEndereco"
+style="display:none">
+
+<input id="rua"
+placeholder="Rua">
+
+<input id="bairro"
+placeholder="Bairro">
+
+<input id="numero"
+placeholder="Número">
+
 </div>
 
 <select id="pagamento">
+
 <option>PIX</option>
 <option>Débito</option>
 <option>Crédito</option>
 <option>Dinheiro</option>
+
 </select>
 
-<div id="boxTroco" style="display:none">
-<input id="troco" placeholder="Troco para quanto?">
+<!-- TROCO -->
+
+<div id="boxTroco"
+style="display:none">
+
+<input id="troco"
+placeholder="Troco para quanto?">
+
 </div>
 
-<!-- PIX VISUAL TRAVADO -->
+<!-- PIX AUTO MOSTRAR -->
 
-<div id="boxPix" style="
+<div id="boxPix"
+style="
 display:none;
 background:#e8f5e9;
 padding:12px;
@@ -384,13 +378,17 @@ border-radius:12px;
 font-weight:700;
 ">
 
-PIX da loja:<br>
-<span id="pixChaveTxt"></span><br><br>
+Chave PIX:<br>
+<span id="pixChaveTxt"></span>
 
-Valor do PIX:<br>
+<br><br>
+
+Valor PIX:<br>
 R$ <span id="pixValorTxt">0.00</span>
 
 </div>
+
+<!-- FRETE TRAVADO -->
 
 <input id="frete"
 value="0"
@@ -403,8 +401,9 @@ ENVIAR PEDIDO
 
 </div>
 </div>
-
-<!-- ===== ADMIN ===== -->
+<!-- =========================
+PAINEL ADMIN
+========================= -->
 
 <div id="telaAdmin" class="tela">
 
@@ -439,7 +438,7 @@ Editar / Remover Itens
 
 <button class="adminBtn"
 onclick="adminPromoItem()">
-Marcar Promo
+Marcar Item Promo
 </button>
 
 <button class="adminBtn"
@@ -451,7 +450,8 @@ Banner Promo
 
 <div class="adminBox">
 
-<b>Pedidos ao vivo</b>
+<b>Pedidos ao Vivo</b>
+
 <div id="adminPedidos"></div>
 
 </div>
@@ -482,14 +482,16 @@ Exportar Excel
 
 <button class="adminBtn"
 onclick="zerarRelatorios()">
-Zerar
+Zerar Dados
 </button>
 
 </div>
 
 </div>
 
-<!-- ===== EDITOR ITENS ===== -->
+<!-- =========================
+EDITOR ITENS
+========================= -->
 
 <div id="telaEditorItens" class="tela">
 
@@ -502,7 +504,9 @@ class="lista"></div>
 
 </div>
 
-<!-- ===== BANNER PROMO ===== -->
+<!-- =========================
+BANNER PROMO TOPO
+========================= -->
 
 <div id="bannerPromo"
 style="
@@ -516,41 +520,67 @@ color:white;
 text-align:center;
 padding:8px;
 font-weight:700;
-z-index:2500;
+z-index:3500;
 ">
 PROMO
 </div>
 <script type="module">
 
-/* ================================
+/* =========================
 CONFIG
-================================ */
+========================= */
 
-const ADMIN_SENHA = "1234"
-let WHATSAPP_LOJA = "5599999999999" // editar
-let PIX_CHAVE = "SUA_CHAVE_PIX"
+const ADMIN_SENHA="1234"
+let WHATSAPP_LOJA="5599999999999"
+let PIX_CHAVE="pix-recanto-exemplo@pix"
 
-/* ================================
+/* =========================
+FIREBASE — COLE SUAS CHAVES
+========================= */
+
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"
+
+import {
+getFirestore, collection, addDoc,
+onSnapshot, updateDoc, doc
+} from
+"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+const firebaseConfig={
+apiKey:"COLE_AQUI",
+authDomain:"COLE_AQUI",
+projectId:"COLE_AQUI",
+storageBucket:"COLE_AQUI",
+messagingSenderId:"COLE_AQUI",
+appId:"COLE_AQUI"
+}
+
+const app=initializeApp(firebaseConfig)
+const db=getFirestore(app)
+
+/* =========================
 ESTADO
-================================ */
+========================= */
 
 let carrinho=[]
-let abaAtual=null
 let pedidosCache=[]
 let historico=["telaInicial"]
+let abaAtual=null
 
 let cardapio={
 "Pastéis":[
 {nome:"Pastel Carne",preco:12},
 {nome:"Pastel Queijo",preco:11}
 ],
-"Lanches":[{nome:"X-Burger",preco:18}],
-"Bebidas":[{nome:"Refri",preco:6}]
+"Bebidas":[
+{nome:"Refri",preco:6}
+]
 }
 
-/* ================================
+/* =========================
 UTIL
-================================ */
+========================= */
 
 function qs(id){return document.getElementById(id)}
 
@@ -561,227 +591,149 @@ qs(id).classList.add("ativa")
 historico.push(id)
 }
 
-/* ================================
-VOLTAR UNIVERSAL
-================================ */
-
 window.voltarUniversal=()=>{
 historico.pop()
-let prev = historico.pop() || "telaInicial"
+let prev=historico.pop()||"telaInicial"
 mostrar(prev)
 }
 
-/* ================================
-RESPONSIVO FIX
-================================ */
-
-document.addEventListener("dblclick",
-e=>e.preventDefault(),{passive:false})
-
-/* ================================
-QR MESA
-================================ */
-
-let url=new URL(location.href)
-let mesa=url.searchParams.get("mesa")
-
-/* ================================
-TELAS
-================================ */
+/* =========================
+CARDÁPIO
+========================= */
 
 window.abrirCardapio=()=>{
 mostrar("telaCardapio")
 renderAbas()
 }
 
-window.loginAdmin=()=>{
-let s=prompt("Senha admin")
-if(s!==ADMIN_SENHA) return
-mostrar("telaAdmin")
-}
-
-/* ================================
-ABAS
-================================ */
-
 function renderAbas(){
-
 let d=qs("abas")
 d.innerHTML=""
-
 Object.keys(cardapio).forEach(nome=>{
-
 let b=document.createElement("button")
 b.className="aba"
 b.innerText=nome
-
-b.onclick=()=>{
-abaAtual=nome
-document.querySelectorAll(".aba")
-.forEach(x=>x.classList.remove("ativa"))
-b.classList.add("ativa")
-renderItens(cardapio[nome])
-}
-
+b.onclick=()=>renderItens(cardapio[nome])
 d.appendChild(b)
-
 })
-
 }
-
-/* ================================
-ITENS
-================================ */
 
 function renderItens(lista){
-
 let d=qs("lista")
 d.innerHTML=""
-
 lista.forEach(item=>{
-
 let el=document.createElement("div")
 el.className="item"
-if(item.promocao) el.classList.add("promocao")
-
 el.innerHTML=`
-<div class="itemInfo">
-${item.img?`<img src="${item.img}">`:""}
-<div>
-<b>${item.promocao?"🔥 ":""}${item.nome}</b>
-<br>R$ ${item.preco.toFixed(2)}
-</div>
-</div>
-<button class="btnAdd">+</button>
-`
-
+<div><b>${item.nome}</b><br>
+R$ ${item.preco.toFixed(2)}</div>
+<button class="btnAdd">+</button>`
 el.querySelector("button").onclick=
 ()=>addCarrinho(item)
-
 d.appendChild(el)
-
 })
-
 }
 
-/* ================================
-CARRINHO
-================================ */
+/* =========================
+CARRINHO + FRETE
+========================= */
 
 function totalItens(){
 return carrinho.reduce(
 (s,i)=>s+i.preco*i.qtd,0)
 }
 
-function abrirCarrinhoAuto(){
+function freteAtual(){
+return parseFloat(qs("frete").value||0)
+}
+
+function totalGeral(){
+return totalItens()+freteAtual()
+}
+
+function addCarrinho(item){
+let ex=carrinho.find(i=>i.nome===item.nome)
+if(ex) ex.qtd++
+else carrinho.push({...item,qtd:1})
 qs("carrinho").classList.add("aberto")
+renderCarrinho()
+}
+
+window.removerItem=(nome)=>{
+carrinho=carrinho.filter(i=>i.nome!==nome)
+renderCarrinho()
+if(!carrinho.length)
+qs("carrinho").classList.remove("aberto")
 }
 
 window.toggleCarrinho=()=>{
 qs("carrinho").classList.toggle("aberto")
 }
 
-function addCarrinho(item){
-
-let ex=carrinho.find(i=>i.nome===item.nome)
-if(ex) ex.qtd++
-else carrinho.push({...item,qtd:1})
-
-abrirCarrinhoAuto()
-renderCarrinho()
-
-}
-
-window.removerItem=(nome)=>{
-
-carrinho=carrinho.filter(
-i=>i.nome!==nome)
-
-renderCarrinho()
-
-if(!carrinho.length)
-qs("carrinho").classList.remove("aberto")
-
-}
-
 function renderCarrinho(){
 
 let d=qs("cLista")
 d.innerHTML=""
-
-let total=0
 let qtd=0
 
 carrinho.forEach(i=>{
-total+=i.preco*i.qtd
 qtd+=i.qtd
-
 let row=document.createElement("div")
 row.className="cItem"
-
 row.innerHTML=`
 <span>${i.qtd}x ${i.nome}</span>
 <span>
-R$ ${(i.preco*i.qtd).toFixed(2)}
+R$ ${(i.qtd*i.preco).toFixed(2)}
 <button onclick="removerItem('${i.nome}')">x</button>
-</span>
-`
-
+</span>`
 d.appendChild(row)
-
 })
 
-qs("total").innerText=total.toFixed(2)
+/* frete visual */
+
+if(freteAtual()>0){
+qs("linhaFreteCarrinho").style.display="block"
+qs("freteCarrinhoTxt").innerText=
+freteAtual().toFixed(2)
+}else{
+qs("linhaFreteCarrinho").style.display="none"
+}
+
 qs("qtd").innerText=qtd
+qs("total").innerText=totalGeral().toFixed(2)
 
 atualizarPixPreview()
-
 }
 
-/* ================================
-PIX PREVIEW CORRETO
-================================ */
-
-function atualizarPixPreview(){
-
-let frete=parseFloat(qs("frete").value||0)
-let total = totalItens()+frete
-
-qs("pixValorTxt").innerText =
-total.toFixed(2)
-
-qs("pixChaveTxt").innerText =
-PIX_CHAVE
-
-}
-
-/* ================================
+/* =========================
 CHECKOUT UI
-================================ */
+========================= */
 
 qs("tipoPedido").onchange=e=>{
 let ent=e.target.value==="entrega"
 qs("boxEndereco").style.display=
 ent?"block":"none"
+qs("boxMesa").style.display=
+ent?"none":"block"
 qs("frete").value = ent?5:0
-atualizarPixPreview()
+renderCarrinho()
 }
 
 qs("pagamento").onchange=e=>{
-
 let p=e.target.value
-
 qs("boxPix").style.display=
 (p==="PIX")?"block":"none"
-
 qs("boxTroco").style.display=
 (p==="Dinheiro")?"block":"none"
-
+atualizarPixPreview()
 }
 
-/* ================================
-CHECKOUT
-================================ */
+function atualizarPixPreview(){
+qs("pixValorTxt").innerText=
+totalGeral().toFixed(2)
+qs("pixChaveTxt").innerText=
+PIX_CHAVE
+}
 
 window.irCheckout=()=>{
 if(!carrinho.length) return
@@ -789,69 +741,81 @@ mostrar("telaCheckout")
 atualizarPixPreview()
 }
 
-/* ================================
-ADMIN EDITOR
-================================ */
+/* =========================
+FINALIZAR PEDIDO
+========================= */
 
-window.abrirEditorItens=()=>{
+window.finalizarPedido=async()=>{
 
-let d=qs("listaEditor")
-d.innerHTML=""
+let nome=qs("nome").value
+let tel=qs("telefone").value
+if(!nome||!tel){
+alert("Preencha nome e telefone")
+return
+}
 
-Object.keys(cardapio).forEach(aba=>{
-cardapio[aba].forEach(item=>{
+let pedido={
+cliente:{nome,tel},
+mesa:qs("mesaInput").value||"",
+tipo:qs("tipoPedido").value,
+pagamento:qs("pagamento").value,
+troco:qs("troco").value||"",
+endereco:{
+rua:qs("rua").value,
+bairro:qs("bairro").value,
+numero:qs("numero").value
+},
+itens:carrinho,
+frete:freteAtual(),
+total:totalGeral(),
+data:new Date().toISOString(),
+status:"novo"
+}
 
-let el=document.createElement("div")
-el.className="item"
+await addDoc(collection(db,"pedidos"),pedido)
 
-el.innerHTML=`
-<div>
-<b>${aba}</b><br>
-${item.nome}<br>
-R$ ${item.preco}
-</div>
-<div>
-<button onclick="editarItem('${aba}','${item.nome}')">
-Editar</button>
-<button onclick="removerItemAdmin('${aba}','${item.nome}')">
-Remover</button>
-</div>
-`
+let txt="🥟 RECANTO DO PASTEL\n\n"
 
-d.appendChild(el)
-
+carrinho.forEach(i=>{
+txt+=`${i.qtd}x ${i.nome} — R$ ${(i.qtd*i.preco).toFixed(2)}\n`
 })
-})
 
-mostrar("telaEditorItens")
+txt+=`\nFrete: R$ ${pedido.frete.toFixed(2)}`
+txt+=`\nTOTAL: R$ ${pedido.total.toFixed(2)}`
+txt+=`\nPagamento: ${pedido.pagamento}`
+txt+=`\nCliente: ${nome}`
+
+if(pedido.mesa)
+txt+=`\nMesa: ${pedido.mesa}`
+
+if(pedido.pagamento==="PIX")
+txt+=`\nPIX: ${PIX_CHAVE}`
+
+window.open(
+`https://wa.me/${WHATSAPP_LOJA}?text=${
+encodeURIComponent(txt)}`)
+
+carrinho=[]
+renderCarrinho()
+qs("carrinho").classList.remove("aberto")
+mostrar("telaInicial")
+
 }
 
-window.editarItem=(aba,nome)=>{
-let i=cardapio[aba]
-.find(x=>x.nome===nome)
-if(!i) return
-i.preco=parseFloat(prompt(
-"Preço:",i.preco))
-salvarLocal()
-abrirEditorItens()
-}
+/* =========================
+ADMIN
+========================= */
 
-window.removerItemAdmin=(aba,nome)=>{
-cardapio[aba]=cardapio[aba]
-.filter(x=>x.nome!==nome)
-salvarLocal()
-abrirEditorItens()
+window.loginAdmin=()=>{
+let s=prompt("Senha admin")
+if(s!==ADMIN_SENHA) return
+mostrar("telaAdmin")
 }
-
-/* ================================
-ADMIN BASICO
-================================ */
 
 window.adminNovaAba=()=>{
 let n=prompt("Nome aba")
 if(!n) return
 cardapio[n]=[]
-salvarLocal()
 renderAbas()
 }
 
@@ -861,290 +825,78 @@ if(!cardapio[a]) return
 let n=prompt("Nome")
 let p=parseFloat(prompt("Preço"))
 cardapio[a].push({nome:n,preco:p})
-salvarLocal()
 renderItens(cardapio[a])
 }
 
-/* ================================
-LOCAL BACKUP
-================================ */
-
-function salvarLocal(){
-localStorage.setItem(
-"recanto_data",
-JSON.stringify({cardapio,pedidosCache}))
-}
-
-function carregarLocal(){
-let d=localStorage.getItem("recanto_data")
-if(d){
-let o=JSON.parse(d)
-cardapio=o.cardapio||cardapio
-pedidosCache=o.pedidosCache||[]
-}
-}
-
-carregarLocal()
-renderAbas()
-/* ================================
-FIREBASE
-================================ */
-
-import { initializeApp } from
-"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"
-
-import {
-getFirestore,
-collection,
-addDoc,
-onSnapshot,
-updateDoc,
-doc
-} from
-"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-
-const firebaseConfig = {
-apiKey: "COLE_AQUI",
-authDomain: "COLE_AQUI",
-projectId: "COLE_AQUI",
-storageBucket: "COLE_AQUI",
-messagingSenderId: "COLE_AQUI",
-appId: "COLE_AQUI"
-}
-
-const app = initializeApp(firebaseConfig)
-const db = getFirestore(app)
-
-/* ================================
-FINALIZAR PEDIDO
-================================ */
-
-window.finalizarPedido = async ()=>{
-
-let nome=qs("nome").value
-let tel=qs("telefone").value
-let tipo=qs("tipoPedido").value
-let pag=qs("pagamento").value
-
-if(!nome || !tel){
-alert("Preencha nome e telefone")
-return
-}
-
-let frete=parseFloat(qs("frete").value||0)
-let total = totalItens()+frete
-
-let pedido={
-cliente:{nome,tel},
-mesa,
-tipo,
-pagamento:pag,
-troco:qs("troco").value||"",
-endereco:{
-rua:qs("rua").value,
-bairro:qs("bairro").value,
-numero:qs("numero").value
-},
-itens:carrinho,
-total,
-data:new Date().toISOString(),
-status:"novo"
-}
-
-/* salvar */
-
-await addDoc(
-collection(db,"pedidos"),
-pedido)
-
-pedidosCache.push(pedido)
-salvarLocal()
-
-/* mensagem whatsapp */
-
-let txt="🥟 RECANTO DO PASTEL\n\n"
-
-carrinho.forEach(i=>{
-txt+=`${i.qtd}x ${i.nome} — R$ ${(i.qtd*i.preco).toFixed(2)}\n`
+window.abrirEditorItens=()=>{
+let d=qs("listaEditor")
+d.innerHTML=""
+Object.keys(cardapio).forEach(a=>{
+cardapio[a].forEach(i=>{
+let el=document.createElement("div")
+el.className="item"
+el.innerHTML=`
+<div>${a}<br>${i.nome}</div>
+<button onclick="removerItemAdmin('${a}','${i.nome}')">
+Remover</button>`
+d.appendChild(el)
 })
-
-txt+=`\nFrete: R$ ${frete.toFixed(2)}`
-txt+=`\nTOTAL: R$ ${total.toFixed(2)}`
-txt+=`\nPagamento: ${pag}`
-txt+=`\nCliente: ${nome}`
-
-if(tipo==="entrega"){
-txt+=`\n${pedido.endereco.rua}, `
-+ `${pedido.endereco.numero} `
-+ `- ${pedido.endereco.bairro}`
+})
+mostrar("telaEditorItens")
 }
 
-if(pag==="PIX")
-txt+=`\nPIX: ${PIX_CHAVE}`
-
-if(pag==="Dinheiro" && pedido.troco)
-txt+=`\nTroco: ${pedido.troco}`
-
-window.open(
-`https://wa.me/${WHATSAPP_LOJA}?text=${
-encodeURIComponent(txt)}`)
-
-/* reset */
-
-carrinho=[]
-renderCarrinho()
-qs("carrinho").classList.remove("aberto")
-mostrar("telaInicial")
-
+window.removerItemAdmin=(a,n)=>{
+cardapio[a]=cardapio[a].filter(x=>x.nome!==n)
+abrirEditorItens()
 }
 
-/* ================================
-PEDIDOS AO VIVO ADMIN
-================================ */
+/* =========================
+PEDIDOS AO VIVO
+========================= */
 
-onSnapshot(
-collection(db,"pedidos"),
-snap=>{
-
+onSnapshot(collection(db,"pedidos"),snap=>{
 let div=qs("adminPedidos")
+if(!div) return
 div.innerHTML=""
-
 snap.forEach(d=>{
-
 let p=d.data()
-
-let box=document.createElement("div")
-box.style.background="#616161"
-box.style.padding="8px"
-box.style.marginBottom="6px"
-box.style.borderRadius="8px"
-
-box.innerHTML=`
-<b>${p.cliente.nome}</b><br>
+let el=document.createElement("div")
+el.className="adminBox"
+el.innerHTML=`
+${p.cliente.nome}<br>
 R$ ${p.total.toFixed(2)}<br>
-Status: ${p.status}<br>
-<button onclick="marcarPronto(
-'${d.id}',
-'${p.cliente.tel}'
-)">
-Pedido Pronto
-</button>
-`
-
-div.appendChild(box)
-
+<button onclick="marcarPronto('${d.id}','${p.cliente.tel}')">
+Pronto</button>`
+div.appendChild(el)
 })
-
 })
-
-/* ================================
-MARCAR PRONTO
-================================ */
 
 window.marcarPronto=async(id,tel)=>{
-
-await updateDoc(
-doc(db,"pedidos",id),
-{status:"pronto"}
-)
-
+await updateDoc(doc(db,"pedidos",id),
+{status:"pronto"})
 window.open(
-`https://wa.me/${tel}?text=${
-encodeURIComponent("Seu pedido está pronto! 🥟")}`
-)
-
+`https://wa.me/${tel}?text=Pedido pronto`)
 }
 
-/* ================================
-PROMO + BANNER
-================================ */
-
-window.adminPromoItem=()=>{
-let a=prompt("Aba")
-let n=prompt("Item")
-let i=cardapio[a]
-.find(x=>x.nome===n)
-if(i) i.promocao=true
-salvarLocal()
-renderItens(cardapio[a])
-}
-
-window.adminBanner=()=>{
-let t=prompt("Texto banner")
-let b=qs("bannerPromo")
-if(!t){
-b.style.display="none"
-return
-}
-b.innerText=t
-b.style.display="block"
-}
-
-/* ================================
-RELATÓRIOS
-================================ */
-
-function soma(fn){
-return pedidosCache
-.filter(fn)
-.reduce((s,p)=>s+p.total,0)
-}
-
-window.relatorioHoje=()=>{
-let h=new Date().toDateString()
-alert("Hoje R$ "+
-soma(p=>
-new Date(p.data)
-.toDateString()===h
-).toFixed(2))
-}
-
-window.relatorioMes=()=>{
-let m=new Date().getMonth()
-alert("Mês R$ "+
-soma(p=>
-new Date(p.data).getMonth()===m
-).toFixed(2))
-}
-
-window.relatorioAno=()=>{
-let a=new Date().getFullYear()
-alert("Ano R$ "+
-soma(p=>
-new Date(p.data).getFullYear()===a
-).toFixed(2))
-}
-
-window.zerarRelatorios=()=>{
-if(confirm("Zerar dados?")){
-pedidosCache=[]
-salvarLocal()
-}
-}
-
-/* ================================
-CSV
-================================ */
+/* =========================
+RELATÓRIO CSV
+========================= */
 
 window.exportarCSV=()=>{
-
 let l=["data,total"]
-
 pedidosCache.forEach(p=>{
 l.push(`${p.data},${p.total}`)
 })
-
 let blob=new Blob([l.join("\n")])
 let a=document.createElement("a")
 a.href=URL.createObjectURL(blob)
 a.download="relatorio.csv"
 a.click()
-
 }
 
-/* ================================
+/* =========================
 INIT
-================================ */
+========================= */
 
 renderAbas()
 
