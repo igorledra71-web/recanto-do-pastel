@@ -13,8 +13,6 @@ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins}
 html,body{height:100%;background:#fff7e6}
 
-/* ===== TELAS ===== */
-
 .tela{
 position:fixed;
 inset:0;
@@ -25,8 +23,6 @@ padding:14px;
 overflow:auto;
 }
 .tela.ativa{display:flex}
-
-/* ===== BOTÃO VOLTAR ===== */
 
 .btnVoltarGlobal{
 position:fixed;
@@ -40,8 +36,6 @@ border-radius:14px;
 padding:12px 16px;
 font-weight:700;
 }
-
-/* ===== INICIAL ===== */
 
 #telaInicial{
 justify-content:center;
@@ -68,8 +62,6 @@ width:100%;
 max-width:320px;
 }
 
-/* ===== CARDÁPIO ===== */
-
 .topo{
 width:100%;
 max-width:680px;
@@ -77,7 +69,6 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 margin-bottom:10px;
-gap:8px;
 }
 
 .abas{
@@ -126,8 +117,6 @@ padding:10px 14px;
 font-weight:700;
 }
 
-/* ===== BOTÕES ===== */
-
 .btn{
 border:none;
 border-radius:12px;
@@ -139,8 +128,6 @@ max-width:680px;
 
 .btnPrim{background:#ff5722;color:white}
 .btnSec{background:#ccc;color:#000}
-
-/* ===== CARRINHO ===== */
 
 #carrinho{
 position:fixed;
@@ -158,20 +145,8 @@ z-index:2000;
 }
 #carrinho.aberto{right:0}
 
-.cLista{
-flex:1;
-overflow:auto;
-padding:10px;
-}
-
-.cItem{
-display:flex;
-justify-content:space-between;
-margin-bottom:8px;
-gap:8px;
-}
-
-/* ===== FORM ===== */
+.cLista{flex:1;overflow:auto;padding:10px}
+.cItem{display:flex;justify-content:space-between;margin-bottom:8px}
 
 .form{
 width:100%;
@@ -189,12 +164,7 @@ font-size:16px;
 width:100%;
 }
 
-/* ===== ADMIN ===== */
-
-#telaAdmin{
-background:#212121;
-color:white;
-}
+#telaAdmin{background:#212121;color:white}
 
 .adminBox{
 background:#424242;
@@ -215,17 +185,18 @@ margin-top:6px;
 width:100%;
 font-weight:700;
 }
-
 </style>
 </head>
 <body>
-<button class="btnVoltarGlobal" onclick="voltarUniversal()">← VOLTAR</button>
+<button class="btnVoltarGlobal"
+onclick="voltarUniversal()">← VOLTAR</button>
 
 <!-- =========================
 TELA INICIAL
 ========================= -->
 
 <div id="telaInicial" class="tela ativa">
+
 <div class="logo">🥟 Recanto do Pastel</div>
 
 <button class="btnPrincipal"
@@ -233,11 +204,14 @@ onclick="abrirCardapio()">
 FAZER PEDIDO
 </button>
 
+<!-- CONFIGURAÇÃO COM SENHA -->
+
 <button class="btn btnSec"
 style="margin-top:12px"
-onclick="loginAdmin()">
-PAINEL ADMIN
+onclick="abrirConfig()">
+CONFIGURAÇÃO
 </button>
+
 </div>
 
 <!-- =========================
@@ -263,7 +237,7 @@ Carrinho (<span id="qtd">0</span>)
 </div>
 
 <!-- =========================
-CARRINHO LATERAL
+CARRINHO
 ========================= -->
 
 <div id="carrinho">
@@ -310,6 +284,7 @@ Finalizar Pedido
 <div class="form">
 
 <select id="tipoPedido">
+
 <option value="local">
 Consumir no local
 </option>
@@ -317,6 +292,7 @@ Consumir no local
 <option value="entrega">
 Entrega
 </option>
+
 </select>
 
 <!-- MESA OPCIONAL -->
@@ -403,6 +379,7 @@ ENVIAR PEDIDO
 </div>
 <!-- =========================
 PAINEL ADMIN
+(acesso só via CONFIGURAÇÃO + senha)
 ========================= -->
 
 <div id="telaAdmin" class="tela">
@@ -434,24 +411,7 @@ Editar / Remover Itens
 
 <div class="adminBox">
 
-<b>Promoções</b>
-
-<button class="adminBtn"
-onclick="adminPromoItem()">
-Marcar Item Promo
-</button>
-
-<button class="adminBtn"
-onclick="adminBanner()">
-Banner Promo
-</button>
-
-</div>
-
-<div class="adminBox">
-
 <b>Pedidos ao Vivo</b>
-
 <div id="adminPedidos"></div>
 
 </div>
@@ -505,7 +465,7 @@ class="lista"></div>
 </div>
 
 <!-- =========================
-BANNER PROMO TOPO
+BANNER PROMO
 ========================= -->
 
 <div id="bannerPromo"
@@ -535,7 +495,7 @@ let WHATSAPP_LOJA="5599999999999"
 let PIX_CHAVE="pix-recanto-exemplo@pix"
 
 /* =========================
-FIREBASE — COLE SUAS CHAVES
+FIREBASE (cole suas chaves depois)
 ========================= */
 
 import { initializeApp } from
@@ -556,17 +516,20 @@ messagingSenderId:"COLE_AQUI",
 appId:"COLE_AQUI"
 }
 
+let db=null
+try{
 const app=initializeApp(firebaseConfig)
-const db=getFirestore(app)
+db=getFirestore(app)
+}catch(e){
+console.log("Firebase não configurado ainda")
+}
 
 /* =========================
 ESTADO
 ========================= */
 
 let carrinho=[]
-let pedidosCache=[]
 let historico=["telaInicial"]
-let abaAtual=null
 
 let cardapio={
 "Pastéis":[
@@ -595,6 +558,19 @@ window.voltarUniversal=()=>{
 historico.pop()
 let prev=historico.pop()||"telaInicial"
 mostrar(prev)
+}
+
+/* =========================
+CONFIGURAÇÃO (ADMIN)
+========================= */
+
+window.abrirConfig=()=>{
+let s=prompt("Senha de configuração")
+if(s!==ADMIN_SENHA){
+alert("Senha incorreta")
+return
+}
+mostrar("telaAdmin")
 }
 
 /* =========================
@@ -635,7 +611,7 @@ d.appendChild(el)
 }
 
 /* =========================
-CARRINHO + FRETE
+CARRINHO
 ========================= */
 
 function totalItens(){
@@ -689,8 +665,6 @@ R$ ${(i.qtd*i.preco).toFixed(2)}
 d.appendChild(row)
 })
 
-/* frete visual */
-
 if(freteAtual()>0){
 qs("linhaFreteCarrinho").style.display="block"
 qs("freteCarrinhoTxt").innerText=
@@ -742,13 +716,14 @@ atualizarPixPreview()
 }
 
 /* =========================
-FINALIZAR PEDIDO
+FINALIZAR PEDIDO (NÃO TRAVA)
 ========================= */
 
-window.finalizarPedido=async()=>{
+window.finalizarPedido = async ()=>{
 
 let nome=qs("nome").value
 let tel=qs("telefone").value
+
 if(!nome||!tel){
 alert("Preencha nome e telefone")
 return
@@ -756,40 +731,31 @@ return
 
 let pedido={
 cliente:{nome,tel},
-mesa:qs("mesaInput").value||"",
-tipo:qs("tipoPedido").value,
-pagamento:qs("pagamento").value,
-troco:qs("troco").value||"",
-endereco:{
-rua:qs("rua").value,
-bairro:qs("bairro").value,
-numero:qs("numero").value
-},
 itens:carrinho,
 frete:freteAtual(),
 total:totalGeral(),
-data:new Date().toISOString(),
-status:"novo"
+data:new Date().toISOString()
 }
 
+/* tenta salvar se firebase ok */
+
+try{
+if(db && firebaseConfig.apiKey!=="COLE_AQUI"){
 await addDoc(collection(db,"pedidos"),pedido)
+}
+}catch(e){
+console.log("Firebase indisponível — seguindo")
+}
+
+/* whatsapp */
 
 let txt="🥟 RECANTO DO PASTEL\n\n"
 
 carrinho.forEach(i=>{
-txt+=`${i.qtd}x ${i.nome} — R$ ${(i.qtd*i.preco).toFixed(2)}\n`
+txt+=`${i.qtd}x ${i.nome}\n`
 })
 
-txt+=`\nFrete: R$ ${pedido.frete.toFixed(2)}`
-txt+=`\nTOTAL: R$ ${pedido.total.toFixed(2)}`
-txt+=`\nPagamento: ${pedido.pagamento}`
-txt+=`\nCliente: ${nome}`
-
-if(pedido.mesa)
-txt+=`\nMesa: ${pedido.mesa}`
-
-if(pedido.pagamento==="PIX")
-txt+=`\nPIX: ${PIX_CHAVE}`
+txt+=`\nTotal R$ ${pedido.total.toFixed(2)}`
 
 window.open(
 `https://wa.me/${WHATSAPP_LOJA}?text=${
@@ -803,14 +769,8 @@ mostrar("telaInicial")
 }
 
 /* =========================
-ADMIN
+ADMIN BÁSICO
 ========================= */
-
-window.loginAdmin=()=>{
-let s=prompt("Senha admin")
-if(s!==ADMIN_SENHA) return
-mostrar("telaAdmin")
-}
 
 window.adminNovaAba=()=>{
 let n=prompt("Nome aba")
@@ -848,50 +808,6 @@ mostrar("telaEditorItens")
 window.removerItemAdmin=(a,n)=>{
 cardapio[a]=cardapio[a].filter(x=>x.nome!==n)
 abrirEditorItens()
-}
-
-/* =========================
-PEDIDOS AO VIVO
-========================= */
-
-onSnapshot(collection(db,"pedidos"),snap=>{
-let div=qs("adminPedidos")
-if(!div) return
-div.innerHTML=""
-snap.forEach(d=>{
-let p=d.data()
-let el=document.createElement("div")
-el.className="adminBox"
-el.innerHTML=`
-${p.cliente.nome}<br>
-R$ ${p.total.toFixed(2)}<br>
-<button onclick="marcarPronto('${d.id}','${p.cliente.tel}')">
-Pronto</button>`
-div.appendChild(el)
-})
-})
-
-window.marcarPronto=async(id,tel)=>{
-await updateDoc(doc(db,"pedidos",id),
-{status:"pronto"})
-window.open(
-`https://wa.me/${tel}?text=Pedido pronto`)
-}
-
-/* =========================
-RELATÓRIO CSV
-========================= */
-
-window.exportarCSV=()=>{
-let l=["data,total"]
-pedidosCache.forEach(p=>{
-l.push(`${p.data},${p.total}`)
-})
-let blob=new Blob([l.join("\n")])
-let a=document.createElement("a")
-a.href=URL.createObjectURL(blob)
-a.download="relatorio.csv"
-a.click()
 }
 
 /* =========================
