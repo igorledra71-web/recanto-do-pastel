@@ -23,6 +23,7 @@ flex-direction:column;
 align-items:center;
 padding:14px;
 overflow:auto;
+z-index:100;
 }
 .tela.ativa{display:flex}
 
@@ -166,7 +167,7 @@ box-shadow:-8px 0 24px rgba(0,0,0,.25);
 transition:.35s;
 display:flex;
 flex-direction:column;
-z-index:2000;
+z-index:900;
 border-top-left-radius:18px;
 border-bottom-left-radius:18px;
 }
@@ -652,9 +653,16 @@ UTIL
 
 const qs=id=>document.getElementById(id)
 
+/* ===== ALTERAÇÃO MOBILE — FECHA CAMADAS ===== */
+
 function mostrar(id){
+
+qs("carrinho").classList.remove("aberto")
+document.body.style.overflow="auto"
+
 document.querySelectorAll(".tela")
 .forEach(t=>t.classList.remove("ativa"))
+
 qs(id).classList.add("ativa")
 historico.push(id)
 }
@@ -718,7 +726,6 @@ el.querySelector("button").onclick=
 qs("lista").appendChild(el)
 })
 }
-
 /* =========================
 CARRINHO
 ========================= */
@@ -726,9 +733,11 @@ CARRINHO
 function totalItens(){
 return carrinho.reduce((s,i)=>s+i.preco*i.qtd,0)
 }
+
 function freteAtual(){
 return parseFloat(qs("frete").value||0)
 }
+
 function totalGeral(){
 return totalItens()+freteAtual()
 }
@@ -737,18 +746,27 @@ function addCarrinho(it){
 let e=carrinho.find(x=>x.nome===it.nome)
 e?e.qtd++:carrinho.push({...it,qtd:1})
 qs("carrinho").classList.add("aberto")
+document.body.style.overflow="hidden"
 renderCarrinho()
 }
 
 window.removerItem=n=>{
 carrinho=carrinho.filter(i=>i.nome!==n)
 renderCarrinho()
-if(!carrinho.length)
+if(!carrinho.length){
 qs("carrinho").classList.remove("aberto")
+document.body.style.overflow="auto"
+}
 }
 
+/* ===== ALTERAÇÃO MOBILE — CONTROLE SCROLL ===== */
+
 window.toggleCarrinho=()=>{
-qs("carrinho").classList.toggle("aberto")
+let aberto = qs("carrinho")
+.classList.toggle("aberto")
+
+document.body.style.overflow =
+aberto ? "hidden" : "auto"
 }
 
 function renderCarrinho(){
@@ -758,8 +776,10 @@ let q=0
 
 carrinho.forEach(i=>{
 q+=i.qtd
+
 let r=document.createElement("div")
 r.className="cItem"
+
 r.innerHTML=`
 <div>
 <b>${i.qtd}x ${i.nome}</b><br>
@@ -767,6 +787,7 @@ R$ ${(i.qtd*i.preco).toFixed(2)}
 </div>
 <button onclick="removerItem('${i.nome}')">X</button>
 `
+
 qs("cLista").appendChild(r)
 })
 
@@ -815,7 +836,9 @@ qs("pixChaveTxt").innerText=
 PIX_CHAVE
 }
 
-/* comprovante */
+/* =========================
+COMPROVANTE PIX
+========================= */
 
 qs("pixArquivo").onchange=()=>{
 if(qs("pixArquivo").files.length>0)
@@ -834,7 +857,7 @@ window.open(
 }
 
 /* =========================
-FINALIZAR
+FINALIZAR — PARTE 1
 ========================= */
 
 window.irCheckout=()=>{
@@ -842,11 +865,15 @@ if(!carrinho.length) return
 mostrar("telaCheckout")
 atualizarPix()
 }
+/* =========================
+FINALIZAR — PARTE 2
+========================= */
 
 window.finalizarPedido=async()=>{
 
 let nome=qs("nome").value
 let tel=qs("telefone").value
+
 if(!nome||!tel)
 return alert("Preencha dados")
 
@@ -870,7 +897,11 @@ if(db) await addDoc(collection(db,"pedidos"),pedido)
 }catch(e){}
 
 let txt="🥟 RECANTO DO PASTEL\n\n"
-carrinho.forEach(i=>txt+=`${i.qtd}x ${i.nome}\n`)
+
+carrinho.forEach(i=>{
+txt+=`${i.qtd}x ${i.nome}\n`
+})
+
 txt+=`\nTotal R$ ${pedido.total.toFixed(2)}`
 
 window.open(
@@ -880,6 +911,7 @@ encodeURIComponent(txt)}`)
 carrinho=[]
 renderCarrinho()
 qs("carrinho").classList.remove("aberto")
+document.body.style.overflow="auto"
 mostrar("telaInicial")
 }
 
@@ -928,7 +960,9 @@ window.confirmarNovoProduto=()=>{
 let nome=qs("novoProdNome").value
 let preco=parseFloat(qs("novoProdPreco").value)
 let aba=qs("novoProdAba").value
+
 if(!nome||isNaN(preco)) return
+
 cardapio[aba].push({nome,preco})
 mostrar("telaAdmin")
 }
@@ -939,20 +973,27 @@ EDITOR ITENS
 
 window.abrirEditorItens=()=>{
 qs("listaEditor").innerHTML=""
+
 Object.keys(cardapio).forEach(a=>{
 cardapio[a].forEach(i=>{
+
 let el=document.createElement("div")
 el.className="item"
+
 el.innerHTML=`
 <div><b>${a}</b><br>${i.nome}<br>R$ ${i.preco}</div>
 <div>
 <button onclick="editNome('${a}','${i.nome}')">Nome</button>
 <button onclick="editPreco('${a}','${i.nome}')">Preço</button>
 <button onclick="remItem('${a}','${i.nome}')">X</button>
-</div>`
+</div>
+`
+
 qs("listaEditor").appendChild(el)
+
 })
 })
+
 mostrar("telaEditorItens")
 }
 
@@ -974,63 +1015,94 @@ window.remItem=(a,n)=>{
 cardapio[a]=cardapio[a].filter(x=>x.nome!==n)
 abrirEditorItens()
 }
-
 /* =========================
 RELATÓRIOS + EXCEL
 ========================= */
 
 if(db){
 onSnapshot(collection(db,"pedidos"),snap=>{
+
 pedidosCache=[]
 qs("adminPedidos").innerHTML=""
+
 snap.forEach(d=>{
 let p=d.data()
 pedidosCache.push(p)
+
 qs("adminPedidos").innerHTML+=
 `${p.cliente.nome} — R$ ${p.total}<br>`
 })
+
 })
 }
 
 function soma(fn){
-return pedidosCache.filter(fn)
+return pedidosCache
+.filter(fn)
 .reduce((s,p)=>s+p.total,0)
 }
 
 window.relatorioHoje=()=>{
 let h=new Date().toDateString()
-alert(soma(p=>new Date(p.data).toDateString()===h))
+
+alert(
+soma(p=>new Date(p.data)
+.toDateString()===h)
+.toFixed(2)
+)
 }
 
 window.relatorioMes=()=>{
 let m=new Date().getMonth()
-alert(soma(p=>new Date(p.data).getMonth()===m))
+
+alert(
+soma(p=>new Date(p.data)
+.getMonth()===m)
+.toFixed(2)
+)
 }
 
 window.relatorioAno=()=>{
 let a=new Date().getFullYear()
-alert(soma(p=>new Date(p.data).getFullYear()===a))
+
+alert(
+soma(p=>new Date(p.data)
+.getFullYear()===a)
+.toFixed(2)
+)
 }
 
+/* ===== EXPORTAR EXCEL CSV ===== */
+
 window.exportarExcel=()=>{
+
 let csv="nome,total,data\n"
+
 pedidosCache.forEach(p=>{
 csv+=`${p.cliente.nome},${p.total},${p.data}\n`
 })
-let blob=new Blob([csv])
+
+let blob=new Blob([csv],{type:"text/csv"})
 let a=document.createElement("a")
+
 a.href=URL.createObjectURL(blob)
 a.download="relatorio.csv"
 a.click()
 }
 
+/* ===== ZERAR ===== */
+
 window.zerarRelatorios=async()=>{
+
 if(!confirm("Apagar todos?")) return
+
 let s=await getDocs(collection(db,"pedidos"))
 s.forEach(d=>deleteDoc(d.ref))
 }
 
-/* ========================= */
+/* =========================
+INIT
+========================= */
 
 renderAbas()
 
