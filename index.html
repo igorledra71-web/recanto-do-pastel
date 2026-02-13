@@ -294,17 +294,12 @@ gap:8px;
 </style>
 </head>
 <body>
-<!-- ⚙️ ADMIN -->
 
 <button class="btnConfig"
 onclick="abrirConfig()">⚙️</button>
 
 <button class="btnVoltarGlobal"
 onclick="voltarUniversal()">← VOLTAR</button>
-
-<!-- =========================
-TELA INICIAL
-========================= -->
 
 <div id="telaInicial" class="tela ativa">
 
@@ -330,11 +325,6 @@ FAZER PEDIDO
 
 </div>
 </div>
-
-<!-- =========================
-CARDÁPIO
-========================= -->
-
 <div id="telaCardapio" class="tela">
 
 <div class="topo">
@@ -413,8 +403,6 @@ CHECKOUT
 Finalizar Pedido
 </h2>
 
-<!-- RESUMO FIXO DO PEDIDO -->
-
 <div class="checkoutResumo">
 
 <div style="font-weight:700;margin-bottom:6px">
@@ -443,8 +431,6 @@ Entrega
 
 </select>
 
-<!-- MESA -->
-
 <div id="boxMesa">
 <input id="mesaInput"
 placeholder="Número da mesa (opcional)">
@@ -456,8 +442,6 @@ placeholder="Nome do cliente">
 <input id="telefone"
 placeholder="Telefone">
 
-<!-- ENDEREÇO ENTREGA -->
-
 <div id="boxEndereco" style="display:none">
 
 <input id="rua" placeholder="Rua">
@@ -465,7 +449,6 @@ placeholder="Telefone">
 <input id="numero" placeholder="Número">
 
 </div>
-
 <!-- PAGAMENTO -->
 
 <select id="pagamento">
@@ -523,6 +506,7 @@ ENVIAR PEDIDO
 
 </div>
 </div>
+
 <!-- =========================
 PAINEL ADMIN
 ========================= -->
@@ -564,7 +548,6 @@ Editar / Remover Produtos
 </button>
 
 </div>
-
 <div class="adminBox">
 
 <b>Pedidos ao Vivo</b>
@@ -643,6 +626,7 @@ Salvar Produto
 </div>
 
 </div>
+
 <script type="module">
 
 /* =========================
@@ -650,7 +634,7 @@ CONFIG
 ========================= */
 
 const ADMIN_SENHA="1234"
-let WHATSAPP_LOJA="5599999999999"
+let WHATSAPP_LOJA="5549991610137"
 let PIX_CHAVE="pix-recanto@pix"
 
 /* =========================
@@ -696,7 +680,6 @@ let cardapio={
 {nome:"Refri",preco:6}
 ]
 }
-
 /* =========================
 UTIL
 ========================= */
@@ -894,6 +877,7 @@ qs("boxTroco").style.display=
 pixComprovanteOK=false
 qs("pixJaEnviei").checked=false
 atualizarPix()
+renderCheckoutResumo()
 }
 
 function atualizarPix(){
@@ -904,8 +888,13 @@ PIX_CHAVE
 }
 
 /* =========================
-COMPROVANTE PIX
+PIX UTIL
 ========================= */
+
+window.copiarPix=()=>{
+navigator.clipboard.writeText(PIX_CHAVE)
+alert("Chave PIX copiada")
+}
 
 qs("pixArquivo").onchange=()=>{
 if(qs("pixArquivo").files.length>0)
@@ -918,11 +907,11 @@ pixComprovanteOK=e.target.checked
 
 window.abrirZapComprovante=()=>{
 let v=totalGeral().toFixed(2)
-let txt=`Comprovante PIX pedido — valor R$ ${v}`
+let txt=`Comprovante PIX — Recanto do Pastel
+Valor R$ ${v}`
 window.open(
 `https://wa.me/${WHATSAPP_LOJA}?text=${encodeURIComponent(txt)}`)
 }
-
 /* =========================
 FINALIZAR
 ========================= */
@@ -932,7 +921,11 @@ if(!carrinho.length) return
 mostrar("telaCheckout")
 renderCheckoutResumo()
 atualizarPix()
+
+qs("pagamento")
+.dispatchEvent(new Event("change"))
 }
+
 /* =========================
 FINALIZAR PEDIDO
 ========================= */
@@ -963,8 +956,6 @@ data:new Date().toISOString()
 try{
 if(db) await addDoc(collection(db,"pedidos"),pedido)
 }catch(e){}
-
-/* texto whatsapp */
 
 let txt="🥟 RECANTO DO PASTEL\n\n"
 
@@ -1011,7 +1002,6 @@ qs("listaAbasRemover").appendChild(b)
 })
 mostrar("uiRemoverAba")
 }
-
 /* =========================
 NOVO PRODUTO UI
 ========================= */
@@ -1149,7 +1139,7 @@ soma(p=>new Date(p.data)
 )
 }
 
-/* ===== EXCEL COM ITENS + TOTAL FINAL ===== */
+/* ===== EXCEL DETALHADO ===== */
 
 window.exportarExcel=()=>{
 
