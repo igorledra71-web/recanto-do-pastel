@@ -67,11 +67,11 @@ color:white;
 }
 
 .logoImg{
-width:85vw;
-max-width:520px;
-margin-top:40px;
-margin-bottom:10px;
-filter:drop-shadow(0 12px 24px rgba(0,0,0,.35));
+width:92vw;
+max-width:560px;
+margin-top:20px;
+margin-bottom:6px;
+filter:drop-shadow(0 14px 26px rgba(0,0,0,.35));
 }
 
 .logoNome{
@@ -128,7 +128,7 @@ max-width:680px;
 display:flex;
 flex-direction:column;
 gap:14px;
-padding-bottom:140px;
+padding-bottom:160px;
 }
 
 .item{
@@ -223,6 +223,18 @@ font-size:16px;
 width:100%;
 }
 
+/* checkout resumo fixo */
+
+.checkoutResumo{
+width:100%;
+max-width:680px;
+background:white;
+border-radius:16px;
+padding:14px;
+box-shadow:0 4px 14px rgba(0,0,0,.15);
+margin-bottom:12px;
+}
+
 /* admin */
 
 #telaAdmin{background:#212121;color:white}
@@ -240,10 +252,31 @@ max-width:680px;
 background:#ff9800;
 border:none;
 color:white;
-padding:12px;
-border-radius:10px;
-margin-top:6px;
+padding:14px;
+border-radius:12px;
+margin-top:8px;
 width:100%;
+font-weight:700;
+font-size:16px;
+}
+
+/* botões editor maiores */
+
+.btnEditNome{
+background:#2196f3;
+color:white;
+border:none;
+border-radius:12px;
+padding:10px 14px;
+font-weight:700;
+}
+
+.btnEditPreco{
+background:#9c27b0;
+color:white;
+border:none;
+border-radius:12px;
+padding:10px 14px;
 font-weight:700;
 }
 
@@ -369,6 +402,7 @@ FINALIZAR
 </button>
 
 </div>
+
 <!-- =========================
 CHECKOUT
 ========================= -->
@@ -378,6 +412,22 @@ CHECKOUT
 <h2 style="margin-bottom:12px">
 Finalizar Pedido
 </h2>
+
+<!-- RESUMO FIXO DO PEDIDO -->
+
+<div class="checkoutResumo">
+
+<div style="font-weight:700;margin-bottom:6px">
+Resumo do Pedido
+</div>
+
+<div id="checkoutItens"></div>
+
+<div style="margin-top:8px;font-weight:700">
+Total: R$ <span id="checkoutTotal">0.00</span>
+</div>
+
+</div>
 
 <div class="form">
 
@@ -653,18 +703,37 @@ UTIL
 
 const qs=id=>document.getElementById(id)
 
-/* ===== ALTERAÇÃO MOBILE — FECHA CAMADAS ===== */
+/* ===== MOBILE FIX ===== */
 
 function mostrar(id){
-
 qs("carrinho").classList.remove("aberto")
 document.body.style.overflow="auto"
-
 document.querySelectorAll(".tela")
 .forEach(t=>t.classList.remove("ativa"))
-
 qs(id).classList.add("ativa")
 historico.push(id)
+}
+
+/* =========================
+RESUMO CHECKOUT
+========================= */
+
+function renderCheckoutResumo(){
+
+if(!qs("checkoutItens")) return
+
+qs("checkoutItens").innerHTML=""
+
+carrinho.forEach(i=>{
+let d=document.createElement("div")
+d.style.marginBottom="4px"
+d.innerText=
+`${i.qtd}x ${i.nome} — R$ ${(i.qtd*i.preco).toFixed(2)}`
+qs("checkoutItens").appendChild(d)
+})
+
+qs("checkoutTotal").innerText=
+totalGeral().toFixed(2)
 }
 
 window.voltarUniversal=()=>{
@@ -759,14 +828,11 @@ document.body.style.overflow="auto"
 }
 }
 
-/* ===== ALTERAÇÃO MOBILE — CONTROLE SCROLL ===== */
-
 window.toggleCarrinho=()=>{
-let aberto = qs("carrinho")
+let aberto=qs("carrinho")
 .classList.toggle("aberto")
-
-document.body.style.overflow =
-aberto ? "hidden" : "auto"
+document.body.style.overflow=
+aberto?"hidden":"auto"
 }
 
 function renderCarrinho(){
@@ -801,6 +867,7 @@ qs("freteCarrinhoTxt").innerText=
 freteAtual().toFixed(2)
 
 atualizarPix()
+renderCheckoutResumo()
 }
 
 /* =========================
@@ -857,16 +924,17 @@ window.open(
 }
 
 /* =========================
-FINALIZAR — PARTE 1
+FINALIZAR
 ========================= */
 
 window.irCheckout=()=>{
 if(!carrinho.length) return
 mostrar("telaCheckout")
+renderCheckoutResumo()
 atualizarPix()
 }
 /* =========================
-FINALIZAR — PARTE 2
+FINALIZAR PEDIDO
 ========================= */
 
 window.finalizarPedido=async()=>{
@@ -895,6 +963,8 @@ data:new Date().toISOString()
 try{
 if(db) await addDoc(collection(db,"pedidos"),pedido)
 }catch(e){}
+
+/* texto whatsapp */
 
 let txt="🥟 RECANTO DO PASTEL\n\n"
 
@@ -960,15 +1030,13 @@ window.confirmarNovoProduto=()=>{
 let nome=qs("novoProdNome").value
 let preco=parseFloat(qs("novoProdPreco").value)
 let aba=qs("novoProdAba").value
-
 if(!nome||isNaN(preco)) return
-
 cardapio[aba].push({nome,preco})
 mostrar("telaAdmin")
 }
 
 /* =========================
-EDITOR ITENS
+EDITOR ITENS — BOTÕES GRANDES
 ========================= */
 
 window.abrirEditorItens=()=>{
@@ -981,11 +1049,26 @@ let el=document.createElement("div")
 el.className="item"
 
 el.innerHTML=`
-<div><b>${a}</b><br>${i.nome}<br>R$ ${i.preco}</div>
 <div>
-<button onclick="editNome('${a}','${i.nome}')">Nome</button>
-<button onclick="editPreco('${a}','${i.nome}')">Preço</button>
-<button onclick="remItem('${a}','${i.nome}')">X</button>
+<b>${a}</b><br>
+${i.nome}<br>
+R$ ${i.preco}
+</div>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btnEditNome"
+onclick="editNome('${a}','${i.nome}')">
+Editar Nome
+</button>
+
+<button class="btnEditPreco"
+onclick="editPreco('${a}','${i.nome}')">
+Editar Preço
+</button>
+
+<button onclick="remItem('${a}','${i.nome}')">
+Remover
+</button>
 </div>
 `
 
@@ -1016,7 +1099,7 @@ cardapio[a]=cardapio[a].filter(x=>x.nome!==n)
 abrirEditorItens()
 }
 /* =========================
-RELATÓRIOS + EXCEL
+RELATÓRIOS + EXCEL DETALHADO
 ========================= */
 
 if(db){
@@ -1044,58 +1127,58 @@ return pedidosCache
 
 window.relatorioHoje=()=>{
 let h=new Date().toDateString()
-
 alert(
 soma(p=>new Date(p.data)
-.toDateString()===h)
-.toFixed(2)
+.toDateString()===h).toFixed(2)
 )
 }
 
 window.relatorioMes=()=>{
 let m=new Date().getMonth()
-
 alert(
 soma(p=>new Date(p.data)
-.getMonth()===m)
-.toFixed(2)
+.getMonth()===m).toFixed(2)
 )
 }
 
 window.relatorioAno=()=>{
 let a=new Date().getFullYear()
-
 alert(
 soma(p=>new Date(p.data)
-.getFullYear()===a)
-.toFixed(2)
+.getFullYear()===a).toFixed(2)
 )
 }
 
-/* ===== EXPORTAR EXCEL CSV ===== */
+/* ===== EXCEL COM ITENS + TOTAL FINAL ===== */
 
 window.exportarExcel=()=>{
 
-let csv="nome,total,data\n"
+let csv="cliente,item,quantidade,valor_item,total_pedido,data\n"
+let totalGeralRel=0
 
 pedidosCache.forEach(p=>{
-csv+=`${p.cliente.nome},${p.total},${p.data}\n`
+
+totalGeralRel+=Number(p.total)||0
+
+;(p.itens||[]).forEach(it=>{
+csv+=`${p.cliente.nome},${it.nome},${it.qtd},${it.preco},${p.total},${p.data}\n`
 })
+
+})
+
+csv+=`\n,,,,TOTAL VENDIDO,${totalGeralRel.toFixed(2)}\n`
 
 let blob=new Blob([csv],{type:"text/csv"})
 let a=document.createElement("a")
-
 a.href=URL.createObjectURL(blob)
-a.download="relatorio.csv"
+a.download="relatorio_detalhado.csv"
 a.click()
 }
 
 /* ===== ZERAR ===== */
 
 window.zerarRelatorios=async()=>{
-
 if(!confirm("Apagar todos?")) return
-
 let s=await getDocs(collection(db,"pedidos"))
 s.forEach(d=>deleteDoc(d.ref))
 }
