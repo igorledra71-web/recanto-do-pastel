@@ -282,6 +282,13 @@ color:var(--text);
 line-height:1.3;
 }
 
+.itemDesc{
+font-size:12px;
+color:var(--text2);
+margin-top:2px;
+line-height:1.3;
+}
+
 .itemPrecos{
 display:flex;
 gap:8px;
@@ -853,6 +860,88 @@ font-size:14px;
 padding:12px;
 }
 
+.mesasGrid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:12px;
+width:100%;
+max-width:500px;
+}
+
+.mesaBtn{
+background:#4a3f34;
+border:2px solid #5a4f44;
+border-radius:16px;
+padding:20px 10px;
+text-align:center;
+color:#f0e6da;
+font-weight:900;
+font-size:14px;
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:6px;
+}
+
+.mesaBtn .mesaIcon{
+font-size:28px;
+}
+
+.mesaBtn:active{
+background:var(--accent);
+border-color:var(--accent);
+}
+
+.modalPratoFeito{
+background:white;
+border-radius:20px;
+padding:28px;
+width:90%;
+max-width:400px;
+text-align:center;
+box-shadow:0 8px 32px rgba(60,30,10,.2);
+animation:slideUp .3s ease;
+}
+
+.modalPratoFeito h3{
+font-size:18px;
+margin-bottom:8px;
+color:var(--text);
+}
+
+.modalPratoFeito .pfDesc{
+font-size:13px;
+color:var(--text2);
+margin-bottom:16px;
+}
+
+.pfOption{
+display:flex;
+align-items:center;
+gap:10px;
+padding:12px;
+background:var(--bg);
+border-radius:12px;
+margin-bottom:8px;
+font-weight:700;
+color:var(--text);
+font-size:15px;
+cursor:pointer;
+}
+
+.pfOption input[type="checkbox"]{
+width:20px;
+height:20px;
+accent-color:var(--accent);
+}
+
+.pfPrecoExtra{
+font-size:13px;
+color:var(--accent);
+font-weight:900;
+margin:12px 0;
+}
+
 /* =========================
 RESPONSIVE
 ========================= */
@@ -887,16 +976,22 @@ TELA ESCOLHA
 <img src="logo-recanto.png" class="logoTopo">
 
 <h1 style="margin-bottom:20px">
-Como deseja pedir?
+Faça seu pedido!
 </h1>
 
-<button class="btnEscolha" onclick="definirModo('local')">
-🍽 Consumir no Local
-</button>
-
-<button class="btnEscolha" onclick="definirModo('delivery')">
+<button class="btnEscolha" id="btnDeliveryMain" onclick="tentarDelivery()">
 🛵 Delivery
 </button>
+
+<div id="deliveryFechado" style="display:none;text-align:center;width:100%;max-width:400px;margin-top:20px">
+<div style="background:white;border-radius:16px;padding:24px;box-shadow:0 4px 16px rgba(60,30,10,.15)">
+<div style="font-size:40px;margin-bottom:12px">🕐</div>
+<p id="msgFechado" style="font-weight:800;color:#3a2a1a;font-size:16px;margin-bottom:16px"></p>
+<button class="btnEscolha" onclick="location.href='https://wa.me/5549991610137'" style="background:var(--accent);color:white;font-size:15px;padding:14px;margin-top:0">
+💬 Fale conosco no WhatsApp
+</button>
+</div>
+</div>
 
 </div>
 
@@ -978,19 +1073,12 @@ Total: R$ <span id="checkoutTotal">0.00</span>
 
 <div class="form">
 
-<select id="tipoPedido">
-<option value="local">Consumir no local</option>
-<option value="entrega">Entrega</option>
-</select>
-
-<div id="boxMesa">
-<input id="mesaInput" placeholder="Número da mesa (opcional)">
-</div>
+<input type="hidden" id="tipoPedido" value="entrega">
 
 <input id="nome" placeholder="Nome do cliente">
 <input id="telefone" placeholder="Telefone">
 
-<div id="boxEndereco" style="display:none">
+<div id="boxEndereco">
 <input id="rua" placeholder="Rua">
 <input id="bairro" placeholder="Bairro">
 <input id="numero" placeholder="Número">
@@ -1078,6 +1166,12 @@ Local
 </div>
 
 <div class="adminBox">
+<b>Atendimento no Local</b>
+<button class="adminBtn" onclick="abrirMesas()">🍽️ Cardápio (Mesas)</button>
+<button class="adminBtn" onclick="abrirPedidosLocal()">📋 Pedidos no Local</button>
+</div>
+
+<div class="adminBox">
 <b>Relatórios</b>
 <button class="adminBtn" onclick="relatorioHoje()">Hoje</button>
 <button class="adminBtn" onclick="relatorioMes()">Mês</button>
@@ -1093,6 +1187,35 @@ Local
 <button class="adminBtn" onclick="abrirEditorItens()">Editar / Remover Itens</button>
 <button class="adminBtn" onclick="abrirRemoverAbaUI()">Remover Aba</button>
 </div>
+
+</div>
+
+<!-- =========================
+TELA MESAS (ADMIN)
+========================= -->
+
+<div id="telaMesas" class="tela" style="background:#2a1f14">
+
+<h2 style="color:#f0e6da;margin-bottom:20px">Selecione a Mesa</h2>
+
+<div class="mesasGrid">
+</div>
+
+<button class="btnVoltar" style="position:static;margin-top:16px" onclick="mostrar('telaAdmin')">← Voltar ao Admin</button>
+
+</div>
+
+<!-- =========================
+TELA PEDIDOS LOCAL (ADMIN)
+========================= -->
+
+<div id="telaPedidosLocal" class="tela" style="background:#2a1f14">
+
+<h2 style="color:#f0e6da;margin-bottom:20px">Pedidos no Local</h2>
+
+<div id="listaPedidosLocal" style="width:100%;max-width:760px"></div>
+
+<button class="btnVoltar" style="position:static;margin-top:16px" onclick="mostrar('telaAdmin')">← Voltar ao Admin</button>
 
 </div>
 
@@ -1162,7 +1285,27 @@ let pixComprovanteOK = false
 let primeiraCarga = true
 
 let carrinho = []
+let mesaSelecionada = null
 let pedidosCache = []
+
+function isDeliveryAberto(){
+let agora = new Date()
+let dia = agora.getDay()
+let hora = agora.getHours()
+let minuto = agora.getMinutes()
+let tempoAtual = hora * 60 + minuto
+
+if(dia === 1 || dia === 2) return {aberto:false, motivo:"Segunda e terça estamos fechados.\nDelivery de quarta a domingo, das 18:30 às 23:00."}
+
+let abertura = 18 * 60 + 30
+let fechamento = 23 * 60
+
+if(tempoAtual < abertura || tempoAtual >= fechamento){
+return {aberto:false, motivo:"Delivery disponível das 18:30 às 23:00.\nEntre em contato conosco para fazer seu pedido!"}
+}
+
+return {aberto:true}
+}
 
 /* =========================
 FIREBASE
@@ -1240,12 +1383,10 @@ if(qs("rua")) qs("rua").value=""
 if(qs("bairro")) qs("bairro").value=""
 if(qs("numero")) qs("numero").value=""
 if(qs("troco")) qs("troco").value=""
-if(qs("mesaInput")) qs("mesaInput").value=""
 
 if(qs("pixJaEnviei")) qs("pixJaEnviei").checked=false
 if(qs("pixArquivo")) qs("pixArquivo").value=""
 
-if(qs("boxEndereco")) qs("boxEndereco").style.display="none"
 if(qs("boxPix")) qs("boxPix").style.display="none"
 if(qs("boxTroco")) qs("boxTroco").style.display="none"
 
@@ -1259,6 +1400,9 @@ BOTÕES PRINCIPAIS
 
 window.voltarTela = ()=>{
 resetarSistema()
+if(qs("deliveryFechado")) qs("deliveryFechado").style.display = "none"
+if(qs("btnDeliveryMain")) qs("btnDeliveryMain").style.display = ""
+mesaSelecionada = null
 mostrar("telaEscolha")
 }
 
@@ -1275,6 +1419,20 @@ mostrar("telaAdmin")
 ESCOLHER MODO
 ========================= */
 
+window.tentarDelivery = ()=>{
+let status = isDeliveryAberto()
+if(!status.aberto){
+qs("deliveryFechado").style.display = "block"
+qs("msgFechado").innerText = status.motivo
+qs("btnDeliveryMain").style.display = "none"
+return
+}
+resetarSistema()
+modoPedido = "delivery"
+mostrar("telaCardapio")
+renderAbas()
+}
+
 window.definirModo = (modo)=>{
 resetarSistema()
 modoPedido = modo
@@ -1288,191 +1446,176 @@ CARDÁPIO COMPLETO
 
 let cardapio = {
 
-/* =========================
-PASTÉIS SALGADOS P
-========================= */
-
 "Pastéis Salgados P":[
-{nome:"Aipim c/ Bacon P",preco:17},
-{nome:"Bacon P",preco:17},
-{nome:"Brócolis P",preco:17},
-{nome:"Calabresa P",preco:17},
-{nome:"Camarão P",preco:20},
-{nome:"Carne P",preco:17},
-{nome:"Carne c/ Ovos P",preco:17},
-{nome:"Coração de Frango P",preco:18},
-{nome:"Crocante P",preco:17},
-{nome:"Frango c/ Catupiry P",preco:17},
-{nome:"Lombinho P",preco:17},
-{nome:"Milho P",preco:17},
-{nome:"Napolitana P",preco:17},
-{nome:"Ovo P",preco:17},
-{nome:"Palmito P",preco:17},
-{nome:"Paulista P",preco:17},
-{nome:"Portuguesa P",preco:17},
-{nome:"Quatro Queijos P",preco:17},
-{nome:"Romana P",preco:17},
-{nome:"Pizza P",preco:17},
-{nome:"Hot Dog P",preco:17},
-{nome:"Do Chef P",preco:17},
-{nome:"Vegetariana P",preco:17},
-{nome:"Strogonoff P",preco:17},
-{nome:"Especial (5 Sabores) P",preco:18}
+{nome:"Aipim c/ Bacon P",preco:17,desc:"Mussarela, aipim, bacon e orégano"},
+{nome:"Bacon P",preco:17,desc:"Mussarela, bacon e orégano"},
+{nome:"Brócolis P",preco:17,desc:"Mussarela, brócolis e orégano"},
+{nome:"Calabresa P",preco:17,desc:"Mussarela, calabresa e orégano"},
+{nome:"Camarão P",preco:20,desc:"Mussarela, camarão e orégano"},
+{nome:"Carne P",preco:17,desc:"Mussarela, carne, azeitonas, palmito, ovo e catupiry"},
+{nome:"Carne c/ Ovos P",preco:17,desc:"Mussarela, carne e ovos"},
+{nome:"Coração de Frango P",preco:18,desc:"Mussarela, coração de frango, catupiry e orégano"},
+{nome:"Crocante P",preco:17,desc:"Mussarela, batata palha e catupiry"},
+{nome:"Frango c/ Catupiry P",preco:17,desc:"Mussarela, frango, catupiry e orégano"},
+{nome:"Lombinho P",preco:17,desc:"Mussarela, lombinho e orégano"},
+{nome:"Milho P",preco:17,desc:"Mussarela, milho e orégano"},
+{nome:"Napolitana P",preco:17,desc:"Mussarela, tomate e orégano"},
+{nome:"Ovo P",preco:17,desc:"Mussarela, ovo e orégano"},
+{nome:"Palmito P",preco:17,desc:"Mussarela, palmito e orégano"},
+{nome:"Paulista P",preco:17,desc:"Mussarela, palmito, orégano, milho e ervilha"},
+{nome:"Portuguesa P",preco:17,desc:"Mussarela, presunto, cebola, ovo, azeitona e orégano"},
+{nome:"Quatro Queijos P",preco:17,desc:"Mussarela, parmesão, cheddar, catupiry e orégano"},
+{nome:"Romana P",preco:17,desc:"Mussarela, presunto, ovo e orégano"},
+{nome:"Pizza P",preco:17,desc:"Mussarela, presunto, orégano e tomate"},
+{nome:"Hot Dog P",preco:17,desc:"Mussarela, salsicha, milho, ervilha e batata palha"},
+{nome:"Do Chef P",preco:17,desc:"Mussarela, frango, bacon, tomate e orégano"},
+{nome:"Vegetariana P",preco:17,desc:"Mussarela, brócolis, tomate, cenoura, palmito e orégano"},
+{nome:"Strogonoff P",preco:17,desc:"Mussarela, frango ao molho e orégano"},
+{nome:"Especial (5 Sabores) P",preco:18,desc:"Escolha 5 sabores entre os ingredientes disponíveis"}
 ],
-
-/* =========================
-PASTÉIS SALGADOS G
-========================= */
 
 "Pastéis Salgados G":[
-{nome:"Aipim c/ Bacon G",preco:22},
-{nome:"Bacon G",preco:22},
-{nome:"Brócolis G",preco:22},
-{nome:"Calabresa G",preco:22},
-{nome:"Camarão G",preco:29},
-{nome:"Carne G",preco:22},
-{nome:"Carne c/ Ovos G",preco:22},
-{nome:"Coração de Frango G",preco:22},
-{nome:"Crocante G",preco:22},
-{nome:"Frango c/ Catupiry G",preco:22},
-{nome:"Lombinho G",preco:22},
-{nome:"Milho G",preco:22},
-{nome:"Napolitana G",preco:22},
-{nome:"Ovo G",preco:22},
-{nome:"Palmito G",preco:22},
-{nome:"Paulista G",preco:22},
-{nome:"Portuguesa G",preco:22},
-{nome:"Quatro Queijos G",preco:22},
-{nome:"Romana G",preco:22},
-{nome:"Pizza G",preco:22},
-{nome:"Hot Dog G",preco:22},
-{nome:"Do Chef G",preco:22},
-{nome:"Vegetariana G",preco:22},
-{nome:"Strogonoff G",preco:22},
-{nome:"Especial (5 Sabores) G",preco:24}
+{nome:"Aipim c/ Bacon G",preco:22,desc:"Mussarela, aipim, bacon e orégano"},
+{nome:"Bacon G",preco:22,desc:"Mussarela, bacon e orégano"},
+{nome:"Brócolis G",preco:22,desc:"Mussarela, brócolis e orégano"},
+{nome:"Calabresa G",preco:22,desc:"Mussarela, calabresa e orégano"},
+{nome:"Camarão G",preco:29,desc:"Mussarela, camarão e orégano"},
+{nome:"Carne G",preco:22,desc:"Mussarela, carne, azeitonas, palmito, ovo e catupiry"},
+{nome:"Carne c/ Ovos G",preco:22,desc:"Mussarela, carne e ovos"},
+{nome:"Coração de Frango G",preco:22,desc:"Mussarela, coração de frango, catupiry e orégano"},
+{nome:"Crocante G",preco:22,desc:"Mussarela, batata palha e catupiry"},
+{nome:"Frango c/ Catupiry G",preco:22,desc:"Mussarela, frango, catupiry e orégano"},
+{nome:"Lombinho G",preco:22,desc:"Mussarela, lombinho e orégano"},
+{nome:"Milho G",preco:22,desc:"Mussarela, milho e orégano"},
+{nome:"Napolitana G",preco:22,desc:"Mussarela, tomate e orégano"},
+{nome:"Ovo G",preco:22,desc:"Mussarela, ovo e orégano"},
+{nome:"Palmito G",preco:22,desc:"Mussarela, palmito e orégano"},
+{nome:"Paulista G",preco:22,desc:"Mussarela, palmito, orégano, milho e ervilha"},
+{nome:"Portuguesa G",preco:22,desc:"Mussarela, presunto, cebola, ovo, azeitona e orégano"},
+{nome:"Quatro Queijos G",preco:22,desc:"Mussarela, parmesão, cheddar, catupiry e orégano"},
+{nome:"Romana G",preco:22,desc:"Mussarela, presunto, ovo e orégano"},
+{nome:"Pizza G",preco:22,desc:"Mussarela, presunto, orégano e tomate"},
+{nome:"Hot Dog G",preco:22,desc:"Mussarela, salsicha, milho, ervilha e batata palha"},
+{nome:"Do Chef G",preco:22,desc:"Mussarela, frango, bacon, tomate e orégano"},
+{nome:"Vegetariana G",preco:22,desc:"Mussarela, brócolis, tomate, cenoura, palmito e orégano"},
+{nome:"Strogonoff G",preco:22,desc:"Mussarela, frango ao molho e orégano"},
+{nome:"Especial (5 Sabores) G",preco:24,desc:"Escolha 5 sabores entre os ingredientes disponíveis"}
 ],
-
-/* =========================
-PASTÉIS DOCES P
-========================= */
 
 "Pastéis Doces P":[
-{nome:"Banana P",preco:17},
-{nome:"Chocolate Preto P",preco:17},
-{nome:"Chocolate Branco P",preco:17},
-{nome:"Krot P",preco:17},
-{nome:"Morango P",preco:17},
-{nome:"Prestígio P",preco:17},
-{nome:"Romeu e Julieta P",preco:17},
-{nome:"Sedução P",preco:17},
-{nome:"Sonho de Valsa P",preco:17},
-{nome:"Mocinha P",preco:17},
-{nome:"Charge P",preco:17},
-{nome:"Bob Marley P",preco:17},
-{nome:"Choquito P",preco:17},
-{nome:"Dois Amores P",preco:17},
-{nome:"Ouro Branco P",preco:17}
+{nome:"Banana P",preco:17,desc:"Mussarela, banana e canela"},
+{nome:"Chocolate Preto P",preco:17,desc:"Mussarela e chocolate preto"},
+{nome:"Chocolate Branco P",preco:17,desc:"Mussarela e chocolate branco"},
+{nome:"Krot P",preco:17,desc:"Chocolate preto, amendoim e leite condensado"},
+{nome:"Morango P",preco:17,desc:"Mussarela, morango e leite condensado"},
+{nome:"Prestígio P",preco:17,desc:"Mussarela, chocolate preto e coco"},
+{nome:"Romeu e Julieta P",preco:17,desc:"Mussarela e goiabada"},
+{nome:"Sedução P",preco:17,desc:"Chocolate branco, morango e leite condensado"},
+{nome:"Sonho de Valsa P",preco:17,desc:"Mussarela, sonho de valsa e leite condensado"},
+{nome:"Mocinha P",preco:17,desc:"Mussarela, doce de leite e coco ralado"},
+{nome:"Charge P",preco:17,desc:"Mussarela, doce de leite e amendoim"},
+{nome:"Bob Marley P",preco:17,desc:"Mussarela, brigadeiro e confetes"},
+{nome:"Choquito P",preco:17,desc:"Mussarela, chocolate preto e branco e flocos de arroz"},
+{nome:"Dois Amores P",preco:17,desc:"Mussarela, chocolate preto e branco"},
+{nome:"Ouro Branco P",preco:17,desc:"Queijo e ouro branco"}
 ],
 
-/* =========================
-PASTÉIS DOCES G
-========================= */
-
 "Pastéis Doces G":[
-{nome:"Banana G",preco:22},
-{nome:"Chocolate Preto G",preco:22},
-{nome:"Chocolate Branco G",preco:22},
-{nome:"Krot G",preco:22},
-{nome:"Morango G",preco:22},
-{nome:"Prestígio G",preco:22},
-{nome:"Romeu e Julieta G",preco:22},
-{nome:"Sedução G",preco:22},
-{nome:"Sonho de Valsa G",preco:22},
-{nome:"Mocinha G",preco:22},
-{nome:"Charge G",preco:22},
-{nome:"Bob Marley G",preco:22},
-{nome:"Choquito G",preco:22},
-{nome:"Dois Amores G",preco:22},
-{nome:"Ouro Branco G",preco:22}
+{nome:"Banana G",preco:22,desc:"Mussarela, banana e canela"},
+{nome:"Chocolate Preto G",preco:22,desc:"Mussarela e chocolate preto"},
+{nome:"Chocolate Branco G",preco:22,desc:"Mussarela e chocolate branco"},
+{nome:"Krot G",preco:22,desc:"Chocolate preto, amendoim e leite condensado"},
+{nome:"Morango G",preco:22,desc:"Mussarela, morango e leite condensado"},
+{nome:"Prestígio G",preco:22,desc:"Mussarela, chocolate preto e coco"},
+{nome:"Romeu e Julieta G",preco:22,desc:"Mussarela e goiabada"},
+{nome:"Sedução G",preco:22,desc:"Chocolate branco, morango e leite condensado"},
+{nome:"Sonho de Valsa G",preco:22,desc:"Mussarela, sonho de valsa e leite condensado"},
+{nome:"Mocinha G",preco:22,desc:"Mussarela, doce de leite e coco ralado"},
+{nome:"Charge G",preco:22,desc:"Mussarela, doce de leite e amendoim"},
+{nome:"Bob Marley G",preco:22,desc:"Mussarela, brigadeiro e confetes"},
+{nome:"Choquito G",preco:22,desc:"Mussarela, chocolate preto e branco e flocos de arroz"},
+{nome:"Dois Amores G",preco:22,desc:"Mussarela, chocolate preto e branco"},
+{nome:"Ouro Branco G",preco:22,desc:"Queijo e ouro branco"}
 ],
 
 "Lanches":[
-{nome:"X-Burger",preco:16},
-{nome:"X-Salada",preco:22},
-{nome:"X-Bacon",preco:28},
-{nome:"X-Calabresa",preco:28},
-{nome:"X-Egg",preco:28},
-{nome:"X-Dog",preco:28},
-{nome:"X-Tudo",preco:38}
+{nome:"X-Burguer",preco:16,desc:"Pão, hambúrguer, presunto e queijo"},
+{nome:"X-Salada",preco:22,desc:"Pão, hambúrguer, presunto, queijo, alface, tomate, milho, ervilha e maionese"},
+{nome:"X-Bacon",preco:28,desc:"Pão, hambúrguer, presunto, queijo, alface, tomate, milho, ervilha, maionese e bacon"},
+{nome:"X-Calabresa",preco:28,desc:"Pão, hambúrguer, calabresa, presunto, queijo, alface, tomate, milho, ervilha e maionese"},
+{nome:"X-Egg",preco:28,desc:"Pão, hambúrguer, ovo, presunto, queijo, alface, tomate, milho, ervilha e maionese"},
+{nome:"X-Dog",preco:28,desc:"Pão, hambúrguer, salsicha, presunto, queijo, alface, tomate, milho, ervilha e maionese"},
+{nome:"X-Tudo",preco:38,desc:"Pão, hambúrguer, bacon, calabresa, salsicha, ovo, presunto, queijo, alface, tomate, milho, ervilha e maionese"}
 ],
 
 "Porções Inteira":[
-{nome:"Anel de Cebola",preco:28},
-{nome:"Polenta",preco:26},
-{nome:"Aipim",preco:26},
-{nome:"Fritas",preco:26},
-{nome:"Tilápia",preco:50},
-{nome:"Bolinho de Bacalhau",preco:42},
-{nome:"Camarão",preco:70}
+{nome:"Anel de Cebola",preco:28,desc:"Porção inteira de anéis de cebola empanados"},
+{nome:"Polenta",preco:26,desc:"Porção inteira de polenta frita"},
+{nome:"Aipim",preco:26,desc:"Porção inteira de aipim frito"},
+{nome:"Fritas",preco:26,desc:"Porção inteira de batata frita"},
+{nome:"Tilápia",preco:50,desc:"Porção inteira de tilápia frita"},
+{nome:"Bolinho de Bacalhau",preco:42,desc:"Porção inteira de bolinho de bacalhau"},
+{nome:"Camarão",preco:70,desc:"Porção inteira de camarão"}
 ],
 
 "Porções Meia":[
-{nome:"Anel de Cebola (Meia)",preco:17},
-{nome:"Polenta (Meia)",preco:16},
-{nome:"Aipim (Meia)",preco:16},
-{nome:"Fritas (Meia)",preco:16},
-{nome:"Tilápia (Meia)",preco:25},
-{nome:"Bolinho de Bacalhau (Meia)",preco:24}
+{nome:"Anel de Cebola (Meia)",preco:17,desc:"Meia porção de anéis de cebola empanados"},
+{nome:"Polenta (Meia)",preco:16,desc:"Meia porção de polenta frita"},
+{nome:"Aipim (Meia)",preco:16,desc:"Meia porção de aipim frito"},
+{nome:"Fritas (Meia)",preco:16,desc:"Meia porção de batata frita"},
+{nome:"Tilápia (Meia)",preco:25,desc:"Meia porção de tilápia frita"},
+{nome:"Bolinho de Bacalhau (Meia)",preco:24,desc:"Meia porção de bolinho de bacalhau"}
 ],
 
 "Prato Feito":[
-{nome:"Prato Feito",preco:30}
+{nome:"Prato Feito",preco:30,desc:"Arroz, salada, fritas e ovo. Escolha: frango, bife ou peixe (adicional +R$8,00 cada proteína extra). Somente de quarta a sexta ao meio dia",pratoFeito:true},
+{nome:"Prato Feito (Meia)",preco:25,desc:"Meia porção. Arroz, salada, fritas e ovo. Escolha: frango, bife ou peixe (adicional +R$8,00 cada proteína extra). Somente de quarta a sexta ao meio dia",pratoFeito:true}
 ],
 
 "Bebidas":[
-{nome:"Brahma",preco:12},
-{nome:"Original",preco:15},
-{nome:"Kaiser",preco:9},
-{nome:"Heineken",preco:16},
-{nome:"Água Mineral",preco:4},
-{nome:"Vinho Taça",preco:10}
+{nome:"Brahma",preco:12,desc:"Cerveja Brahma"},
+{nome:"Original",preco:15,desc:"Cerveja Original"},
+{nome:"Kaiser",preco:9,desc:"Cerveja Kaiser"},
+{nome:"Heineken",preco:16,desc:"Cerveja Heineken"},
+{nome:"Água Mineral",preco:4,desc:"Água mineral com ou sem gás"},
+{nome:"Vinho Taça",preco:10,desc:"Taça de vinho tinto, suave ou seco"}
 ],
 
 "Refrigerantes":[
-{nome:"KS",preco:5},
-{nome:"Lata",preco:6},
-{nome:"600ml",preco:9},
-{nome:"1 Litro",preco:11}
+{nome:"KS",preco:5,desc:"Refrigerante KS"},
+{nome:"Lata",preco:6,desc:"Refrigerante lata"},
+{nome:"600ml",preco:9,desc:"Refrigerante 600ml"},
+{nome:"1 Litro",preco:11,desc:"Refrigerante 1 litro"}
 ],
 
 "Sucos":[
-{nome:"Abacaxi",preco:9},
-{nome:"Abacaxi c/ Hortelã",preco:9},
-{nome:"Manga",preco:9},
-{nome:"Morango",preco:9},
-{nome:"Uva",preco:9},
-{nome:"Limão",preco:9},
-{nome:"Maracujá",preco:9}
+{nome:"Abacaxi",preco:9,desc:"Suco natural de abacaxi"},
+{nome:"Abacaxi c/ Hortelã",preco:9,desc:"Suco natural de abacaxi com hortelã"},
+{nome:"Manga",preco:9,desc:"Suco natural de manga"},
+{nome:"Morango",preco:9,desc:"Suco natural de morango"},
+{nome:"Uva",preco:9,desc:"Suco natural de uva"},
+{nome:"Limão",preco:9,desc:"Suco natural de limão"},
+{nome:"Maracujá",preco:9,desc:"Suco natural de maracujá"}
 ],
 
 "Doses":[
-{nome:"Campari",preco:8},
-{nome:"Jack Daniels",preco:15}
+{nome:"Campari",preco:8,desc:"Dose de Campari"},
+{nome:"Jack Daniels",preco:15,desc:"Dose de Jack Daniels"}
 ],
 
 "Caipiras":[
-{nome:"Vinho",preco:22},
-{nome:"Bacardi",preco:22},
-{nome:"Raiska",preco:22},
-{nome:"Steinhaeger",preco:22}
+{nome:"Vinho",preco:22,desc:"Caipira de vinho"},
+{nome:"Bacardi",preco:22,desc:"Caipira de Bacardi"},
+{nome:"Raiska",preco:22,desc:"Caipira de Raiska"},
+{nome:"Steinhaeger",preco:22,desc:"Caipira de Steinhaeger"}
 ],
 
 "Batidas":[
-{nome:"Batida",preco:14}
+{nome:"Batida",preco:14,desc:"Batida de frutas"}
 ],
 
 "Vitaminas":[
-{nome:"Vitamina",preco:12}
+{nome:"Vitamina",preco:12,desc:"Vitamina de frutas"}
 ]
 
 }
@@ -1581,12 +1724,14 @@ listaP.forEach(item=>{
 let base = item.nome.replace(" P","")
 if(!grupos[nomeGrupo][base]) grupos[nomeGrupo][base] = {}
 grupos[nomeGrupo][base]["P"] = item.preco
+grupos[nomeGrupo][base]["desc"] = item.desc || ""
 })
 
 listaG.forEach(item=>{
 let base = item.nome.replace(" G","")
 if(!grupos[nomeGrupo][base]) grupos[nomeGrupo][base] = {}
 grupos[nomeGrupo][base]["G"] = item.preco
+if(!grupos[nomeGrupo][base]["desc"]) grupos[nomeGrupo][base]["desc"] = item.desc || ""
 })
 
 processados.add(aba)
@@ -1600,6 +1745,8 @@ if(!grupos[aba]) grupos[aba] = {}
 cardapio[aba].forEach(item=>{
 if(!grupos[aba][item.nome]) grupos[aba][item.nome] = {}
 grupos[aba][item.nome]["Único"] = item.preco
+grupos[aba][item.nome]["desc"] = item.desc || ""
+grupos[aba][item.nome]["pratoFeito"] = item.pratoFeito || false
 })
 
 processados.add(aba)
@@ -1629,10 +1776,17 @@ nomeEl.className = "itemNome"
 nomeEl.textContent = nomeBase
 infoDiv.appendChild(nomeEl)
 
+if(tamanhos.desc){
+let descEl = document.createElement("div")
+descEl.className = "itemDesc"
+descEl.textContent = tamanhos.desc
+infoDiv.appendChild(descEl)
+}
+
 let precosDiv = document.createElement("div")
 precosDiv.className = "itemPrecos"
 
-Object.keys(tamanhos).forEach(t=>{
+Object.keys(tamanhos).filter(t=> t!=="desc" && t!=="pratoFeito").forEach(t=>{
 let span = document.createElement("span")
 span.className = "itemPreco"
 span.textContent = (t === "Único" ? "" : t + " ") + "R$ " + tamanhos[t].toFixed(2)
@@ -1647,6 +1801,10 @@ btn.className = "btnAdd"
 btn.textContent = "Adicionar"
 
 btn.onclick = ()=>{
+if(tamanhos.pratoFeito){
+mostrarModalPratoFeito(nomeBase, tamanhos["Único"] || tamanhos[Object.keys(tamanhos).filter(t=>t!=="desc"&&t!=="pratoFeito")[0]])
+return
+}
 if(tamanhos["P"] && tamanhos["G"]){
 mostrarModalTamanho(nomeBase, tamanhos)
 } else if(Object.keys(tamanhos).length > 1 && tamanhos["Único"] === undefined){
@@ -1945,11 +2103,18 @@ IR PARA CHECKOUT
 
 window.irCheckout = ()=>{
 
+if(mesaSelecionada){
+finalizarPedidoLocal()
+return
+}
+
 if(!carrinho.length) return
 
 fecharCarrinho()
 
 mostrar("telaCheckout")
+
+if(qs("boxEndereco")) qs("boxEndereco").style.display="block"
 
 renderCheckoutResumo()
 
@@ -1965,7 +2130,7 @@ qs("pagamento").dispatchEvent(new Event("change"))
 TIPO PEDIDO (LOCAL / ENTREGA)
 ========================= */
 
-if(qs("tipoPedido")){
+if(qs("tipoPedido") && qs("tipoPedido").tagName === "SELECT"){
 
 qs("tipoPedido").onchange = e=>{
 
@@ -1976,14 +2141,12 @@ if(tipo === "entrega"){
 modoPedido = "delivery"
 
 qs("boxEndereco").style.display="block"
-qs("boxMesa").style.display="none"
 
 }else{
 
 modoPedido = "local"
 
 qs("boxEndereco").style.display="none"
-qs("boxMesa").style.display="block"
 
 valorFrete = 0
 
@@ -2146,6 +2309,8 @@ window.finalizarPedido = async()=>{
 if(bloqueioFinalizacao) return
 bloqueioFinalizacao = true
 
+if(!modoPedido) modoPedido = "delivery"
+
 let nome = qs("nome")?.value
 let tel  = qs("telefone")?.value
 let tipo = qs("tipoPedido")?.value
@@ -2211,6 +2376,162 @@ bloqueioFinalizacao = false
 },2000)
 
 }
+/* =========================
+MESAS (ADMIN)
+========================= */
+
+window.abrirMesas = ()=>{
+mostrar("telaMesas")
+let grid = document.querySelector(".mesasGrid")
+if(!grid) return
+grid.innerHTML = ""
+for(let i = 1; i <= 18; i++){
+let btn = document.createElement("button")
+btn.className = "mesaBtn"
+btn.innerHTML = `<span class="mesaIcon">🍽️</span>Mesa ${i}`
+btn.onclick = ()=>{
+mesaSelecionada = i
+modoPedido = "local"
+carrinho = []
+renderCarrinho()
+mostrar("telaCardapio")
+renderAbas()
+}
+grid.appendChild(btn)
+}
+}
+
+/* =========================
+IR CHECKOUT (OVERRIDE)
+========================= */
+
+let _irCheckoutOriginal = null
+
+/* =========================
+FINALIZAR PEDIDO LOCAL (GARÇOM)
+========================= */
+
+window.finalizarPedidoLocal = async()=>{
+if(!carrinho.length){
+alert("Carrinho vazio")
+return
+}
+
+let pedido = {
+cliente:{nome:"Mesa " + mesaSelecionada, tel:"", mesa:String(mesaSelecionada)},
+itens:carrinho,
+total:totalGeral(),
+frete:0,
+modo:"local",
+pagamento:"",
+data:new Date().toISOString(),
+visto:false
+}
+
+try{
+await addDoc(collection(db,"pedidos"),pedido)
+}catch(e){
+console.log("Erro ao salvar:",e)
+}
+
+alert("Pedido da Mesa " + mesaSelecionada + " enviado!")
+carrinho = []
+renderCarrinho()
+mesaSelecionada = null
+mostrar("telaAdmin")
+}
+
+/* =========================
+PEDIDOS NO LOCAL (ADMIN)
+========================= */
+
+window.abrirPedidosLocal = ()=>{
+mostrar("telaPedidosLocal")
+renderPedidosLocal()
+}
+
+function renderPedidosLocal(){
+let box = document.getElementById("listaPedidosLocal")
+if(!box) return
+box.innerHTML = ""
+
+let locais = pedidosCache.filter(p => p.modo === "local")
+if(!locais.length){
+box.innerHTML = "<div style='color:#7a6a5a;text-align:center;padding:20px'>Nenhum pedido local</div>"
+return
+}
+
+locais.forEach(p=>{
+let itensHtml = ""
+;(p.itens || []).forEach(i=>{
+itensHtml += `• ${i.qtd}x ${escHtml(i.nome)} - R$ ${(i.qtd * i.preco).toFixed(2)}<br>`
+if(i.obs) itensHtml += `&nbsp;&nbsp;📝 ${escHtml(i.obs)}<br>`
+})
+
+box.innerHTML += `<div class="pedidoCard">
+<div class="pedidoNome">🍽️ ${escHtml(p.cliente?.nome || "Mesa")}</div>
+<div class="pedidoInfo">🕐 ${escHtml(new Date(p.data).toLocaleString())}</div>
+<div class="pedidoItens">${itensHtml}</div>
+<div class="pedidoTotal">💰 R$ ${Number(p.total).toFixed(2)}</div>
+</div>`
+})
+}
+
+/* =========================
+PRATO FEITO MODAL
+========================= */
+
+function mostrarModalPratoFeito(nomeItem, precoBase){
+let overlay = document.createElement("div")
+overlay.className = "modalOverlay"
+overlay.onclick = e=>{ if(e.target === overlay) overlay.remove() }
+
+overlay.innerHTML = `<div class="modalPratoFeito">
+<h3>🍽️ ${nomeItem}</h3>
+<div class="pfDesc">Arroz, salada, fritas e ovo.<br>Escolha a proteína (adicional de +R$8 por proteína extra):</div>
+
+<label class="pfOption"><input type="checkbox" value="Frango" class="pfCheck"> 🍗 Frango</label>
+<label class="pfOption"><input type="checkbox" value="Bife" class="pfCheck"> 🥩 Bife</label>
+<label class="pfOption"><input type="checkbox" value="Peixe" class="pfCheck"> 🐟 Peixe</label>
+
+<div class="pfPrecoExtra" id="pfPrecoInfo">Valor: R$ ${precoBase.toFixed(2)}</div>
+
+<button class="modalBtnTam modalBtnG" style="margin-top:8px" id="pfConfirmar">ADICIONAR</button>
+<button class="modalBtnTam modalBtnCancelar" onclick="this.closest('.modalOverlay').remove()">Cancelar</button>
+</div>`
+
+document.body.appendChild(overlay)
+
+let checks = overlay.querySelectorAll(".pfCheck")
+let precoInfo = overlay.querySelector("#pfPrecoInfo")
+let btnConfirmar = overlay.querySelector("#pfConfirmar")
+
+function atualizarPrecoPF(){
+let selecionados = [...checks].filter(c=>c.checked).length
+let extra = selecionados > 1 ? (selecionados - 1) * 8 : 0
+let total = precoBase + extra
+precoInfo.textContent = "Valor: R$ " + total.toFixed(2) + (extra > 0 ? " (+" + extra.toFixed(2) + " extra)" : "")
+}
+
+checks.forEach(c=>c.addEventListener("change", atualizarPrecoPF))
+
+btnConfirmar.onclick = ()=>{
+let selecionados = [...checks].filter(c=>c.checked)
+if(!selecionados.length){
+alert("Escolha pelo menos uma proteína")
+return
+}
+let nomes = selecionados.map(c=>c.value)
+let extra = selecionados.length > 1 ? (selecionados.length - 1) * 8 : 0
+let precoFinal = precoBase + extra
+let obsProteinas = "Proteína: " + nomes.join(", ")
+
+addCarrinho({nome:nomeItem, preco:precoFinal, obs:obsProteinas})
+overlay.remove()
+mostrarToast(nomeItem + " adicionado!")
+}
+}
+
 /* =========================
 SOM DE NOTIFICAÇÃO (ADMIN)
 ========================= */
