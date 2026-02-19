@@ -20,6 +20,15 @@ font-family:Poppins;
 html,body{
 height:100%;
 background:#fff7e6;
+overflow-x:hidden;
+}
+
+/* =========================
+RESET AUTOMÁTICO VISUAL
+========================= */
+
+.hidden{
+display:none!important;
 }
 
 /* =========================
@@ -36,6 +45,7 @@ padding:20px;
 overflow:auto;
 z-index:100;
 text-align:center;
+background:#fff7e6;
 }
 
 .tela.ativa{
@@ -71,6 +81,11 @@ width:100%;
 max-width:360px;
 margin-top:18px;
 box-shadow:0 6px 14px rgba(0,0,0,.2);
+transition:.2s;
+}
+
+.btnEscolha:active{
+transform:scale(.97);
 }
 
 /* =========================
@@ -90,6 +105,10 @@ align-items:center;
 margin-bottom:16px;
 }
 
+.topo b{
+font-size:22px;
+}
+
 .abas{
 display:flex;
 gap:10px;
@@ -97,6 +116,7 @@ overflow-x:auto;
 width:100%;
 max-width:760px;
 margin-bottom:16px;
+padding-bottom:4px;
 }
 
 .aba{
@@ -105,9 +125,15 @@ border:none;
 padding:14px 20px;
 border-radius:22px;
 font-weight:900;
-font-size:15px;
+font-size:14px;
 white-space:nowrap;
 color:#bf360c;
+cursor:pointer;
+transition:.2s;
+}
+
+.aba:active{
+transform:scale(.95);
 }
 
 .lista{
@@ -131,13 +157,14 @@ box-shadow:0 8px 18px rgba(0,0,0,.15);
 }
 
 .itemNome{
-font-size:22px;
+font-size:20px;
 font-weight:900;
 color:#e65100;
+text-align:center;
 }
 
 .itemPreco{
-font-size:24px;
+font-size:22px;
 font-weight:900;
 color:#2e7d32;
 }
@@ -149,9 +176,16 @@ border:none;
 border-radius:16px;
 padding:14px 22px;
 font-weight:900;
-font-size:18px;
+font-size:16px;
 margin-top:8px;
+cursor:pointer;
+transition:.2s;
 }
+
+.btnAdd:active{
+transform:scale(.95);
+}
+
 /* =========================
 CARRINHO
 ========================= */
@@ -194,6 +228,7 @@ display:flex;
 flex-direction:column;
 gap:6px;
 box-shadow:0 3px 10px rgba(0,0,0,.15);
+text-align:center;
 }
 
 .btnFinalizarCarrinho{
@@ -205,8 +240,13 @@ font-weight:900;
 background:#ff5722;
 color:white;
 border:none;
+cursor:pointer;
+transition:.2s;
 }
 
+.btnFinalizarCarrinho:active{
+transform:scale(.96);
+}
 /* =========================
 CHECKOUT
 ========================= */
@@ -242,26 +282,28 @@ width:100%;
 }
 
 /* =========================
-PIX BOX
+PIX BOX (visual mais clean)
 ========================= */
 
 .pixBox{
-background:#fff3e0;
+background:#f5f5f5;
 border-radius:20px;
 padding:18px;
 display:flex;
 flex-direction:column;
 gap:12px;
+border:1px solid #ddd;
 }
 
 .btnCopiarPix{
-background:#1976d2;
+background:#1565c0;
 color:white;
 border:none;
 padding:14px;
 border-radius:14px;
 font-weight:900;
 font-size:16px;
+cursor:pointer;
 }
 
 /* =========================
@@ -292,6 +334,7 @@ margin-top:10px;
 width:100%;
 font-weight:900;
 font-size:16px;
+cursor:pointer;
 }
 
 /* =========================
@@ -303,12 +346,13 @@ position:fixed;
 top:14px;
 right:16px;
 z-index:4000;
-font-size:26px;
+font-size:22px;
 background:white;
 border:none;
 border-radius:14px;
 padding:10px;
 box-shadow:0 4px 12px rgba(0,0,0,.2);
+cursor:pointer;
 }
 
 .btnVoltar{
@@ -322,7 +366,13 @@ border:none;
 border-radius:14px;
 padding:12px 16px;
 font-weight:900;
+cursor:pointer;
 }
+
+/* =========================
+FINAL DO CSS
+========================= */
+
 </style>
 </head>
 <body>
@@ -361,7 +411,7 @@ TELA CARDÁPIO
 <div id="telaCardapio" class="tela">
 
 <div class="topo">
-<b style="font-size:22px">Cardápio</b>
+<b>Cardápio</b>
 
 <button class="adminBtn"
 style="max-width:200px;background:#ff5722"
@@ -374,6 +424,7 @@ Carrinho (<span id="qtd">0</span>)
 <div id="lista" class="lista"></div>
 
 </div>
+
 <!-- =========================
 CARRINHO
 ========================= -->
@@ -430,7 +481,6 @@ FINALIZAR PEDIDO
 </button>
 
 </div>
-
 <!-- =========================
 TELA CHECKOUT
 ========================= -->
@@ -496,7 +546,7 @@ PIX
 
 <div style="font-weight:900">Chave PIX</div>
 
-<div style="font-size:18px;color:#ff5722;font-weight:900">
+<div style="font-size:18px;font-weight:900">
 <span id="pixChaveTxt"></span>
 </div>
 
@@ -531,8 +581,8 @@ ENVIAR PEDIDO
 </button>
 
 </div>
-
 </div>
+
 <!-- =========================
 TELA ADMIN
 ========================= -->
@@ -617,6 +667,10 @@ Salvar Produto
 
 </div>
 
+<!-- =========================
+INÍCIO SCRIPT
+========================= -->
+
 <script type="module">
 
 /* =========================
@@ -634,7 +688,6 @@ let primeiraCarga = true
 
 let carrinho = []
 let pedidosCache = []
-
 /* =========================
 FIREBASE
 ========================= */
@@ -680,7 +733,16 @@ document.querySelectorAll(".tela")
 qs(id).classList.add("ativa")
 }
 
+/* Fecha carrinho sempre que troca tela */
+function fecharCarrinho(){
+qs("carrinho").classList.remove("aberto")
+document.body.style.overflow="auto"
+}
+
+/* Voltar sempre reinicia escolha */
 window.voltarTela = ()=>{
+fecharCarrinho()
+resetarSistema()
 mostrar("telaEscolha")
 }
 
@@ -690,19 +752,35 @@ if(s !== ADMIN_SENHA){
 alert("Senha incorreta")
 return
 }
+fecharCarrinho()
 mostrar("telaAdmin")
 }
+
 /* =========================
-CARDÁPIO BASE
+RESET COMPLETO
+========================= */
+
+function resetarSistema(){
+carrinho=[]
+valorFrete=0
+pixComprovanteOK=false
+modoPedido=null
+renderCarrinho()
+qs("lista").innerHTML=""
+qs("abas").innerHTML=""
+}
+
+/* =========================
+CARDÁPIO COMPLETO
 ========================= */
 
 let cardapio = {
 
 /* =========================
-PASTÉIS SALGADOS
+PASTÉIS SALGADOS P
 ========================= */
 
-"Pastéis Salgados Pequeno":[
+"Pastéis Salgados P":[
 {nome:"Aipim c/ Bacon P",preco:17},
 {nome:"Bacon P",preco:17},
 {nome:"Brócolis P",preco:17},
@@ -727,10 +805,14 @@ PASTÉIS SALGADOS
 {nome:"Do Chef P",preco:17},
 {nome:"Vegetariana P",preco:17},
 {nome:"Strogonoff P",preco:17},
-{nome:"Especial (Escolha 5 Sabores) P",preco:18}
+{nome:"Especial (5 Sabores) P",preco:18}
 ],
 
-"Pastéis Salgados Grande":[
+/* =========================
+PASTÉIS SALGADOS G
+========================= */
+
+"Pastéis Salgados G":[
 {nome:"Aipim c/ Bacon G",preco:22},
 {nome:"Bacon G",preco:22},
 {nome:"Brócolis G",preco:22},
@@ -755,14 +837,14 @@ PASTÉIS SALGADOS
 {nome:"Do Chef G",preco:22},
 {nome:"Vegetariana G",preco:22},
 {nome:"Strogonoff G",preco:22},
-{nome:"Especial (Escolha 5 Sabores) G",preco:24}
+{nome:"Especial (5 Sabores) G",preco:24}
 ],
 
 /* =========================
-PASTÉIS DOCES
+PASTÉIS DOCES P
 ========================= */
 
-"Pastéis Doces Pequeno":[
+"Pastéis Doces P":[
 {nome:"Banana P",preco:17},
 {nome:"Chocolate Preto P",preco:17},
 {nome:"Chocolate Branco P",preco:17},
@@ -780,7 +862,11 @@ PASTÉIS DOCES
 {nome:"Ouro Branco P",preco:17}
 ],
 
-"Pastéis Doces Grande":[
+/* =========================
+PASTÉIS DOCES G
+========================= */
+
+"Pastéis Doces G":[
 {nome:"Banana G",preco:22},
 {nome:"Chocolate Preto G",preco:22},
 {nome:"Chocolate Branco G",preco:22},
@@ -834,10 +920,6 @@ PORÇÕES
 {nome:"Tilápia (Meia)",preco:25},
 {nome:"Bolinho de Bacalhau (Meia)",preco:24}
 ],
-
-/* =========================
-PRATO FEITO
-========================= */
 
 "Prato Feito":[
 {nome:"Prato Feito",preco:30}
@@ -894,26 +976,29 @@ BEBIDAS
 ]
 
 }
-
 /* =========================
 ESCOLHER MODO
 ========================= */
 
 window.definirModo = (modo)=>{
 modoPedido = modo
+
+/* limpa qualquer estado anterior */
+resetarSistema()
+
 mostrar("telaCardapio")
 renderAbas()
 }
 
 /* =========================
-FILTRO DELIVERY
+FILTRO DELIVERY (REMOVE ABAS INTEIRAS)
 ========================= */
 
-function permitidoDelivery(produto, aba){
+function abaPermitidaDelivery(nomeAba){
 
 if(modoPedido !== "delivery") return true
 
-let a = aba.toLowerCase()
+let a = nomeAba.toLowerCase()
 
 if(
 a.includes("sucos") ||
@@ -921,18 +1006,6 @@ a.includes("doses") ||
 a.includes("caip") ||
 a.includes("batida") ||
 a.includes("vitamina")
-){
-return false
-}
-
-let nome = produto.nome.toLowerCase()
-
-if(
-nome.includes("suco") ||
-nome.includes("dose") ||
-nome.includes("caip") ||
-nome.includes("batida") ||
-nome.includes("vitamina")
 ){
 return false
 }
@@ -947,8 +1020,11 @@ RENDER ABAS
 function renderAbas(){
 
 qs("abas").innerHTML=""
+qs("lista").innerHTML=""
 
 Object.keys(cardapio).forEach(aba=>{
+
+if(!abaPermitidaDelivery(aba)) return
 
 let btn = document.createElement("button")
 btn.className="aba"
@@ -972,9 +1048,9 @@ function renderItens(aba){
 
 qs("lista").innerHTML=""
 
-cardapio[aba].forEach(produto=>{
+if(!cardapio[aba]) return
 
-if(!permitidoDelivery(produto,aba)) return
+cardapio[aba].forEach(produto=>{
 
 let el = document.createElement("div")
 el.className="item"
@@ -1030,8 +1106,7 @@ carrinho = carrinho.filter(i=>i.nome!==nome)
 renderCarrinho()
 
 if(!carrinho.length){
-qs("carrinho").classList.remove("aberto")
-document.body.style.overflow="auto"
+fecharCarrinho()
 }
 }
 
@@ -1039,8 +1114,9 @@ window.toggleCarrinho = ()=>{
 let aberto = qs("carrinho").classList.toggle("aberto")
 document.body.style.overflow = aberto ? "hidden" : "auto"
 }
+
 /* =========================
-FRETE AUTOMÁTICO INTELIGENTE
+FRETE AUTOMÁTICO
 ========================= */
 
 function calcularFreteAutomatico(){
@@ -1063,18 +1139,6 @@ valorFrete = 8
 }
 
 }
-
-/* Atualiza frete quando digita bairro */
-
-setTimeout(()=>{
-if(qs("bairro")){
-qs("bairro").addEventListener("input",()=>{
-calcularFreteAutomatico()
-renderCarrinho()
-renderCheckoutResumo()
-})
-}
-},500)
 
 /* =========================
 RENDER CARRINHO
@@ -1120,55 +1184,6 @@ renderCheckoutResumo()
 }
 
 /* =========================
-RESUMO CHECKOUT
-========================= */
-
-function renderCheckoutResumo(){
-
-if(!qs("checkoutItens")) return
-
-qs("checkoutItens").innerHTML=""
-
-carrinho.forEach(i=>{
-
-let d=document.createElement("div")
-d.style.marginBottom="6px"
-d.style.textAlign="center"
-
-d.innerHTML=`
-<span style="font-weight:600">
-${i.qtd}x ${i.nome}
-</span>
- —
-<span style="color:#2e7d32;font-weight:700">
-R$ ${(i.qtd*i.preco).toFixed(2)}
-</span>
-`
-
-qs("checkoutItens").appendChild(d)
-
-})
-
-if(valorFrete>0){
-
-let freteDiv=document.createElement("div")
-freteDiv.style.marginTop="8px"
-freteDiv.style.fontWeight="700"
-freteDiv.style.color="#c62828"
-freteDiv.innerText=
-`Taxa de entrega: R$ ${valorFrete.toFixed(2)}`
-
-qs("checkoutItens").appendChild(freteDiv)
-
-}
-
-if(qs("checkoutTotal")){
-qs("checkoutTotal").innerText=
-totalGeral().toFixed(2)
-}
-
-}
-/* =========================
 IR PARA CHECKOUT
 ========================= */
 
@@ -1176,6 +1191,7 @@ window.irCheckout = ()=>{
 
 if(!carrinho.length) return
 
+fecharCarrinho()
 mostrar("telaCheckout")
 renderCheckoutResumo()
 atualizarPix()
@@ -1188,7 +1204,133 @@ qs("pagamento")
 }
 
 /* =========================
-CHECKOUT TIPO PEDIDO
+FINALIZAR PEDIDO
+========================= */
+
+window.finalizarPedido = async()=>{
+
+let nome = qs("nome")?.value
+let tel  = qs("telefone")?.value
+let tipo = qs("tipoPedido")?.value
+let pag  = qs("pagamento")?.value
+
+if(!nome || !tel){
+alert("Preencha nome e telefone")
+return
+}
+
+if(tipo==="entrega" && pag==="PIX" && !pixComprovanteOK){
+alert("Envie o comprovante PIX para finalizar")
+return
+}
+
+/* monta pedido */
+
+let pedido = {
+cliente:{nome,tel},
+itens:carrinho,
+total:totalGeral(),
+frete:valorFrete,
+modo:modoPedido,
+data:new Date().toISOString()
+}
+
+/* salva firebase */
+
+try{
+await addDoc(collection(db,"pedidos"),pedido)
+}catch(e){
+console.log(e)
+}
+
+/* mensagem whatsapp limpa */
+
+let txt = "*RECANTO DO PASTEL*%0A%0A"
+
+carrinho.forEach(i=>{
+txt += `${i.qtd}x ${i.nome} - R$ ${(i.qtd*i.preco).toFixed(2)}%0A`
+})
+
+if(valorFrete>0){
+txt += `%0ATaxa entrega: R$ ${valorFrete.toFixed(2)}%0A`
+}
+
+txt += `%0ATotal: R$ ${pedido.total.toFixed(2)}`
+
+window.open(`https://wa.me/${WHATSAPP_LOJA}?text=${txt}`)
+
+/* RESET COMPLETO */
+
+resetarSistema()
+fecharCarrinho()
+mostrar("telaEscolha")
+
+}
+/* =========================
+FECHAR CARRINHO FORÇADO
+========================= */
+
+function fecharCarrinho(){
+qs("carrinho").classList.remove("aberto")
+document.body.style.overflow="auto"
+}
+
+/* =========================
+RESET TOTAL DO SISTEMA
+========================= */
+
+function resetarSistema(){
+
+/* limpa carrinho */
+carrinho = []
+valorFrete = 0
+pixComprovanteOK = false
+
+/* limpa campos */
+if(qs("nome")) qs("nome").value=""
+if(qs("telefone")) qs("telefone").value=""
+if(qs("rua")) qs("rua").value=""
+if(qs("bairro")) qs("bairro").value=""
+if(qs("numero")) qs("numero").value=""
+if(qs("troco")) qs("troco").value=""
+if(qs("mesaInput")) qs("mesaInput").value=""
+
+/* reset selects */
+if(qs("tipoPedido")) qs("tipoPedido").value="local"
+if(qs("pagamento")) qs("pagamento").value="PIX"
+
+/* esconde blocos */
+if(qs("boxEndereco")) qs("boxEndereco").style.display="none"
+if(qs("boxMesa")) qs("boxMesa").style.display="block"
+if(qs("boxTroco")) qs("boxTroco").style.display="none"
+if(qs("boxPix")) qs("boxPix").style.display="none"
+
+/* limpa listas */
+if(qs("checkoutItens")) qs("checkoutItens").innerHTML=""
+if(qs("lista")) qs("lista").innerHTML=""
+if(qs("abas")) qs("abas").innerHTML=""
+
+/* limpa totais */
+if(qs("total")) qs("total").innerText="0.00"
+if(qs("checkoutTotal")) qs("checkoutTotal").innerText="0.00"
+if(qs("qtd")) qs("qtd").innerText="0"
+
+}
+
+/* =========================
+CORRIGIR VOLTAR TELA
+========================= */
+
+window.voltarTela = ()=>{
+
+fecharCarrinho()
+resetarSistema()
+mostrar("telaEscolha")
+
+}
+
+/* =========================
+CORRIGIR TROCA DE TIPO PEDIDO
 ========================= */
 
 if(qs("tipoPedido")){
@@ -1214,13 +1356,14 @@ valorFrete=0
 
 calcularFreteAutomatico()
 renderCarrinho()
+renderCheckoutResumo()
 
 }
 
 }
 
 /* =========================
-PAGAMENTO
+CORRIGIR PAGAMENTO
 ========================= */
 
 if(qs("pagamento")){
@@ -1252,75 +1395,208 @@ renderCheckoutResumo()
 }
 
 /* =========================
-PIX
+GARANTIR FECHAMENTO AUTOMÁTICO
+AO MUDAR DE TELA
 ========================= */
 
-function atualizarPix(){
+function mostrar(id){
 
-if(qs("pixValorTxt")){
-qs("pixValorTxt").innerText =
-totalGeral().toFixed(2)
-}
+document.querySelectorAll(".tela")
+.forEach(t=>t.classList.remove("ativa"))
 
-if(qs("pixChaveTxt")){
-qs("pixChaveTxt").innerText =
-PIX_CHAVE
-}
+qs(id).classList.add("ativa")
 
-}
-
-/* copiar chave */
-
-window.copiarPix = ()=>{
-
-navigator.clipboard.writeText(PIX_CHAVE)
-alert("Chave PIX copiada com sucesso ✅")
-
-}
-
-/* arquivo comprovante */
-
-if(qs("pixArquivo")){
-
-qs("pixArquivo").onchange = ()=>{
-if(qs("pixArquivo").files.length>0){
-pixComprovanteOK=true
-}
-}
-
-}
-
-/* checkbox já enviei */
-
-if(qs("pixJaEnviei")){
-
-qs("pixJaEnviei").onchange = e=>{
-pixComprovanteOK = e.target.checked
+/* sempre fechar carrinho ao trocar tela */
+if(id !== "telaCardapio"){
+fecharCarrinho()
 }
 
 }
 
 /* =========================
-WHATSAPP COMPROVANTE
+GARANTIR QUE NÃO FIQUE
+ABA SELECIONADA APÓS RESET
 ========================= */
 
-window.abrirZapComprovante = ()=>{
+function limparAbasVisual(){
 
-let valor = totalGeral().toFixed(2)
-
-let texto =
-`Comprovante PIX — Recanto do Pastel
-Valor: R$ ${valor}`
-
-window.open(
-`https://wa.me/${WHATSAPP_LOJA}?text=${
-encodeURIComponent(texto)
-}`
-)
+let abas = document.querySelectorAll(".aba")
+abas.forEach(a=>a.classList.remove("ativa"))
 
 }
+
 /* =========================
-FINALIZAR PEDIDO
+QUANDO ENTRAR NO CARDÁPIO
+COMEÇA SEM ITENS ABERTOS
+========================= */
+
+window.definirModo = (modo)=>{
+
+modoPedido = modo
+
+resetarSistema()
+mostrar("telaCardapio")
+renderAbas()
+
+}
+
+/* =========================
+AO INICIAR APP
+GARANTE TELA INICIAL
+========================= */
+
+document.addEventListener("DOMContentLoaded",()=>{
+mostrar("telaEscolha")
+resetarSistema()
+})
+
+/* =========================
+AJUSTE VISUAL PROFISSIONAL
+========================= */
+
+/* fundo mais limpo */
+html,body{
+background:#f5f5f5;
+}
+
+/* topo */
+.topo b{
+color:#222;
+}
+
+/* abas elegantes */
+.aba{
+background:#eeeeee;
+color:#333;
+border:1px solid #ddd;
+transition:0.2s;
+}
+
+.aba:hover{
+background:#e0e0e0;
+}
+
+.aba.ativa{
+background:#ff5722;
+color:white;
+border-color:#ff5722;
+}
+
+/* itens */
+.item{
+border:1px solid #e0e0e0;
+box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+.itemNome{
+color:#222;
+}
+
+.itemPreco{
+color:#ff5722;
+font-size:22px;
+}
+
+/* botão adicionar */
+.btnAdd{
+background:#ff5722;
+transition:0.2s;
+}
+
+.btnAdd:hover{
+background:#e64a19;
+}
+
+/* carrinho */
+#carrinho{
+background:white;
+}
+
+.cItem{
+border:1px solid #eee;
+box-shadow:none;
+}
+
+/* checkout */
+.checkoutResumo{
+border:1px solid #eee;
+box-shadow:none;
+}
+
+/* botões admin mais discretos */
+.adminBtn{
+background:#333;
+}
+
+.adminBtn:hover{
+background:#111;
+}
+
+/* botão finalizar */
+.btnFinalizarCarrinho{
+background:#ff5722;
+}
+
+/* =========================
+MARCAR ABA ATIVA
+========================= */
+
+function renderAbas(){
+
+qs("abas").innerHTML=""
+
+Object.keys(cardapio).forEach(aba=>{
+
+let btn = document.createElement("button")
+btn.className="aba"
+btn.innerText = aba
+
+btn.onclick = ()=>{
+
+document.querySelectorAll(".aba")
+.forEach(a=>a.classList.remove("ativa"))
+
+btn.classList.add("ativa")
+renderItens(aba)
+
+}
+
+qs("abas").appendChild(btn)
+
+})
+
+}
+
+/* =========================
+ENVIO WHATSAPP PROFISSIONAL
+========================= */
+
+function montarMensagemWhatsApp(pedido){
+
+let texto = "📋 *RECANTO DO PASTEL*\n\n"
+
+texto += `👤 Cliente: ${pedido.cliente.nome}\n`
+texto += `📞 Telefone: ${pedido.cliente.tel}\n`
+texto += `📦 Tipo: ${pedido.modo === "delivery" ? "Delivery" : "Local"}\n\n`
+
+texto += "🧾 *ITENS:*\n"
+
+pedido.itens.forEach(i=>{
+texto += `• ${i.qtd}x ${i.nome} — R$ ${(i.qtd*i.preco).toFixed(2)}\n`
+})
+
+if(pedido.frete>0){
+texto += `\n🚚 Entrega: R$ ${pedido.frete.toFixed(2)}`
+}
+
+texto += `\n\n💰 *TOTAL: R$ ${pedido.total.toFixed(2)}*`
+
+return texto
+
+}
+
+/* =========================
+SUBSTITUIR ENVIO ANTIGO
 ========================= */
 
 window.finalizarPedido = async()=>{
@@ -1335,14 +1611,10 @@ alert("Preencha nome e telefone")
 return
 }
 
-/* validar PIX para delivery */
-
 if(tipo==="entrega" && pag==="PIX" && !pixComprovanteOK){
 alert("Envie o comprovante PIX para finalizar")
 return
 }
-
-/* montar pedido */
 
 let pedido = {
 cliente:{nome,tel},
@@ -1353,279 +1625,678 @@ modo:modoPedido,
 data:new Date().toISOString()
 }
 
-/* salvar no Firebase */
-
 try{
 await addDoc(collection(db,"pedidos"),pedido)
 }catch(e){
-console.log("Erro ao salvar pedido:",e)
+console.log("Erro:",e)
 }
 
-/* montar mensagem WhatsApp */
-
-let txt = "🥟 RECANTO DO PASTEL\n\n"
-
-carrinho.forEach(i=>{
-txt += `${i.qtd}x ${i.nome} — R$ ${(i.qtd*i.preco).toFixed(2)}\n`
-})
-
-if(valorFrete>0){
-txt += `\n🚚 Taxa entrega: R$ ${valorFrete.toFixed(2)}`
-}
-
-txt += `\n\n💰 Total: R$ ${pedido.total.toFixed(2)}`
+/* nova mensagem automática */
+let mensagem = montarMensagemWhatsApp(pedido)
 
 window.open(
 `https://wa.me/${WHATSAPP_LOJA}?text=${
-encodeURIComponent(txt)
+encodeURIComponent(mensagem)
 }`
 )
 
-/* reset sistema */
-
-carrinho=[]
-valorFrete=0
-pixComprovanteOK=false
-
-renderCarrinho()
-
-qs("carrinho").classList.remove("aberto")
-document.body.style.overflow="auto"
-
+/* reset completo */
+resetarSistema()
+fecharCarrinho()
 mostrar("telaEscolha")
 
 }
 
 /* =========================
-SOM NOTIFICAÇÃO ADMIN
+GARANTIR QUE DELIVERY
+NÃO MOSTRE ABAS BLOQUEADAS
 ========================= */
 
-const audioNotificacao = new Audio(
-"https://actions.google.com/sounds/v1/alarms/notification.ogg"
-)
-/* =========================
-SINCRONIZAR PEDIDOS (ADMIN)
-========================= */
+function renderAbas(){
 
-onSnapshot(collection(db,"pedidos"),snap=>{
+qs("abas").innerHTML=""
 
-pedidosCache=[]
-let box = qs("adminPedidos")
+Object.keys(cardapio).forEach(aba=>{
 
-if(box) box.innerHTML=""
+/* bloquear abas inteiras no delivery */
+if(modoPedido==="delivery"){
 
-snap.forEach(d=>{
-let p=d.data()
-pedidosCache.push(p)
+let nomeAba = aba.toLowerCase()
 
-if(box){
-box.innerHTML+=`
-<div style="margin-bottom:10px;padding:10px;background:#333;border-radius:10px">
-<b>${p.cliente.nome}</b><br>
-<span style="color:#4caf50;font-weight:700">
-R$ ${Number(p.total).toFixed(2)}
-</span>
-</div>`
-}
-})
-
-if(!primeiraCarga && pedidosCache.length>0){
-audioNotificacao.play().catch(()=>{})
+if(
+nomeAba.includes("sucos") ||
+nomeAba.includes("doses") ||
+nomeAba.includes("caip") ||
+nomeAba.includes("batida") ||
+nomeAba.includes("vitamina")
+){
+return
 }
 
-primeiraCarga=false
+}
+
+let btn = document.createElement("button")
+btn.className="aba"
+btn.innerText = aba
+
+btn.onclick = ()=>{
+
+document.querySelectorAll(".aba")
+.forEach(a=>a.classList.remove("ativa"))
+
+btn.classList.add("ativa")
+renderItens(aba)
+
+}
+
+qs("abas").appendChild(btn)
 
 })
 
+}
+
 /* =========================
-SALVAR CARDÁPIO FIREBASE
+FECHAR CARRINHO FORÇADO
 ========================= */
 
-async function salvarCardapioFirebase(){
+function fecharCarrinho(){
+qs("carrinho").classList.remove("aberto")
+document.body.style.overflow="auto"
+}
+
+/* =========================
+RESET COMPLETO DO SISTEMA
+========================= */
+
+function resetarSistema(){
+
+carrinho = []
+valorFrete = 0
+pixComprovanteOK = false
+modoPedido = null
+
+/* limpar campos */
+if(qs("nome")) qs("nome").value=""
+if(qs("telefone")) qs("telefone").value=""
+if(qs("rua")) qs("rua").value=""
+if(qs("bairro")) qs("bairro").value=""
+if(qs("numero")) qs("numero").value=""
+if(qs("mesaInput")) qs("mesaInput").value=""
+if(qs("troco")) qs("troco").value=""
+
+if(qs("pixJaEnviei")) qs("pixJaEnviei").checked=false
+if(qs("pixArquivo")) qs("pixArquivo").value=""
+
+renderCarrinho()
+
+/* limpar abas ativas */
+document.querySelectorAll(".aba")
+.forEach(a=>a.classList.remove("ativa"))
+
+qs("lista").innerHTML=""
+qs("abas").innerHTML=""
+
+}
+
+/* =========================
+GARANTIR QUE NUNCA FIQUE PRESO
+========================= */
+
+window.addEventListener("pageshow",()=>{
+resetarSistema()
+mostrar("telaEscolha")
+})
+
+window.addEventListener("load",()=>{
+resetarSistema()
+mostrar("telaEscolha")
+})
+
+/* =========================
+FECHAR TELAS AUTOMÁTICO
+========================= */
+
+function mostrar(id){
+
+document.querySelectorAll(".tela")
+.forEach(t=>t.classList.remove("ativa"))
+
+qs(id).classList.add("ativa")
+
+/* sempre que trocar tela, fechar carrinho */
+fecharCarrinho()
+
+}
+
+/* =========================
+GARANTIR FINALIZAÇÃO LIMPA
+========================= */
+
+window.irCheckout = ()=>{
+
+if(!carrinho.length) return
+
+mostrar("telaCheckout")
+renderCheckoutResumo()
+atualizarPix()
+
+if(qs("pagamento")){
+qs("pagamento")
+.dispatchEvent(new Event("change"))
+}
+
+}
+
+/* =========================
+AO FINALIZAR PEDIDO
+========================= */
+
+window.finalizarPedido = async()=>{
+
+let nome = qs("nome")?.value
+let tel  = qs("telefone")?.value
+let tipo = qs("tipoPedido")?.value
+let pag  = qs("pagamento")?.value
+
+if(!nome || !tel){
+alert("Preencha nome e telefone")
+return
+}
+
+if(tipo==="entrega" && pag==="PIX" && !pixComprovanteOK){
+alert("Envie o comprovante PIX para finalizar")
+return
+}
+
+let pedido = {
+cliente:{nome,tel},
+itens:carrinho,
+total:totalGeral(),
+frete:valorFrete,
+modo:modoPedido,
+data:new Date().toISOString()
+}
 
 try{
-
-let snap = await getDocs(collection(db,"cardapio"))
-snap.forEach(docu=>{
-deleteDoc(docu.ref)
-})
-
-for(let aba in cardapio){
-
-await addDoc(collection(db,"cardapio"),{
-nomeAba:aba,
-itens:cardapio[aba]
-})
-
-}
-
+await addDoc(collection(db,"pedidos"),pedido)
 }catch(e){
-console.log("Erro salvar cardápio",e)
+console.log("Erro:",e)
 }
 
-}
+/* WhatsApp automático */
+let mensagem = montarMensagemWhatsApp(pedido)
 
-/* =========================
-CARREGAR CARDÁPIO FIREBASE
-========================= */
-
-async function carregarCardapioFirebase(){
-
-let snap = await getDocs(collection(db,"cardapio"))
-
-if(snap.empty) return
-
-cardapio={}
-
-snap.forEach(docu=>{
-let d=docu.data()
-cardapio[d.nomeAba]=d.itens||[]
-})
-
-}
-
-/* =========================
-RELATÓRIOS
-========================= */
-
-function soma(fn){
-return pedidosCache
-.filter(fn)
-.reduce((s,p)=>s+Number(p.total||0),0)
-}
-
-window.relatorioHoje=()=>{
-
-let hoje=new Date().toDateString()
-
-let total=soma(p=>
-new Date(p.data).toDateString()===hoje
+window.open(
+`https://wa.me/${WHATSAPP_LOJA}?text=${
+encodeURIComponent(mensagem)
+}`
 )
 
-alert("Total Hoje: R$ "+total.toFixed(2))
-
-}
-
-window.relatorioMes=()=>{
-
-let mes=new Date().getMonth()
-
-let total=soma(p=>
-new Date(p.data).getMonth()===mes
-)
-
-alert("Total do Mês: R$ "+total.toFixed(2))
-
-}
-
-window.relatorioAno=()=>{
-
-let ano=new Date().getFullYear()
-
-let total=soma(p=>
-new Date(p.data).getFullYear()===ano
-)
-
-alert("Total do Ano: R$ "+total.toFixed(2))
+/* RESET DEFINITIVO */
+resetarSistema()
+mostrar("telaEscolha")
 
 }
 
 /* =========================
-EXPORTAR EXCEL COMPLETO
+GARANTIR QUE DELIVERY RECARREGA ABAS
 ========================= */
 
-window.exportarExcel=()=>{
+window.definirModo = (modo)=>{
 
-let csv="cliente,item,quantidade,valor_unitario,total_pedido,data\n"
+modoPedido = modo
 
-let totalGeralRel=0
+resetarSistema()
 
-pedidosCache.forEach(p=>{
+modoPedido = modo
 
-totalGeralRel+=Number(p.total)||0
-
-;(p.itens||[]).forEach(it=>{
-
-csv+=`${p.cliente.nome},`
-csv+=`${it.nome},`
-csv+=`${it.qtd},`
-csv+=`${it.preco},`
-csv+=`${p.total},`
-csv+=`${p.data}\n`
-
-})
-
-})
-
-csv+=`\n,,,,TOTAL VENDIDO,${totalGeralRel.toFixed(2)}\n`
-
-let blob=new Blob([csv],{type:"text/csv"})
-let a=document.createElement("a")
-a.href=URL.createObjectURL(blob)
-a.download="relatorio_recanto_do_pastel.csv"
-a.click()
+mostrar("telaCardapio")
+renderAbas()
 
 }
+
 /* =========================
-ZERAR RELATÓRIOS
+PROTEGER CONTRA DUPLO CLIQUE
 ========================= */
 
-window.zerarRelatorios = async()=>{
+let bloqueioFinalizacao = false
 
-if(!confirm("Deseja apagar TODOS os pedidos?"))
+window.finalizarPedido = async()=>{
+
+if(bloqueioFinalizacao) return
+bloqueioFinalizacao = true
+
+let nome = qs("nome")?.value
+let tel  = qs("telefone")?.value
+let tipo = qs("tipoPedido")?.value
+let pag  = qs("pagamento")?.value
+
+if(!nome || !tel){
+alert("Preencha nome e telefone")
+bloqueioFinalizacao=false
 return
+}
 
-let snap = await getDocs(collection(db,"pedidos"))
+if(tipo==="entrega" && pag==="PIX" && !pixComprovanteOK){
+alert("Envie o comprovante PIX para finalizar")
+bloqueioFinalizacao=false
+return
+}
 
-snap.forEach(docu=>{
-deleteDoc(docu.ref)
+let pedido = {
+cliente:{nome,tel},
+itens:carrinho,
+total:totalGeral(),
+frete:valorFrete,
+modo:modoPedido,
+data:new Date().toISOString()
+}
+
+try{
+await addDoc(collection(db,"pedidos"),pedido)
+}catch(e){}
+
+let mensagem = montarMensagemWhatsApp(pedido)
+
+window.open(
+`https://wa.me/${WHATSAPP_LOJA}?text=${
+encodeURIComponent(mensagem)
+}`
+)
+
+resetarSistema()
+mostrar("telaEscolha")
+
+setTimeout(()=>{
+bloqueioFinalizacao=false
+},2000)
+
+}
+/* =========================
+ABA ATIVA VISUAL LIMPA
+========================= */
+
+function marcarAbaAtiva(botao){
+
+document.querySelectorAll(".aba")
+.forEach(b=>{
+b.style.background="#ffe0b2"
+b.style.color="#bf360c"
 })
 
-alert("Pedidos apagados com sucesso")
+botao.style.background="#ff9800"
+botao.style.color="#ffffff"
 
 }
 
 /* =========================
-INIT SISTEMA
+RENDER ABAS ESTÁVEL
+========================= */
+
+function renderAbas(){
+
+qs("abas").innerHTML=""
+
+Object.keys(cardapio).forEach((aba,index)=>{
+
+/* se delivery, esconder abas bloqueadas */
+if(modoPedido==="delivery"){
+
+let a = aba.toLowerCase()
+
+if(
+a.includes("sucos") ||
+a.includes("doses") ||
+a.includes("caip") ||
+a.includes("batida") ||
+a.includes("vitamina")
+){
+return
+}
+
+}
+
+let btn = document.createElement("button")
+btn.className="aba"
+btn.innerText = aba
+
+btn.onclick = ()=>{
+marcarAbaAtiva(btn)
+renderItens(aba)
+}
+
+qs("abas").appendChild(btn)
+
+/* abrir primeira aba automaticamente */
+if(index===0){
+setTimeout(()=>{
+btn.click()
+},50)
+}
+
+})
+
+}
+
+/* =========================
+AGRUPAR TAMANHOS VISUALMENTE
+========================= */
+
+function organizarTamanhos(lista){
+
+let agrupado = {}
+
+lista.forEach(item=>{
+
+let base = item.nome.replace(" P","").replace(" G","")
+
+if(!agrupado[base]){
+agrupado[base] = {}
+}
+
+if(item.nome.includes(" P")){
+agrupado[base]["P"] = item.preco
+}else if(item.nome.includes(" G")){
+agrupado[base]["G"] = item.preco
+}else{
+agrupado[base]["Único"] = item.preco
+}
+
+})
+
+return agrupado
+
+}
+
+/* =========================
+RENDER ITENS MELHORADO
+========================= */
+
+function renderItens(aba){
+
+qs("lista").innerHTML=""
+
+let produtos = cardapio[aba]
+
+let organizados = organizarTamanhos(produtos)
+
+Object.keys(organizados).forEach(nomeBase=>{
+
+let tamanhos = organizados[nomeBase]
+
+let el = document.createElement("div")
+el.className="item"
+
+let html = `<div class="itemNome">${nomeBase}</div>`
+
+Object.keys(tamanhos).forEach(t=>{
+
+html += `
+<div style="font-size:18px;font-weight:700;color:#2e7d32">
+${t==="Único"?"":t+" - "}
+R$ ${tamanhos[t].toFixed(2)}
+</div>
+`
+
+})
+
+html += `<button class="btnAdd">Adicionar</button>`
+
+el.innerHTML = html
+
+el.querySelector("button").onclick=()=>{
+
+/* se tiver P e G, perguntar */
+if(tamanhos["P"] && tamanhos["G"]){
+
+let escolha = confirm("OK = Pequeno | Cancelar = Grande")
+
+if(escolha){
+addCarrinho({nome:nomeBase+" P",preco:tamanhos["P"]})
+}else{
+addCarrinho({nome:nomeBase+" G",preco:tamanhos["G"]})
+}
+
+}else{
+
+let preco = tamanhos["Único"] || tamanhos["P"] || tamanhos["G"]
+
+addCarrinho({nome:nomeBase,preco:preco})
+
+}
+
+}
+
+qs("lista").appendChild(el)
+
+})
+
+}
+
+/* =========================
+LAYOUT MENOS CARNAVAL
+========================= */
+
+document.querySelectorAll(".item")
+.forEach(el=>{
+el.style.boxShadow="0 4px 10px rgba(0,0,0,.08)"
+})
+
+document.querySelectorAll(".aba")
+.forEach(el=>{
+el.style.background="#ffe0b2"
+})
+
+/* =========================
+WHATSAPP FORMATADO BONITO
+========================= */
+
+function montarMensagemWhatsApp(pedido){
+
+let msg = `🥟 *RECANTO DO PASTEL*\n\n`
+
+msg += `👤 Cliente: ${pedido.cliente.nome}\n`
+msg += `📱 Telefone: ${pedido.cliente.tel}\n\n`
+
+msg += `🧾 *Itens do Pedido:*\n`
+
+pedido.itens.forEach(i=>{
+msg += `• ${i.qtd}x ${i.nome} - R$ ${(i.qtd*i.preco).toFixed(2)}\n`
+})
+
+if(pedido.frete>0){
+msg += `\n🚚 Frete: R$ ${pedido.frete.toFixed(2)}`
+}
+
+msg += `\n\n💰 *Total: R$ ${pedido.total.toFixed(2)}*`
+
+if(pedido.modo==="delivery"){
+msg += `\n\n🛵 Tipo: Delivery`
+}else{
+msg += `\n\n🍽 Tipo: Local`
+}
+
+return msg
+
+}
+
+/* =========================
+GARANTIR QUE NÃO FIQUE EM ABA ANTIGA
+========================= */
+
+window.voltarTela = ()=>{
+resetarSistema()
+mostrar("telaEscolha")
+}
+/* =========================
+RESET TOTAL DO SISTEMA
+========================= */
+
+function resetarSistema(){
+
+/* limpar carrinho */
+carrinho = []
+valorFrete = 0
+pixComprovanteOK = false
+
+/* fechar carrinho */
+qs("carrinho").classList.remove("aberto")
+document.body.style.overflow="auto"
+
+/* limpar visual */
+if(qs("cLista")) qs("cLista").innerHTML=""
+if(qs("qtd")) qs("qtd").innerText="0"
+if(qs("total")) qs("total").innerText="0.00"
+if(qs("checkoutItens")) qs("checkoutItens").innerHTML=""
+if(qs("checkoutTotal")) qs("checkoutTotal").innerText="0.00"
+if(qs("linhaFrete")) qs("linhaFrete").style.display="none"
+
+/* limpar formulário */
+if(qs("nome")) qs("nome").value=""
+if(qs("telefone")) qs("telefone").value=""
+if(qs("rua")) qs("rua").value=""
+if(qs("bairro")) qs("bairro").value=""
+if(qs("numero")) qs("numero").value=""
+if(qs("mesaInput")) qs("mesaInput").value=""
+if(qs("troco")) qs("troco").value=""
+
+if(qs("pixJaEnviei")) qs("pixJaEnviei").checked=false
+if(qs("pixArquivo")) qs("pixArquivo").value=""
+
+/* esconder caixas */
+if(qs("boxEndereco")) qs("boxEndereco").style.display="none"
+if(qs("boxPix")) qs("boxPix").style.display="none"
+if(qs("boxTroco")) qs("boxTroco").style.display="none"
+
+/* reset modo */
+modoPedido = null
+
+/* remover aba ativa */
+document.querySelectorAll(".aba")
+.forEach(b=>{
+b.style.background="#ffe0b2"
+b.style.color="#bf360c"
+})
+
+}
+
+/* =========================
+FINALIZAR PEDIDO DEFINITIVO
+========================= */
+
+window.finalizarPedido = async()=>{
+
+let nome = qs("nome")?.value
+let tel  = qs("telefone")?.value
+let tipo = qs("tipoPedido")?.value
+let pag  = qs("pagamento")?.value
+
+if(!nome || !tel){
+alert("Preencha nome e telefone")
+return
+}
+
+/* validar PIX delivery */
+if(tipo==="entrega" && pag==="PIX" && !pixComprovanteOK){
+alert("Envie o comprovante PIX para finalizar")
+return
+}
+
+/* montar pedido */
+let pedido = {
+cliente:{nome,tel},
+itens:carrinho,
+total:totalGeral(),
+frete:valorFrete,
+modo:modoPedido,
+data:new Date().toISOString()
+}
+
+/* salvar */
+try{
+await addDoc(collection(db,"pedidos"),pedido)
+}catch(e){
+console.log("Erro salvar:",e)
+}
+
+/* mensagem automática */
+let mensagem = montarMensagemWhatsApp(pedido)
+
+window.open(
+`https://wa.me/${WHATSAPP_LOJA}?text=${
+encodeURIComponent(mensagem)
+}`
+)
+
+/* RESET COMPLETO */
+resetarSistema()
+
+/* voltar para tela inicial */
+mostrar("telaEscolha")
+
+}
+
+/* =========================
+GARANTIR QUE AO SAIR E VOLTAR NÃO FIQUE EM ABA
+========================= */
+
+window.addEventListener("pageshow",()=>{
+resetarSistema()
+mostrar("telaEscolha")
+})
+
+/* =========================
+GARANTIR QUE DELIVERY NÃO MOSTRE ABAS BLOQUEADAS
+========================= */
+
+window.definirModo = (modo)=>{
+resetarSistema()
+modoPedido = modo
+mostrar("telaCardapio")
+renderAbas()
+}
+
+/* =========================
+FECHAR TELA AO ABRIR OUTRA
+========================= */
+
+function mostrar(id){
+
+document.querySelectorAll(".tela")
+.forEach(t=>{
+t.classList.remove("ativa")
+})
+
+qs(id).classList.add("ativa")
+
+/* fechar carrinho ao mudar tela */
+qs("carrinho").classList.remove("aberto")
+document.body.style.overflow="auto"
+
+}
+
+/* =========================
+INICIALIZAÇÃO FINAL
 ========================= */
 
 async function initSistema(){
 
 await carregarCardapioFirebase()
 
-if(Object.keys(cardapio).length===0){
-
-cardapio={
-"Pastéis":[
-{nome:"Pastel Carne",preco:12},
-{nome:"Pastel Queijo",preco:11}
-],
-"Bebidas":[
-{nome:"Refrigerante Lata",preco:6}
-],
-"Prato Feito":[
-{nome:"Prato Executivo",preco:22}
-]
-}
-
-await salvarCardapioFirebase()
-
-}
-
 renderAbas()
 
-}
+resetarSistema()
 
-/* =========================
-INICIAR SISTEMA
-========================= */
+mostrar("telaEscolha")
+
+}
 
 initSistema()
 
 /* =========================
-FIM DO SCRIPT
+FIM DEFINITIVO DO SISTEMA
 ========================= */
+
 </script>
 </body>
 </html>
-
