@@ -152,7 +152,6 @@ font-weight:900;
 font-size:18px;
 margin-top:8px;
 }
-
 /* =========================
 CARRINHO
 ========================= */
@@ -207,6 +206,7 @@ background:#ff5722;
 color:white;
 border:none;
 }
+
 /* =========================
 CHECKOUT
 ========================= */
@@ -374,7 +374,6 @@ Carrinho (<span id="qtd">0</span>)
 <div id="lista" class="lista"></div>
 
 </div>
-
 <!-- =========================
 CARRINHO
 ========================= -->
@@ -431,6 +430,193 @@ FINALIZAR PEDIDO
 </button>
 
 </div>
+
+<!-- =========================
+TELA CHECKOUT
+========================= -->
+
+<div id="telaCheckout" class="tela">
+
+<h2 style="margin-bottom:16px">
+Finalizar Pedido
+</h2>
+
+<div class="checkoutResumo">
+
+<div style="font-weight:900;margin-bottom:10px;font-size:18px">
+Resumo do Pedido
+</div>
+
+<div id="checkoutItens"></div>
+
+<div style="margin-top:12px;font-weight:900;font-size:18px">
+Total: R$ <span id="checkoutTotal">0.00</span>
+</div>
+
+</div>
+
+<div class="form">
+
+<select id="tipoPedido">
+<option value="local">Consumir no local</option>
+<option value="entrega">Entrega</option>
+</select>
+
+<div id="boxMesa">
+<input id="mesaInput" placeholder="Número da mesa (opcional)">
+</div>
+
+<input id="nome" placeholder="Nome do cliente">
+<input id="telefone" placeholder="Telefone">
+
+<div id="boxEndereco" style="display:none">
+
+<input id="rua" placeholder="Rua">
+<input id="bairro" placeholder="Bairro">
+<input id="numero" placeholder="Número">
+
+</div>
+
+<select id="pagamento">
+<option>PIX</option>
+<option>Débito</option>
+<option>Crédito</option>
+<option>Dinheiro</option>
+</select>
+
+<div id="boxTroco" style="display:none">
+<input id="troco" placeholder="Troco para quanto?">
+</div>
+
+<!-- =========================
+PIX
+========================= -->
+
+<div id="boxPix" class="pixBox" style="display:none">
+
+<div style="font-weight:900">Chave PIX</div>
+
+<div style="font-size:18px;color:#ff5722;font-weight:900">
+<span id="pixChaveTxt"></span>
+</div>
+
+<button class="btnCopiarPix" onclick="copiarPix()">
+COPIAR CHAVE PIX
+</button>
+
+<div style="font-weight:900">
+Valor: R$ <span id="pixValorTxt">0.00</span>
+</div>
+
+<button class="adminBtn"
+style="background:#25d366"
+onclick="abrirZapComprovante()">
+Enviar comprovante no WhatsApp
+</button>
+
+<label style="display:flex;gap:8px;align-items:center;justify-content:center">
+<input type="checkbox" id="pixJaEnviei">
+Já enviei comprovante
+</label>
+
+<input type="file"
+id="pixArquivo"
+accept="image/*,application/pdf">
+
+</div>
+
+<button class="btnFinalizarCarrinho"
+onclick="finalizarPedido()">
+ENVIAR PEDIDO
+</button>
+
+</div>
+
+</div>
+<!-- =========================
+TELA ADMIN
+========================= -->
+
+<div id="telaAdmin" class="tela">
+
+<h2 style="margin-bottom:18px">Painel Admin</h2>
+
+<div class="adminBox">
+
+<b>Pedidos ao Vivo</b>
+
+<div id="adminPedidos"
+style="margin-top:12px;font-size:14px"></div>
+
+</div>
+
+<div class="adminBox">
+
+<b>Relatórios</b>
+
+<button class="adminBtn" onclick="relatorioHoje()">Hoje</button>
+<button class="adminBtn" onclick="relatorioMes()">Mês</button>
+<button class="adminBtn" onclick="relatorioAno()">Ano</button>
+<button class="adminBtn" onclick="exportarExcel()">Exportar Excel</button>
+<button class="adminBtn" onclick="zerarRelatorios()">Zerar Dados</button>
+
+</div>
+
+<div class="adminBox">
+
+<b>Gerenciar Cardápio</b>
+
+<button class="adminBtn" onclick="adminNovaAba()">Nova Aba</button>
+<button class="adminBtn" onclick="abrirNovoProdutoUI()">Adicionar Produto</button>
+<button class="adminBtn" onclick="abrirEditorItens()">Editar Produtos</button>
+<button class="adminBtn" onclick="abrirRemoverAbaUI()">Remover Aba</button>
+
+</div>
+
+</div>
+
+<!-- =========================
+EDITOR PRODUTOS
+========================= -->
+
+<div id="telaEditorItens" class="tela">
+<h2 style="margin-bottom:18px">Editor de Produtos</h2>
+<div id="listaEditor" class="lista"></div>
+</div>
+
+<!-- =========================
+REMOVER ABA
+========================= -->
+
+<div id="uiRemoverAba" class="tela">
+<h2 style="margin-bottom:18px">Remover Aba</h2>
+<div id="listaAbasRemover" class="lista"></div>
+</div>
+
+<!-- =========================
+NOVO PRODUTO
+========================= -->
+
+<div id="uiNovoProduto" class="tela">
+
+<h2 style="margin-bottom:18px">Novo Produto</h2>
+
+<div class="form">
+
+<input id="novoProdNome" placeholder="Nome do produto">
+<input id="novoProdPreco" placeholder="Preço">
+
+<select id="novoProdAba"></select>
+
+<button class="btnFinalizarCarrinho"
+onclick="confirmarNovoProduto()">
+Salvar Produto
+</button>
+
+</div>
+
+</div>
+
 <script type="module">
 
 /* =========================
@@ -453,8 +639,8 @@ let pedidosCache = []
 FIREBASE
 ========================= */
 
-import { initializeApp } from
-"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"
 
 import {
 getFirestore,
@@ -463,8 +649,8 @@ addDoc,
 onSnapshot,
 getDocs,
 deleteDoc
-} from
-"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+}
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
 const firebaseConfig = {
 apiKey:"AIzaSyCE6daBipSq0Xjxt3ofW9anxMdN-AecI4w",
@@ -506,17 +692,6 @@ return
 }
 mostrar("telaAdmin")
 }
-
-/* =========================
-ESCOLHER MODO
-========================= */
-
-window.definirModo = (modo)=>{
-modoPedido = modo
-mostrar("telaCardapio")
-renderAbas()
-}
-
 /* =========================
 CARDÁPIO BASE
 ========================= */
@@ -535,6 +710,16 @@ let cardapio = {
 }
 
 /* =========================
+ESCOLHER MODO
+========================= */
+
+window.definirModo = (modo)=>{
+modoPedido = modo
+mostrar("telaCardapio")
+renderAbas()
+}
+
+/* =========================
 FILTRO DELIVERY
 ========================= */
 
@@ -550,6 +735,18 @@ a.includes("doses") ||
 a.includes("caip") ||
 a.includes("batida") ||
 a.includes("vitamina")
+){
+return false
+}
+
+let nome = produto.nome.toLowerCase()
+
+if(
+nome.includes("suco") ||
+nome.includes("dose") ||
+nome.includes("caip") ||
+nome.includes("batida") ||
+nome.includes("vitamina")
 ){
 return false
 }
@@ -613,6 +810,7 @@ qs("lista").appendChild(el)
 })
 
 }
+
 /* =========================
 CARRINHO
 ========================= */
@@ -655,7 +853,6 @@ window.toggleCarrinho = ()=>{
 let aberto = qs("carrinho").classList.toggle("aberto")
 document.body.style.overflow = aberto ? "hidden" : "auto"
 }
-
 /* =========================
 FRETE AUTOMÁTICO INTELIGENTE
 ========================= */
@@ -682,6 +879,7 @@ valorFrete = 8
 }
 
 /* Atualiza frete quando digita bairro */
+
 setTimeout(()=>{
 if(qs("bairro")){
 qs("bairro").addEventListener("input",()=>{
@@ -723,7 +921,7 @@ qs("cLista").appendChild(div)
 qs("qtd").innerText=qtdTotal
 qs("total").innerText=totalGeral().toFixed(2)
 
-/* frete */
+/* exibir frete */
 
 if(valorFrete>0){
 qs("linhaFrete").style.display="block"
@@ -784,7 +982,6 @@ totalGeral().toFixed(2)
 }
 
 }
-
 /* =========================
 IR PARA CHECKOUT
 ========================= */
@@ -797,13 +994,18 @@ mostrar("telaCheckout")
 renderCheckoutResumo()
 atualizarPix()
 
+if(qs("pagamento")){
 qs("pagamento")
 .dispatchEvent(new Event("change"))
+}
 
 }
+
 /* =========================
 CHECKOUT TIPO PEDIDO
 ========================= */
+
+if(qs("tipoPedido")){
 
 qs("tipoPedido").onchange = e=>{
 
@@ -829,24 +1031,38 @@ renderCarrinho()
 
 }
 
+}
+
 /* =========================
 PAGAMENTO
 ========================= */
+
+if(qs("pagamento")){
 
 qs("pagamento").onchange = e=>{
 
 let p = e.target.value
 
+if(qs("boxPix")){
 qs("boxPix").style.display =
 (p==="PIX") ? "block" : "none"
+}
 
+if(qs("boxTroco")){
 qs("boxTroco").style.display =
 (p==="Dinheiro") ? "block" : "none"
+}
 
 pixComprovanteOK=false
+
+if(qs("pixJaEnviei")){
 qs("pixJaEnviei").checked=false
+}
 
 renderCheckoutResumo()
+
+}
+
 }
 
 /* =========================
@@ -867,6 +1083,8 @@ PIX_CHAVE
 
 }
 
+/* copiar chave */
+
 window.copiarPix = ()=>{
 
 navigator.clipboard.writeText(PIX_CHAVE)
@@ -874,17 +1092,26 @@ alert("Chave PIX copiada com sucesso ✅")
 
 }
 
+/* arquivo comprovante */
+
 if(qs("pixArquivo")){
+
 qs("pixArquivo").onchange = ()=>{
-if(qs("pixArquivo").files.length>0)
+if(qs("pixArquivo").files.length>0){
 pixComprovanteOK=true
 }
 }
 
+}
+
+/* checkbox já enviei */
+
 if(qs("pixJaEnviei")){
+
 qs("pixJaEnviei").onchange = e=>{
 pixComprovanteOK = e.target.checked
 }
+
 }
 
 /* =========================
@@ -906,17 +1133,16 @@ encodeURIComponent(texto)
 )
 
 }
-
 /* =========================
 FINALIZAR PEDIDO
 ========================= */
 
 window.finalizarPedido = async()=>{
 
-let nome = qs("nome").value
-let tel = qs("telefone").value
-let tipo = qs("tipoPedido").value
-let pag  = qs("pagamento").value
+let nome = qs("nome")?.value
+let tel  = qs("telefone")?.value
+let tipo = qs("tipoPedido")?.value
+let pag  = qs("pagamento")?.value
 
 if(!nome || !tel){
 alert("Preencha nome e telefone")
@@ -930,6 +1156,8 @@ alert("Envie o comprovante PIX para finalizar")
 return
 }
 
+/* montar pedido */
+
 let pedido = {
 cliente:{nome,tel},
 itens:carrinho,
@@ -942,22 +1170,24 @@ data:new Date().toISOString()
 /* salvar no Firebase */
 
 try{
-if(db) await addDoc(collection(db,"pedidos"),pedido)
-}catch(e){}
+await addDoc(collection(db,"pedidos"),pedido)
+}catch(e){
+console.log("Erro ao salvar pedido:",e)
+}
 
-/* mensagem WhatsApp */
+/* montar mensagem WhatsApp */
 
 let txt = "🥟 RECANTO DO PASTEL\n\n"
 
 carrinho.forEach(i=>{
-txt += `${i.qtd}x ${i.nome}\n`
+txt += `${i.qtd}x ${i.nome} — R$ ${(i.qtd*i.preco).toFixed(2)}\n`
 })
 
 if(valorFrete>0){
-txt += `\nTaxa entrega: R$ ${valorFrete.toFixed(2)}`
+txt += `\n🚚 Taxa entrega: R$ ${valorFrete.toFixed(2)}`
 }
 
-txt += `\n\nTotal R$ ${pedido.total.toFixed(2)}`
+txt += `\n\n💰 Total: R$ ${pedido.total.toFixed(2)}`
 
 window.open(
 `https://wa.me/${WHATSAPP_LOJA}?text=${
@@ -965,10 +1195,12 @@ encodeURIComponent(txt)
 }`
 )
 
-/* reset */
+/* reset sistema */
 
 carrinho=[]
 valorFrete=0
+pixComprovanteOK=false
+
 renderCarrinho()
 
 qs("carrinho").classList.remove("aberto")
@@ -985,34 +1217,31 @@ SOM NOTIFICAÇÃO ADMIN
 const audioNotificacao = new Audio(
 "https://actions.google.com/sounds/v1/alarms/notification.ogg"
 )
-
-let primeiraCarga=true
-
 /* =========================
 SINCRONIZAR PEDIDOS (ADMIN)
 ========================= */
 
-if(db){
-
 onSnapshot(collection(db,"pedidos"),snap=>{
 
 pedidosCache=[]
-qs("adminPedidos").innerHTML=""
+let box = qs("adminPedidos")
+
+if(box) box.innerHTML=""
 
 snap.forEach(d=>{
 let p=d.data()
 pedidosCache.push(p)
 
-qs("adminPedidos").innerHTML+=
-`<div style="margin-bottom:8px">
+if(box){
+box.innerHTML+=`
+<div style="margin-bottom:10px;padding:10px;background:#333;border-radius:10px">
 <b>${p.cliente.nome}</b><br>
 <span style="color:#4caf50;font-weight:700">
 R$ ${Number(p.total).toFixed(2)}
 </span>
 </div>`
+}
 })
-
-/* tocar som apenas após primeira carga */
 
 if(!primeiraCarga && pedidosCache.length>0){
 audioNotificacao.play().catch(()=>{})
@@ -1022,18 +1251,18 @@ primeiraCarga=false
 
 })
 
-}
 /* =========================
 SALVAR CARDÁPIO FIREBASE
 ========================= */
 
 async function salvarCardapioFirebase(){
 
-if(!db) return
-
 try{
 
-await deletarColecao("cardapio")
+let snap = await getDocs(collection(db,"cardapio"))
+snap.forEach(docu=>{
+deleteDoc(docu.ref)
+})
 
 for(let aba in cardapio){
 
@@ -1044,7 +1273,9 @@ itens:cardapio[aba]
 
 }
 
-}catch(e){}
+}catch(e){
+console.log("Erro salvar cardápio",e)
+}
 
 }
 
@@ -1053,8 +1284,6 @@ CARREGAR CARDÁPIO FIREBASE
 ========================= */
 
 async function carregarCardapioFirebase(){
-
-if(!db) return
 
 let snap = await getDocs(collection(db,"cardapio"))
 
@@ -1066,193 +1295,6 @@ snap.forEach(docu=>{
 let d=docu.data()
 cardapio[d.nomeAba]=d.itens||[]
 })
-
-renderAbas()
-
-}
-
-/* =========================
-DELETAR COLEÇÃO
-========================= */
-
-async function deletarColecao(nome){
-
-let snap = await getDocs(collection(db,nome))
-
-snap.forEach(docu=>{
-deleteDoc(docu.ref)
-})
-
-}
-
-/* =========================
-ADMIN - ABAS
-========================= */
-
-window.adminNovaAba = async()=>{
-
-let n = prompt("Nome da nova aba")
-
-if(!n || cardapio[n]) return
-
-cardapio[n]=[]
-
-await salvarCardapioFirebase()
-
-renderAbas()
-
-}
-
-window.abrirRemoverAbaUI = ()=>{
-
-qs("listaAbasRemover").innerHTML=""
-
-Object.keys(cardapio).forEach(a=>{
-
-let b=document.createElement("button")
-b.className="adminBtn"
-b.innerText=a
-
-b.onclick=async()=>{
-delete cardapio[a]
-await salvarCardapioFirebase()
-mostrar("telaAdmin")
-renderAbas()
-}
-
-qs("listaAbasRemover").appendChild(b)
-
-})
-
-mostrar("uiRemoverAba")
-
-}
-
-/* =========================
-NOVO PRODUTO
-========================= */
-
-window.abrirNovoProdutoUI = ()=>{
-
-qs("novoProdAba").innerHTML=""
-
-Object.keys(cardapio).forEach(a=>{
-let o=document.createElement("option")
-o.innerText=a
-qs("novoProdAba").appendChild(o)
-})
-
-mostrar("uiNovoProduto")
-
-}
-
-window.confirmarNovoProduto = async()=>{
-
-let nome = qs("novoProdNome").value
-let preco = parseFloat(qs("novoProdPreco").value)
-let aba   = qs("novoProdAba").value
-
-if(!nome || isNaN(preco)) return
-
-cardapio[aba].push({nome,preco})
-
-await salvarCardapioFirebase()
-
-mostrar("telaAdmin")
-
-}
-
-/* =========================
-EDITOR PRODUTOS
-========================= */
-
-window.abrirEditorItens = ()=>{
-
-qs("listaEditor").innerHTML=""
-
-Object.keys(cardapio).forEach(a=>{
-
-cardapio[a].forEach(i=>{
-
-let el=document.createElement("div")
-el.className="item"
-
-el.innerHTML=`
-<div style="text-align:center">
-<b>${a}</b><br>
-${i.nome}<br>
-<span style="color:#ff5722;font-weight:700">
-R$ ${i.preco}
-</span>
-</div>
-
-<div style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="adminBtn"
-onclick="editNome('${a}','${i.nome}')">
-Editar Nome
-</button>
-
-<button class="adminBtn"
-onclick="editPreco('${a}','${i.nome}')">
-Editar Preço
-</button>
-
-<button class="adminBtn"
-style="background:#c62828"
-onclick="remItem('${a}','${i.nome}')">
-Remover
-</button>
-</div>
-`
-
-qs("listaEditor").appendChild(el)
-
-})
-
-})
-
-mostrar("telaEditorItens")
-
-}
-
-window.editNome = async(a,n)=>{
-
-let it=cardapio[a].find(x=>x.nome===n)
-
-let novo=prompt("Novo nome",it.nome)
-
-if(novo){
-it.nome=novo
-await salvarCardapioFirebase()
-}
-
-abrirEditorItens()
-
-}
-
-window.editPreco = async(a,n)=>{
-
-let it=cardapio[a].find(x=>x.nome===n)
-
-let novo=parseFloat(prompt("Novo preço",it.preco))
-
-if(!isNaN(novo)){
-it.preco=novo
-await salvarCardapioFirebase()
-}
-
-abrirEditorItens()
-
-}
-
-window.remItem = async(a,n)=>{
-
-cardapio[a]=cardapio[a]
-.filter(x=>x.nome!==n)
-
-await salvarCardapioFirebase()
-
-abrirEditorItens()
 
 }
 
@@ -1303,7 +1345,7 @@ alert("Total do Ano: R$ "+total.toFixed(2))
 }
 
 /* =========================
-EXPORTAR EXCEL DETALHADO
+EXPORTAR EXCEL COMPLETO
 ========================= */
 
 window.exportarExcel=()=>{
@@ -1334,16 +1376,15 @@ csv+=`\n,,,,TOTAL VENDIDO,${totalGeralRel.toFixed(2)}\n`
 let blob=new Blob([csv],{type:"text/csv"})
 let a=document.createElement("a")
 a.href=URL.createObjectURL(blob)
-a.download="relatorio_detalhado_recanto.csv"
+a.download="relatorio_recanto_do_pastel.csv"
 a.click()
 
 }
-
 /* =========================
 ZERAR RELATÓRIOS
 ========================= */
 
-window.zerarRelatorios=async()=>{
+window.zerarRelatorios = async()=>{
 
 if(!confirm("Deseja apagar TODOS os pedidos?"))
 return
@@ -1396,7 +1437,7 @@ INICIAR SISTEMA
 initSistema()
 
 /* =========================
-FECHAR SCRIPT E HTML
+FIM DO SCRIPT
 ========================= */
 </script>
 </body>
