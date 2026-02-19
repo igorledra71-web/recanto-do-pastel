@@ -10,17 +10,44 @@ content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
+:root{
+--bg:#fdf6ee;
+--card:#fff;
+--accent:#c4632a;
+--accent2:#e8854a;
+--accent-light:#f5dcc8;
+--text:#3a2a1a;
+--text2:#7a6a5a;
+--border:#e8ddd0;
+--shadow:0 2px 12px rgba(60,40,20,.08);
+--radius:16px;
+}
+
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Poppins, sans-serif;
+font-family:'Poppins',sans-serif;
+-webkit-tap-highlight-color:transparent;
 }
 
 html,body{
 height:100%;
-background:#f4f4f4;
+background:var(--bg);
 overflow-x:hidden;
+color:var(--text);
+}
+
+button{
+transition:transform .15s ease,box-shadow .15s ease,opacity .15s ease;
+cursor:pointer;
+-webkit-user-select:none;
+user-select:none;
+}
+
+button:active{
+transform:scale(.94) !important;
+opacity:.85;
 }
 
 /* =========================
@@ -34,13 +61,31 @@ display:none;
 flex-direction:column;
 align-items:center;
 padding:20px;
-overflow:auto;
+padding-bottom:80px;
+overflow-y:auto;
+overflow-x:hidden;
 z-index:100;
-background:#f4f4f4;
+background:var(--bg);
+animation:fadeIn .35s ease;
 }
 
 .tela.ativa{
 display:flex;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(12px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes slideUp{
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+@keyframes slideRight{
+from{transform:translateX(100%)}
+to{transform:translateX(0)}
 }
 
 /* =========================
@@ -49,36 +94,41 @@ TELA ESCOLHA
 
 #telaEscolha{
 justify-content:center;
-background:linear-gradient(180deg,#ff9800,#ff5722);
-color:white;
+background:linear-gradient(160deg,#f5e6d0 0%,#e8c9a8 40%,#c4632a 100%);
+color:var(--text);
 text-align:center;
+padding-bottom:20px;
 }
 
 .logoTopo{
-width:90%;
-max-width:380px;
-margin-bottom:25px;
-filter:drop-shadow(0 10px 20px rgba(0,0,0,.35));
+width:85%;
+max-width:320px;
+margin-bottom:30px;
+filter:drop-shadow(0 8px 24px rgba(60,30,10,.3));
+animation:slideUp .6s ease;
+}
+
+#telaEscolha h1{
+color:white;
+font-size:clamp(20px,5vw,28px);
+text-shadow:0 2px 8px rgba(60,30,10,.3);
+margin-bottom:24px;
+animation:slideUp .6s ease .1s both;
 }
 
 .btnEscolha{
 background:white;
-color:#ff5722;
-padding:20px;
-border-radius:18px;
-font-size:20px;
-font-weight:900;
+color:var(--accent);
+padding:18px 24px;
+border-radius:var(--radius);
+font-size:clamp(16px,4vw,20px);
+font-weight:800;
 border:none;
 width:100%;
 max-width:360px;
-margin-top:18px;
-box-shadow:0 6px 14px rgba(0,0,0,.2);
-cursor:pointer;
-transition:.2s;
-}
-
-.btnEscolha:active{
-transform:scale(.96);
+margin-top:12px;
+box-shadow:0 4px 16px rgba(60,30,10,.15);
+animation:slideUp .5s ease .2s both;
 }
 
 /* =========================
@@ -86,7 +136,8 @@ CARDÁPIO
 ========================= */
 
 #telaCardapio{
-background:#f4f4f4;
+background:var(--bg);
+padding-top:16px;
 }
 
 .topo{
@@ -95,92 +146,168 @@ max-width:760px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-margin-bottom:16px;
+margin-bottom:14px;
+padding:0 4px;
 }
 
 .topo b{
-font-size:22px;
-color:#222;
+font-size:clamp(18px,5vw,24px);
+color:var(--text);
 }
 
-.abas{
-display:flex;
-gap:8px;
-overflow-x:auto;
+.btnCarrinho{
+background:var(--accent);
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:var(--radius);
+font-weight:800;
+font-size:14px;
+box-shadow:0 3px 10px rgba(196,99,42,.3);
+}
+
+/* =========================
+BUSCA
+========================= */
+
+.buscaInput{
 width:100%;
 max-width:760px;
-margin-bottom:16px;
-padding-bottom:4px;
+padding:14px 18px;
+padding-left:44px;
+border-radius:var(--radius);
+border:2px solid var(--border);
+font-size:14px;
+margin-bottom:14px;
+background:white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%237a6a5a' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 14px center;
+color:var(--text);
 }
 
-.aba{
-background:#eeeeee;
-border:1px solid #ddd;
-padding:12px 18px;
-border-radius:20px;
-font-weight:800;
-font-size:13px;
-white-space:nowrap;
-color:#333;
-cursor:pointer;
-transition:.2s;
+.buscaInput:focus{
+outline:none;
+border-color:var(--accent);
+box-shadow:0 0 0 3px rgba(196,99,42,.12);
 }
 
-.aba.ativa{
-background:#ff5722;
-color:white;
-border-color:#ff5722;
+/* =========================
+ABAS (HIDDEN, replaced by accordion)
+========================= */
+
+.abas{
+display:none;
 }
+
+/* =========================
+ACCORDION CATEGORIES
+========================= */
 
 .lista{
 width:100%;
 max-width:760px;
 display:flex;
 flex-direction:column;
-gap:18px;
-padding-bottom:180px;
+gap:10px;
+padding-bottom:100px;
+}
+
+.categoriaHeader{
+width:100%;
+background:white;
+border:2px solid var(--border);
+border-radius:var(--radius);
+padding:16px 20px;
+font-size:clamp(15px,3.5vw,17px);
+font-weight:800;
+color:var(--text);
+text-align:left;
+display:flex;
+justify-content:space-between;
+align-items:center;
+box-shadow:var(--shadow);
+}
+
+.categoriaHeader::after{
+content:'▸';
+font-size:18px;
+color:var(--accent);
+transition:transform .3s ease;
+flex-shrink:0;
+margin-left:10px;
+}
+
+.categoriaHeader.aberta{
+background:var(--accent);
+color:white;
+border-color:var(--accent);
+}
+
+.categoriaHeader.aberta::after{
+content:'▾';
+color:white;
+}
+
+.categoriaItens{
+display:none;
+flex-direction:column;
+gap:10px;
+padding:6px 0;
+animation:slideUp .3s ease;
+}
+
+.categoriaItens.visivel{
+display:flex;
 }
 
 .item{
 background:white;
-border-radius:18px;
-padding:20px;
+border-radius:14px;
+padding:16px;
 display:flex;
-flex-direction:column;
 align-items:center;
-gap:10px;
-border:1px solid #e0e0e0;
-box-shadow:0 4px 10px rgba(0,0,0,.06);
+justify-content:space-between;
+gap:12px;
+border:1px solid var(--border);
+box-shadow:0 1px 6px rgba(60,40,20,.04);
+animation:slideUp .25s ease;
+}
+
+.itemInfo{
+flex:1;
 }
 
 .itemNome{
-font-size:18px;
-font-weight:900;
-color:#222;
-text-align:center;
+font-size:clamp(14px,3.2vw,16px);
+font-weight:700;
+color:var(--text);
+line-height:1.3;
+}
+
+.itemPrecos{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-top:4px;
 }
 
 .itemPreco{
-font-size:20px;
-font-weight:900;
-color:#ff5722;
+font-size:14px;
+font-weight:800;
+color:var(--accent);
 }
 
 .btnAdd{
-background:#ff5722;
+background:var(--accent);
 color:white;
 border:none;
-border-radius:14px;
-padding:12px 18px;
-font-weight:900;
-font-size:14px;
-cursor:pointer;
-transition:.2s;
+border-radius:12px;
+padding:10px 16px;
+font-weight:800;
+font-size:13px;
+white-space:nowrap;
+flex-shrink:0;
+box-shadow:0 2px 8px rgba(196,99,42,.2);
 }
 
-.btnAdd:active{
-transform:scale(.95);
-}
 /* =========================
 CARRINHO
 ========================= */
@@ -193,49 +320,139 @@ width:92%;
 max-width:420px;
 height:100%;
 background:white;
-box-shadow:-8px 0 24px rgba(0,0,0,.25);
-transition:.35s;
+box-shadow:-4px 0 24px rgba(60,30,10,.15);
+transition:right .35s cubic-bezier(.4,0,.2,1);
 display:flex;
 flex-direction:column;
 z-index:900;
-border-top-left-radius:20px;
-border-bottom-left-radius:20px;
+border-top-left-radius:24px;
+border-bottom-left-radius:24px;
 }
 
 #carrinho.aberto{
 right:0;
 }
 
+.carrinhoHeader{
+padding:20px;
+font-weight:900;
+font-size:18px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid var(--border);
+color:var(--text);
+}
+
+.carrinhoFechar{
+background:var(--accent-light);
+border:none;
+border-radius:10px;
+padding:8px 14px;
+font-weight:800;
+color:var(--accent);
+font-size:16px;
+}
+
 .cLista{
 flex:1;
 overflow:auto;
-padding:18px;
+padding:16px;
 display:flex;
 flex-direction:column;
-gap:14px;
+gap:12px;
 }
 
 .cItem{
-background:#fafafa;
+background:var(--bg);
 border-radius:14px;
 padding:14px;
 display:flex;
 flex-direction:column;
-gap:6px;
-border:1px solid #eee;
+gap:8px;
+border:1px solid var(--border);
+}
+
+.cItemNome{
+font-size:15px;
+font-weight:700;
+color:var(--text);
+}
+
+.cItemPreco{
+color:var(--accent);
+font-weight:800;
+font-size:14px;
+}
+
+.qtdControle{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:14px;
+margin-top:4px;
+}
+
+.btnQtd{
+width:36px;
+height:36px;
+border-radius:50%;
+border:none;
+font-size:18px;
+font-weight:900;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.btnQtdMenos{
+background:var(--accent-light);
+color:var(--accent);
+}
+
+.btnQtdMais{
+background:var(--accent);
+color:white;
+}
+
+.qtdNum{
+font-size:18px;
+font-weight:900;
+min-width:30px;
 text-align:center;
+color:var(--text);
+}
+
+.carrinhoFooter{
+padding:16px;
+border-top:1px solid var(--border);
+background:white;
+}
+
+.carrinhoFrete{
+font-weight:800;
+color:var(--accent);
+margin-bottom:6px;
+font-size:14px;
+}
+
+.carrinhoTotal{
+font-size:18px;
+font-weight:900;
+color:var(--text);
+margin-bottom:12px;
 }
 
 .btnFinalizarCarrinho{
-margin:14px;
+width:100%;
 padding:16px;
-border-radius:16px;
+border-radius:var(--radius);
 font-size:16px;
 font-weight:900;
-background:#ff5722;
+background:var(--accent);
 color:white;
 border:none;
-cursor:pointer;
+box-shadow:0 4px 14px rgba(196,99,42,.3);
 }
 
 /* =========================
@@ -243,17 +460,31 @@ CHECKOUT
 ========================= */
 
 #telaCheckout{
-background:#f4f4f4;
+background:var(--bg);
+}
+
+#telaCheckout h2{
+font-size:clamp(18px,5vw,24px);
+color:var(--text);
+margin-bottom:16px;
 }
 
 .checkoutResumo{
 width:100%;
 max-width:760px;
 background:white;
-border-radius:18px;
-padding:18px;
-border:1px solid #e0e0e0;
+border-radius:var(--radius);
+padding:20px;
+border:1px solid var(--border);
 margin-bottom:18px;
+box-shadow:var(--shadow);
+}
+
+.checkoutResumo .titulo{
+font-weight:900;
+font-size:16px;
+margin-bottom:12px;
+color:var(--text);
 }
 
 .form{
@@ -261,15 +492,25 @@ width:100%;
 max-width:760px;
 display:flex;
 flex-direction:column;
-gap:14px;
+gap:12px;
 }
 
 input,select{
-padding:14px;
+padding:14px 16px;
 border-radius:12px;
-border:1px solid #ccc;
+border:2px solid var(--border);
 font-size:14px;
 width:100%;
+background:white;
+color:var(--text);
+font-family:'Poppins',sans-serif;
+transition:border-color .2s;
+}
+
+input:focus,select:focus{
+outline:none;
+border-color:var(--accent);
+box-shadow:0 0 0 3px rgba(196,99,42,.1);
 }
 
 /* =========================
@@ -277,24 +518,68 @@ PIX BOX
 ========================= */
 
 .pixBox{
-background:#f9f9f9;
-border-radius:16px;
-padding:16px;
+background:white;
+border-radius:var(--radius);
+padding:20px;
 display:flex;
 flex-direction:column;
-gap:10px;
-border:1px solid #ddd;
+gap:12px;
+border:2px solid var(--border);
+box-shadow:var(--shadow);
+}
+
+.pixBox .pixTitulo{
+font-weight:900;
+font-size:16px;
+color:var(--text);
+}
+
+.pixBox .pixChave{
+font-size:16px;
+font-weight:800;
+color:var(--accent);
+word-break:break-all;
+}
+
+.pixBox .pixValor{
+font-weight:900;
+font-size:16px;
+color:var(--text);
 }
 
 .btnCopiarPix{
-background:#1565c0;
+background:var(--accent);
 color:white;
 border:none;
-padding:12px;
+padding:14px;
 border-radius:12px;
 font-weight:800;
 font-size:14px;
-cursor:pointer;
+box-shadow:0 3px 10px rgba(196,99,42,.25);
+}
+
+.btnComprovante{
+background:#3d8b4f;
+color:white;
+border:none;
+padding:14px;
+border-radius:12px;
+font-weight:800;
+font-size:14px;
+width:100%;
+margin-top:4px;
+box-shadow:0 3px 10px rgba(61,139,79,.25);
+}
+
+/* =========================
+OBS ITEM
+========================= */
+
+.obsItem{
+font-size:12px;
+color:var(--text2);
+font-style:italic;
+margin-top:2px;
 }
 
 /* =========================
@@ -302,30 +587,44 @@ ADMIN
 ========================= */
 
 #telaAdmin{
-background:#1f1f1f;
-color:white;
+background:#2a1f14;
+color:#f0e6da;
+}
+
+#telaAdmin h2{
+color:#f0e6da;
+font-size:clamp(18px,5vw,24px);
 }
 
 .adminBox{
-background:#2c2c2c;
-padding:16px;
-border-radius:16px;
-margin-bottom:16px;
+background:#3a2f24;
+padding:18px;
+border-radius:var(--radius);
+margin-bottom:14px;
 width:100%;
 max-width:760px;
+border:1px solid #4a3f34;
+}
+
+.adminBox b{
+color:#f0e6da;
+font-size:15px;
 }
 
 .adminBtn{
-background:#333;
+background:#4a3f34;
 border:none;
-color:white;
+color:#f0e6da;
 padding:14px;
-border-radius:14px;
+border-radius:12px;
 margin-top:8px;
 width:100%;
 font-weight:800;
 font-size:14px;
-cursor:pointer;
+}
+
+.adminBtn:active{
+background:#5a4f44;
 }
 
 /* =========================
@@ -337,13 +636,13 @@ position:fixed;
 top:14px;
 right:14px;
 z-index:4000;
-font-size:20px;
+font-size:18px;
 background:white;
 border:none;
 border-radius:12px;
-padding:8px 10px;
-box-shadow:0 4px 10px rgba(0,0,0,.2);
-cursor:pointer;
+padding:10px 12px;
+box-shadow:0 2px 10px rgba(60,30,10,.12);
+color:var(--text);
 }
 
 .btnVoltar{
@@ -351,39 +650,42 @@ position:fixed;
 bottom:16px;
 left:16px;
 z-index:3000;
-background:#222;
+background:var(--accent);
 color:white;
 border:none;
 border-radius:12px;
-padding:10px 14px;
+padding:12px 16px;
 font-weight:900;
-cursor:pointer;
+font-size:14px;
+box-shadow:0 3px 12px rgba(196,99,42,.3);
 }
 
-
 /* =========================
-TOAST NOTIFICATION
+TOAST
 ========================= */
 
 .toast{
 position:fixed;
-bottom:100px;
+bottom:90px;
 left:50%;
-transform:translateX(-50%);
-background:#333;
+transform:translateX(-50%) translateY(20px);
+background:var(--accent);
 color:white;
-padding:12px 24px;
+padding:12px 28px;
 border-radius:30px;
 font-weight:700;
 font-size:14px;
 z-index:9999;
 opacity:0;
-transition:opacity .3s;
+transition:all .3s ease;
 pointer-events:none;
+box-shadow:0 4px 16px rgba(196,99,42,.35);
+white-space:nowrap;
 }
 
 .toast.mostrar{
 opacity:1;
+transform:translateX(-50%) translateY(0);
 }
 
 /* =========================
@@ -393,26 +695,30 @@ MODAL TAMANHO
 .modalOverlay{
 position:fixed;
 inset:0;
-background:rgba(0,0,0,.5);
+background:rgba(60,40,20,.5);
 display:flex;
 align-items:center;
 justify-content:center;
 z-index:5000;
+animation:fadeIn .2s ease;
+backdrop-filter:blur(4px);
 }
 
 .modalBox{
 background:white;
 border-radius:20px;
-padding:24px;
+padding:28px;
 width:90%;
 max-width:360px;
 text-align:center;
+box-shadow:0 8px 32px rgba(60,30,10,.2);
+animation:slideUp .3s ease;
 }
 
 .modalBox h3{
-font-size:20px;
-margin-bottom:16px;
-color:#222;
+font-size:clamp(18px,4vw,22px);
+margin-bottom:20px;
+color:var(--text);
 }
 
 .modalBtnTam{
@@ -422,105 +728,44 @@ border-radius:14px;
 font-size:16px;
 font-weight:900;
 border:none;
-cursor:pointer;
 margin-bottom:10px;
-transition:.2s;
-}
-
-.modalBtnTam:active{
-transform:scale(.96);
 }
 
 .modalBtnP{
-background:#ff9800;
+background:var(--accent2);
 color:white;
 }
 
 .modalBtnG{
-background:#ff5722;
+background:var(--accent);
 color:white;
 }
 
 .modalBtnCancelar{
-background:#eee;
-color:#666;
+background:var(--accent-light);
+color:var(--accent);
 font-size:14px;
 padding:12px;
 }
 
 /* =========================
-BUSCA CARDAPIO
+RESPONSIVE
 ========================= */
 
-.buscaInput{
-width:100%;
-max-width:760px;
-padding:14px 18px;
-border-radius:14px;
-border:1px solid #ddd;
-font-size:14px;
-margin-bottom:12px;
-background:white;
+@media(min-width:768px){
+.tela{padding:30px 40px;padding-bottom:80px}
+.item{padding:18px 22px}
+.categoriaHeader{padding:18px 24px;font-size:18px}
 }
 
-.buscaInput:focus{
-outline:none;
-border-color:#ff5722;
+@media(max-width:380px){
+.tela{padding:14px 10px;padding-bottom:70px}
+.categoriaHeader{padding:14px 16px;font-size:14px}
+.item{padding:12px;gap:8px}
+.btnAdd{padding:8px 12px;font-size:12px}
+.btnVoltar{bottom:12px;left:12px;padding:10px 12px;font-size:12px}
+.btnConfig{top:10px;right:10px;padding:8px 10px;font-size:16px}
 }
-
-/* =========================
-CARRINHO +/- BOTOES
-========================= */
-
-.qtdControle{
-display:flex;
-align-items:center;
-justify-content:center;
-gap:12px;
-margin-top:6px;
-}
-
-.btnQtd{
-width:36px;
-height:36px;
-border-radius:50%;
-border:none;
-font-size:18px;
-font-weight:900;
-cursor:pointer;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
-.btnQtdMenos{
-background:#eee;
-color:#333;
-}
-
-.btnQtdMais{
-background:#ff5722;
-color:white;
-}
-
-.qtdNum{
-font-size:18px;
-font-weight:900;
-min-width:30px;
-text-align:center;
-}
-
-/* =========================
-OBS ITEM
-========================= */
-
-.obsItem{
-font-size:12px;
-color:#888;
-font-style:italic;
-margin-top:2px;
-}
-
 </style>
 </head>
 <body>
@@ -663,7 +908,7 @@ PIX
 
 <div id="boxPix" class="pixBox" style="display:none">
 
-<div style="font-weight:900">Chave PIX</div>
+<div class="pixTitulo">Chave PIX</div>
 
 <div style="font-size:16px;font-weight:900">
 <span id="pixChaveTxt"></span>
@@ -708,7 +953,7 @@ TELA ADMIN
 
 <div id="telaAdmin" class="tela">
 
-<h2 style="margin-bottom:16px">Painel Admin</h2>
+<h2>Painel Admin</h2>
 
 <div class="adminBox">
 <b>Pedidos ao Vivo</b>
@@ -740,7 +985,7 @@ TELA NOVO PRODUTO
 
 <div id="uiNovoProduto" class="tela">
 
-<h2 style="margin-bottom:16px;color:#222">Adicionar Produto</h2>
+<h2 style="margin-bottom:16px">Adicionar Produto</h2>
 
 <div class="form" style="max-width:760px">
 <select id="novoProdAba"></select>
@@ -758,7 +1003,7 @@ TELA EDITOR DE ITENS
 
 <div id="telaEditorItens" class="tela">
 
-<h2 style="margin-bottom:16px;color:#222">Editar / Remover Itens</h2>
+<h2 style="margin-bottom:16px">Editar / Remover Itens</h2>
 
 <div id="listaEditor" style="width:100%;max-width:760px"></div>
 
@@ -772,7 +1017,7 @@ TELA REMOVER ABA
 
 <div id="uiRemoverAba" class="tela">
 
-<h2 style="margin-bottom:16px;color:#222">Remover Aba</h2>
+<h2 style="margin-bottom:16px">Remover Aba</h2>
 
 <div id="listaAbasRemover" style="width:100%;max-width:760px"></div>
 
@@ -1147,32 +1392,158 @@ function renderAbas(){
 qs("abas").innerHTML=""
 qs("lista").innerHTML=""
 
-Object.keys(cardapio).forEach((aba,index)=>{
+let categoriasAgrupadas = agruparCategorias()
+
+Object.keys(categoriasAgrupadas).forEach((nomeGrupo)=>{
+
+let grupo = categoriasAgrupadas[nomeGrupo]
+
+let header = document.createElement("button")
+header.className = "categoriaHeader"
+header.innerText = nomeGrupo
+
+let container = document.createElement("div")
+container.className = "categoriaItens"
+
+renderItensAcordeon(grupo, container)
+
+header.onclick = ()=>{
+let aberta = header.classList.toggle("aberta")
+container.classList.toggle("visivel")
+
+if(!aberta) return
+
+document.querySelectorAll(".categoriaHeader").forEach(h=>{
+if(h !== header){
+h.classList.remove("aberta")
+}
+})
+document.querySelectorAll(".categoriaItens").forEach(c=>{
+if(c !== container){
+c.classList.remove("visivel")
+}
+})
+}
+
+qs("lista").appendChild(header)
+qs("lista").appendChild(container)
+
+})
+
+}
+
+function agruparCategorias(){
+
+let grupos = {}
+
+let abasP = {}
+let abasG = {}
+
+Object.keys(cardapio).forEach(aba=>{
+if(aba.endsWith(" P")) abasP[aba.replace(" P","")] = aba
+if(aba.endsWith(" G")) abasG[aba.replace(" G","")] = aba
+})
+
+let processados = new Set()
+
+Object.keys(cardapio).forEach(aba=>{
 
 if(!abaPermitida(aba)) return
+if(processados.has(aba)) return
+
+let nomeBase = aba.replace(" P","").replace(" G","")
+
+if(aba.endsWith(" P") && abasG[nomeBase]){
+let nomeGrupo = nomeBase
+if(!grupos[nomeGrupo]) grupos[nomeGrupo] = {}
+
+let listaP = cardapio[aba]
+let listaG = cardapio[abasG[nomeBase]]
+
+listaP.forEach(item=>{
+let base = item.nome.replace(" P","")
+if(!grupos[nomeGrupo][base]) grupos[nomeGrupo][base] = {}
+grupos[nomeGrupo][base]["P"] = item.preco
+})
+
+listaG.forEach(item=>{
+let base = item.nome.replace(" G","")
+if(!grupos[nomeGrupo][base]) grupos[nomeGrupo][base] = {}
+grupos[nomeGrupo][base]["G"] = item.preco
+})
+
+processados.add(aba)
+processados.add(abasG[nomeBase])
+
+} else if(aba.endsWith(" G") && abasP[nomeBase]){
+return
+} else {
+if(!grupos[aba]) grupos[aba] = {}
+
+cardapio[aba].forEach(item=>{
+if(!grupos[aba][item.nome]) grupos[aba][item.nome] = {}
+grupos[aba][item.nome]["Único"] = item.preco
+})
+
+processados.add(aba)
+}
+
+})
+
+return grupos
+}
+
+function renderItensAcordeon(grupo, container){
+
+container.innerHTML = ""
+
+Object.keys(grupo).forEach(nomeBase=>{
+
+let tamanhos = grupo[nomeBase]
+
+let el = document.createElement("div")
+el.className = "item"
+
+let infoDiv = document.createElement("div")
+infoDiv.className = "itemInfo"
+
+let nomeEl = document.createElement("div")
+nomeEl.className = "itemNome"
+nomeEl.textContent = nomeBase
+infoDiv.appendChild(nomeEl)
+
+let precosDiv = document.createElement("div")
+precosDiv.className = "itemPrecos"
+
+Object.keys(tamanhos).forEach(t=>{
+let span = document.createElement("span")
+span.className = "itemPreco"
+span.textContent = (t === "Único" ? "" : t + " ") + "R$ " + tamanhos[t].toFixed(2)
+precosDiv.appendChild(span)
+})
+
+infoDiv.appendChild(precosDiv)
+el.appendChild(infoDiv)
 
 let btn = document.createElement("button")
-btn.className="aba"
-btn.innerText = aba
+btn.className = "btnAdd"
+btn.textContent = "Adicionar"
 
 btn.onclick = ()=>{
-
-/* remover ativa anterior */
-document.querySelectorAll(".aba")
-.forEach(a=>a.classList.remove("ativa"))
-
-btn.classList.add("ativa")
-
-renderItens(aba)
-
+if(tamanhos["P"] && tamanhos["G"]){
+mostrarModalTamanho(nomeBase, tamanhos)
+} else if(Object.keys(tamanhos).length > 1 && tamanhos["Único"] === undefined){
+let keys = Object.keys(tamanhos)
+let preco = tamanhos[keys[0]]
+pedirObservacao(nomeBase, preco)
+} else {
+let preco = tamanhos["Único"] || tamanhos["P"] || tamanhos["G"] || tamanhos["Meia"] || tamanhos[Object.keys(tamanhos)[0]]
+pedirObservacao(nomeBase, preco)
+}
 }
 
-qs("abas").appendChild(btn)
-
-/* abrir primeira aba automaticamente */
-if(index === 0){
-setTimeout(()=>{ btn.click() }, 50)
-}
+el.appendChild(btn)
+container.appendChild(el)
 
 })
 
@@ -1209,73 +1580,6 @@ agrupado[base]["Único"] = item.preco
 })
 
 return agrupado
-
-}
-
-/* =========================
-RENDER ITENS INTELIGENTE
-========================= */
-
-function renderItens(aba){
-
-qs("lista").innerHTML=""
-
-let produtos = cardapio[aba]
-if(!produtos) return
-
-let busca = qs("buscaCardapio")?.value?.toLowerCase() || ""
-
-let organizados = organizarTamanhos(produtos)
-
-Object.keys(organizados).forEach(nomeBase=>{
-
-if(busca && !nomeBase.toLowerCase().includes(busca)) return
-
-let tamanhos = organizados[nomeBase]
-
-let el = document.createElement("div")
-el.className="item"
-
-let html = `<div class="itemNome">${nomeBase}</div>`
-
-Object.keys(tamanhos).forEach(t=>{
-
-html += `
-<div style="font-size:18px;font-weight:700;color:#ff5722">
-${t==="Único"?"":t+" - "}
-R$ ${tamanhos[t].toFixed(2)}
-</div>
-`
-
-})
-
-html += `<button class="btnAdd">Adicionar</button>`
-
-el.innerHTML = html
-
-el.querySelector("button").onclick=()=>{
-
-if(tamanhos["P"] && tamanhos["G"]){
-
-mostrarModalTamanho(nomeBase, tamanhos)
-
-}
-else{
-
-let preco =
-tamanhos["Único"] ||
-tamanhos["P"] ||
-tamanhos["G"]
-
-pedirObservacao(nomeBase, preco)
-
-}
-
-}
-
-qs("lista").appendChild(el)
-
-})
 
 }
 
@@ -2282,60 +2586,74 @@ window.filtrarCardapio = ()=>{
 let busca = qs("buscaCardapio")?.value?.toLowerCase() || ""
 
 if(!busca){
-document.querySelectorAll(".aba").forEach(a=>a.classList.remove("ativa"))
-let primeira = document.querySelector(".aba")
-if(primeira){
-primeira.classList.add("ativa")
-primeira.click()
-}
+renderAbas()
 return
 }
 
-document.querySelectorAll(".aba").forEach(a=>a.classList.remove("ativa"))
-
 qs("lista").innerHTML = ""
 
-Object.keys(cardapio).forEach(aba=>{
+let categoriasAgrupadas = agruparCategorias()
 
-if(!abaPermitida(aba)) return
+Object.keys(categoriasAgrupadas).forEach(nomeGrupo=>{
 
-let produtos = cardapio[aba]
-let organizados = organizarTamanhos(produtos)
+let grupo = categoriasAgrupadas[nomeGrupo]
+let encontrados = {}
 
-Object.keys(organizados).forEach(nomeBase=>{
-
-if(!nomeBase.toLowerCase().includes(busca)) return
-
-let tamanhos = organizados[nomeBase]
-
-let el = document.createElement("div")
-el.className="item"
-
-let html = `<div class="itemNome">${nomeBase}</div>`
-html += `<div style="font-size:12px;color:#999;margin-bottom:4px">${aba}</div>`
-
-Object.keys(tamanhos).forEach(t=>{
-html += `
-<div style="font-size:18px;font-weight:700;color:#ff5722">
-${t==="Único"?"":t+" - "}
-R$ ${tamanhos[t].toFixed(2)}
-</div>
-`
+Object.keys(grupo).forEach(nomeBase=>{
+if(nomeBase.toLowerCase().includes(busca)){
+encontrados[nomeBase] = grupo[nomeBase]
+}
 })
 
-html += `<button class="btnAdd">Adicionar</button>`
+if(Object.keys(encontrados).length === 0) return
 
-el.innerHTML = html
+let label = document.createElement("div")
+label.style.cssText = "font-size:13px;font-weight:700;color:var(--text2);padding:4px 0;margin-top:8px"
+label.textContent = nomeGrupo
+qs("lista").appendChild(label)
 
-el.querySelector("button").onclick=()=>{
+Object.keys(encontrados).forEach(nomeBase=>{
+
+let tamanhos = encontrados[nomeBase]
+
+let el = document.createElement("div")
+el.className = "item"
+
+let infoDiv = document.createElement("div")
+infoDiv.className = "itemInfo"
+
+let nomeEl = document.createElement("div")
+nomeEl.className = "itemNome"
+nomeEl.textContent = nomeBase
+infoDiv.appendChild(nomeEl)
+
+let precosDiv = document.createElement("div")
+precosDiv.className = "itemPrecos"
+
+Object.keys(tamanhos).forEach(t=>{
+let span = document.createElement("span")
+span.className = "itemPreco"
+span.textContent = (t === "Único" ? "" : t + " ") + "R$ " + tamanhos[t].toFixed(2)
+precosDiv.appendChild(span)
+})
+
+infoDiv.appendChild(precosDiv)
+el.appendChild(infoDiv)
+
+let btn = document.createElement("button")
+btn.className = "btnAdd"
+btn.textContent = "Adicionar"
+
+btn.onclick = ()=>{
 if(tamanhos["P"] && tamanhos["G"]){
 mostrarModalTamanho(nomeBase, tamanhos)
-}else{
-let preco = tamanhos["Único"] || tamanhos["P"] || tamanhos["G"]
+} else {
+let preco = tamanhos["Único"] || tamanhos["P"] || tamanhos["G"] || tamanhos[Object.keys(tamanhos)[0]]
 pedirObservacao(nomeBase, preco)
 }
 }
 
+el.appendChild(btn)
 qs("lista").appendChild(el)
 
 })
