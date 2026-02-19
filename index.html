@@ -555,11 +555,12 @@ padding:14px;
 border-radius:12px;
 font-weight:800;
 font-size:14px;
+width:100%;
 box-shadow:0 3px 10px rgba(196,99,42,.25);
 }
 
 .btnComprovante{
-background:#3d8b4f;
+background:#5a3e2b;
 color:white;
 border:none;
 padding:14px;
@@ -568,7 +569,19 @@ font-weight:800;
 font-size:14px;
 width:100%;
 margin-top:4px;
-box-shadow:0 3px 10px rgba(61,139,79,.25);
+box-shadow:0 3px 10px rgba(90,62,43,.25);
+}
+
+.btnEnviarPedido{
+width:100%;
+padding:16px;
+border-radius:var(--radius);
+font-size:16px;
+font-weight:900;
+background:#5a3e2b;
+color:white;
+border:none;
+box-shadow:0 4px 14px rgba(90,62,43,.3);
 }
 
 /* =========================
@@ -625,6 +638,98 @@ font-size:14px;
 
 .adminBtn:active{
 background:#5a4f44;
+}
+
+.adminTabs{
+display:flex;
+gap:8px;
+margin-bottom:12px;
+width:100%;
+}
+
+.adminTab{
+flex:1;
+padding:14px 10px;
+border-radius:12px;
+border:2px solid #4a3f34;
+background:#3a2f24;
+color:#f0e6da;
+font-weight:800;
+font-size:14px;
+text-align:center;
+position:relative;
+}
+
+.adminTab.ativo{
+background:var(--accent);
+border-color:var(--accent);
+color:white;
+}
+
+.adminBadge{
+position:absolute;
+top:-6px;
+right:-6px;
+background:#e74c3c;
+color:white;
+font-size:11px;
+font-weight:900;
+min-width:22px;
+height:22px;
+border-radius:11px;
+display:none;
+align-items:center;
+justify-content:center;
+padding:0 6px;
+}
+
+.adminBadge.visivel{
+display:flex;
+}
+
+.pedidoCard{
+background:#4a3f34;
+border-radius:12px;
+padding:14px;
+margin-bottom:10px;
+}
+
+.pedidoCard .pedidoNome{
+font-weight:900;
+font-size:15px;
+color:#f0e6da;
+}
+
+.pedidoCard .pedidoInfo{
+font-size:13px;
+color:#c0b0a0;
+margin-top:4px;
+line-height:1.5;
+}
+
+.pedidoCard .pedidoItens{
+margin-top:8px;
+font-size:13px;
+color:#d0c0b0;
+}
+
+.pedidoCard .pedidoTotal{
+margin-top:8px;
+font-weight:900;
+color:#4caf50;
+font-size:15px;
+}
+
+.btnDeliveryCaminho{
+background:var(--accent);
+color:white;
+border:none;
+padding:10px 14px;
+border-radius:10px;
+font-weight:800;
+font-size:13px;
+margin-top:8px;
+width:100%;
 }
 
 /* =========================
@@ -910,7 +1015,7 @@ PIX
 
 <div class="pixTitulo">Chave PIX</div>
 
-<div style="font-size:16px;font-weight:900">
+<div style="font-size:16px;font-weight:900;word-break:break-all">
 <span id="pixChaveTxt"></span>
 </div>
 
@@ -922,14 +1027,13 @@ COPIAR CHAVE PIX
 Valor: R$ <span id="pixValorTxt">0.00</span>
 </div>
 
-<button class="adminBtn"
-style="background:#25d366"
+<button class="btnComprovante"
 onclick="abrirZapComprovante()">
 Enviar comprovante no WhatsApp
 </button>
 
-<label style="display:flex;gap:6px;align-items:center;justify-content:center">
-<input type="checkbox" id="pixJaEnviei">
+<label style="display:flex;gap:6px;align-items:center;justify-content:center;font-size:14px">
+<input type="checkbox" id="pixJaEnviei" style="width:auto">
 Já enviei comprovante
 </label>
 
@@ -939,7 +1043,7 @@ accept="image/*,application/pdf">
 
 </div>
 
-<button class="btnFinalizarCarrinho"
+<button class="btnEnviarPedido"
 onclick="finalizarPedido()">
 ENVIAR PEDIDO
 </button>
@@ -957,7 +1061,20 @@ TELA ADMIN
 
 <div class="adminBox">
 <b>Pedidos ao Vivo</b>
-<div id="adminPedidos" style="margin-top:10px"></div>
+
+<div class="adminTabs" style="margin-top:12px">
+<button class="adminTab ativo" id="tabDelivery" onclick="trocarAbaAdmin('delivery')">
+Delivery
+<span class="adminBadge" id="badgeDelivery">0</span>
+</button>
+<button class="adminTab" id="tabLocal" onclick="trocarAbaAdmin('local')">
+Local
+<span class="adminBadge" id="badgeLocal">0</span>
+</button>
+</div>
+
+<div id="adminPedidosDelivery"></div>
+<div id="adminPedidosLocal" style="display:none"></div>
 </div>
 
 <div class="adminBox">
@@ -1975,9 +2092,7 @@ let valor = totalGeral().toFixed(2)
 let texto =
 `Comprovante PIX - Recanto do Pastel\nValor: R$ ${valor}`
 
-window.open(
-`https://wa.me/${WHATSAPP_LOJA}?text=${encodeURIComponent(texto)}`
-)
+location.href = `https://wa.me/${WHATSAPP_LOJA}?text=${encodeURIComponent(texto)}`
 
 pixComprovanteOK = true
 
@@ -1993,9 +2108,17 @@ let msg = `🥟 *RECANTO DO PASTEL*\n\n`
 
 msg += `👤 Cliente: ${pedido.cliente.nome}\n`
 msg += `📱 Telefone: ${pedido.cliente.tel}\n`
-msg += `📦 Tipo: ${pedido.modo === "delivery" ? "Delivery" : "Local"}\n\n`
+msg += `📦 Tipo: ${pedido.modo === "delivery" ? "Delivery" : "Local"}\n`
+msg += `💳 Pagamento: ${pedido.pagamento || "PIX"}\n`
 
-msg += `🧾 *Itens:*\n`
+if(pedido.modo === "delivery" && pedido.endereco){
+let e = pedido.endereco
+if(e.rua) msg += `📍 Endereço: ${e.rua}, ${e.numero || ""} - ${e.bairro || ""}\n`
+} else {
+if(pedido.cliente.mesa) msg += `🍽️ Mesa: ${pedido.cliente.mesa}\n`
+}
+
+msg += `\n🧾 *Itens:*\n`
 
 pedido.itens.forEach(i=>{
 msg += `• ${i.qtd}x ${i.nome} - R$ ${(i.qtd * i.preco).toFixed(2)}\n`
@@ -2046,13 +2169,21 @@ return
 
 /* Montar pedido */
 
+let mesa = qs("mesaInput")?.value || ""
+let rua = qs("rua")?.value || ""
+let bairro = qs("bairro")?.value || ""
+let numEnd = qs("numero")?.value || ""
+
 let pedido = {
-cliente:{nome,tel},
+cliente:{nome,tel,mesa},
+endereco:{rua,bairro,numero:numEnd},
 itens:carrinho,
 total:totalGeral(),
 frete:valorFrete,
 modo:modoPedido,
-data:new Date().toISOString()
+pagamento:pag,
+data:new Date().toISOString(),
+visto:false
 }
 
 /* Salvar no Firebase */
@@ -2067,9 +2198,7 @@ console.log("Erro ao salvar:",e)
 
 let mensagem = montarMensagemWhatsApp(pedido)
 
-window.open(
-`https://wa.me/${WHATSAPP_LOJA}?text=${encodeURIComponent(mensagem)}`
-)
+location.href = `https://wa.me/${WHATSAPP_LOJA}?text=${encodeURIComponent(mensagem)}`
 
 /* Reset total */
 
@@ -2094,51 +2223,162 @@ const audioNotificacao = new Audio(
 PEDIDOS AO VIVO (FIREBASE)
 ========================= */
 
+let abaAdminAtiva = "delivery"
+let pedidosNaoVistosDelivery = 0
+let pedidosNaoVistosLocal = 0
+
+window.trocarAbaAdmin = (tipo)=>{
+
+abaAdminAtiva = tipo
+
+let tabD = document.getElementById("tabDelivery")
+let tabL = document.getElementById("tabLocal")
+let boxD = document.getElementById("adminPedidosDelivery")
+let boxL = document.getElementById("adminPedidosLocal")
+
+if(tipo === "delivery"){
+tabD.classList.add("ativo")
+tabL.classList.remove("ativo")
+boxD.style.display = "block"
+boxL.style.display = "none"
+pedidosNaoVistosDelivery = 0
+let badge = document.getElementById("badgeDelivery")
+if(badge){ badge.classList.remove("visivel"); badge.textContent = "0" }
+} else {
+tabL.classList.add("ativo")
+tabD.classList.remove("ativo")
+boxL.style.display = "block"
+boxD.style.display = "none"
+pedidosNaoVistosLocal = 0
+let badge = document.getElementById("badgeLocal")
+if(badge){ badge.classList.remove("visivel"); badge.textContent = "0" }
+}
+
+}
+
+window.enviarACaminho = (tel, nome)=>{
+let texto = `Olá ${nome}! Seu pedido do *Recanto do Pastel* está a caminho! 🥟🛵`
+location.href = `https://wa.me/55${tel.replace(/\D/g,"")}?text=${encodeURIComponent(texto)}`
+}
+
+function escHtml(s){
+if(!s) return ""
+return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")
+}
+
+function renderPedidoCard(p, docId){
+
+let nome = escHtml(p.cliente?.nome || "Sem nome")
+let tel = escHtml(p.cliente?.tel || "")
+let mesa = escHtml(p.cliente?.mesa || "")
+let pagamento = escHtml(p.pagamento || "PIX")
+let dataStr = escHtml(new Date(p.data).toLocaleString())
+
+let infoHtml = ""
+
+infoHtml += `📱 ${tel}<br>`
+
+if(p.modo === "delivery"){
+let end = p.endereco || {}
+let rua = escHtml(end.rua || "")
+let num = escHtml(end.numero || "")
+let bairro = escHtml(end.bairro || "")
+if(rua) infoHtml += `📍 ${rua}, ${num} - ${bairro}<br>`
+} else {
+if(mesa) infoHtml += `🍽️ Mesa: ${mesa}<br>`
+}
+
+infoHtml += `💳 ${pagamento}<br>`
+infoHtml += `🕐 ${dataStr}`
+
+let itensHtml = ""
+;(p.itens || []).forEach(i=>{
+let nomeItem = escHtml(i.nome)
+let obsItem = escHtml(i.obs)
+itensHtml += `• ${i.qtd}x ${nomeItem} - R$ ${(i.qtd * i.preco).toFixed(2)}<br>`
+if(obsItem) itensHtml += `&nbsp;&nbsp;📝 ${obsItem}<br>`
+})
+
+let telLimpo = (p.cliente?.tel || "").replace(/\D/g,"")
+let nomeLimpo = escHtml(p.cliente?.nome || "")
+
+let btnHtml = ""
+if(p.modo === "delivery" && telLimpo){
+btnHtml = `<button class="btnDeliveryCaminho" data-tel="${telLimpo}" data-nome="${nomeLimpo}" onclick="enviarACaminho(this.dataset.tel,this.dataset.nome)">🛵 Enviar "A caminho" no WhatsApp</button>`
+}
+
+return `<div class="pedidoCard">
+<div class="pedidoNome">👤 ${nome}</div>
+<div class="pedidoInfo">${infoHtml}</div>
+<div class="pedidoItens">${itensHtml}</div>
+<div class="pedidoTotal">💰 R$ ${Number(p.total).toFixed(2)}</div>
+${btnHtml}
+</div>`
+
+}
+
+let pedidoIdsVistos = new Set()
+
 onSnapshot(collection(db,"pedidos"), snap => {
 
 pedidosCache = []
 
-let box = qs("adminPedidos")
+let boxD = document.getElementById("adminPedidosDelivery")
+let boxL = document.getElementById("adminPedidosLocal")
 
-if(box) box.innerHTML = ""
+if(boxD) boxD.innerHTML = ""
+if(boxL) boxL.innerHTML = ""
+
+let countDeliveryNovos = 0
+let countLocalNovos = 0
 
 snap.forEach(doc => {
 
 let p = doc.data()
+let docId = doc.id
 
 pedidosCache.push(p)
 
-if(box){
+let card = renderPedidoCard(p, docId)
 
-box.innerHTML += `
-<div style="
-margin-bottom:12px;
-padding:12px;
-background:#333;
-border-radius:12px">
-
-<b>${p.cliente.nome}</b><br>
-
-<span style="color:#4caf50;font-weight:700">
-R$ ${Number(p.total).toFixed(2)}
-</span><br>
-
-<span style="font-size:12px;color:#ccc">
-${new Date(p.data).toLocaleString()}
-</span>
-
-</div>
-`
-
+if(p.modo === "delivery"){
+if(boxD) boxD.innerHTML += card
+if(!pedidoIdsVistos.has(docId) && !primeiraCarga){
+countDeliveryNovos++
 }
+} else {
+if(boxL) boxL.innerHTML += card
+if(!pedidoIdsVistos.has(docId) && !primeiraCarga){
+countLocalNovos++
+}
+}
+
+pedidoIdsVistos.add(docId)
 
 })
 
-/* tocar som apenas quando já tiver carregado antes */
+if(!primeiraCarga){
 
-if(!primeiraCarga && pedidosCache.length > 0){
+if(countDeliveryNovos > 0 && abaAdminAtiva !== "delivery"){
+pedidosNaoVistosDelivery += countDeliveryNovos
+let badge = document.getElementById("badgeDelivery")
+if(badge){ badge.textContent = pedidosNaoVistosDelivery; badge.classList.add("visivel") }
+}
+
+if(countLocalNovos > 0 && abaAdminAtiva !== "local"){
+pedidosNaoVistosLocal += countLocalNovos
+let badge = document.getElementById("badgeLocal")
+if(badge){ badge.textContent = pedidosNaoVistosLocal; badge.classList.add("visivel") }
+}
+
+if(countDeliveryNovos > 0 || countLocalNovos > 0){
 audioNotificacao.play().catch(()=>{})
 }
+
+}
+
+if(boxD && boxD.innerHTML === "") boxD.innerHTML = "<div style='color:#7a6a5a;text-align:center;padding:20px'>Nenhum pedido delivery</div>"
+if(boxL && boxL.innerHTML === "") boxL.innerHTML = "<div style='color:#7a6a5a;text-align:center;padding:20px'>Nenhum pedido local</div>"
 
 primeiraCarga = false
 
