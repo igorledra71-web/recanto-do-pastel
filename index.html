@@ -328,7 +328,6 @@ font-weight:900;
 <body>
 
 <button class="btnConfig" onclick="abrirAdmin()">⚙️</button>
-
 <button class="btnVoltar" onclick="voltarTela()">←</button>
 
 <!-- =========================
@@ -354,6 +353,7 @@ onclick="definirModo('delivery')">
 </button>
 
 </div>
+
 <!-- =========================
 TELA CARDÁPIO
 ========================= -->
@@ -361,9 +361,7 @@ TELA CARDÁPIO
 <div id="telaCardapio" class="tela">
 
 <div class="topo">
-<b style="font-size:22px">
-Cardápio
-</b>
+<b style="font-size:22px">Cardápio</b>
 
 <button class="adminBtn"
 style="max-width:200px;background:#ff5722"
@@ -373,7 +371,6 @@ Carrinho (<span id="qtd">0</span>)
 </div>
 
 <div id="abas" class="abas"></div>
-
 <div id="lista" class="lista"></div>
 
 </div>
@@ -428,17 +425,197 @@ R$ <span id="total">0.00</span>
 
 </div>
 
-<button class="btnFinalizar"
+<button class="btnFinalizarCarrinho"
 onclick="irCheckout()">
 FINALIZAR PEDIDO
 </button>
 
 </div>
+<script type="module">
+
+/* =========================
+CONFIGURAÇÕES
+========================= */
+
+const ADMIN_SENHA = "1234"
+let WHATSAPP_LOJA = "5549991610137"
+let PIX_CHAVE = "pix-recanto@pix"
+
+let modoPedido = null
+let valorFrete = 0
+let pixComprovanteOK = false
+let primeiraCarga = true
+
+let carrinho = []
+let pedidosCache = []
+
+/* =========================
+FIREBASE
+========================= */
+
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"
+
+import {
+getFirestore,
+collection,
+addDoc,
+onSnapshot,
+getDocs,
+deleteDoc
+} from
+"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
+
+const firebaseConfig = {
+apiKey:"AIzaSyCE6daBipSq0Xjxt3ofW9anxMdN-AecI4w",
+authDomain:"recanto-do-pastel-bcea2.firebaseapp.com",
+projectId:"recanto-do-pastel-bcea2",
+storageBucket:"recanto-do-pastel-bcea2.firebasestorage.app",
+messagingSenderId:"304374292790",
+appId:"1:304374292790:web:5bd235b7c0419a8dfe1397"
+}
+
+const app = initializeApp(firebaseConfig)
+const db = getFirestore(app)
+
+/* =========================
+UTIL
+========================= */
+
+const qs = id => document.getElementById(id)
+
+/* =========================
+CONTROLE DE TELAS
+========================= */
+
+function mostrar(id){
+document.querySelectorAll(".tela")
+.forEach(t=>t.classList.remove("ativa"))
+qs(id).classList.add("ativa")
+}
+
+window.voltarTela = ()=>{
+mostrar("telaEscolha")
+}
+
+window.abrirAdmin = ()=>{
+let s = prompt("Senha admin")
+if(s !== ADMIN_SENHA){
+alert("Senha incorreta")
+return
+}
+mostrar("telaAdmin")
+}
+
+/* =========================
+ESCOLHER MODO
+========================= */
+
+window.definirModo = (modo)=>{
+modoPedido = modo
+mostrar("telaCardapio")
+renderAbas()
+}
+
+/* =========================
+CARDÁPIO BASE
+========================= */
+
+let cardapio = {
+"Pastéis":[
+{nome:"Pastel Carne",preco:12},
+{nome:"Pastel Queijo",preco:11}
+],
+"Bebidas":[
+{nome:"Refrigerante Lata",preco:6}
+],
+"Prato Feito":[
+{nome:"Prato Executivo",preco:22}
+]
+}
+
+/* =========================
+FILTRO DELIVERY
+========================= */
+
+function permitidoDelivery(produto, aba){
+
+if(modoPedido !== "delivery") return true
+
+let a = aba.toLowerCase()
+
+if(
+a.includes("sucos") ||
+a.includes("doses") ||
+a.includes("caip") ||
+a.includes("batida") ||
+a.includes("vitamina")
+){
+return false
+}
+
+return true
+}
+
+/* =========================
+RENDER ABAS
+========================= */
+
+function renderAbas(){
+
+qs("abas").innerHTML=""
+
+Object.keys(cardapio).forEach(aba=>{
+
+let btn = document.createElement("button")
+btn.className="aba"
+btn.innerText = aba
+
+btn.onclick = ()=>{
+renderItens(aba)
+}
+
+qs("abas").appendChild(btn)
+
+})
+
+}
+
+/* =========================
+RENDER ITENS
+========================= */
+
+function renderItens(aba){
+
+qs("lista").innerHTML=""
+
+cardapio[aba].forEach(produto=>{
+
+if(!permitidoDelivery(produto,aba)) return
+
+let el = document.createElement("div")
+el.className="item"
+
+el.innerHTML = `
+<div class="itemNome">${produto.nome}</div>
+<div class="itemPreco">
+R$ ${produto.preco.toFixed(2)}
+</div>
+<button class="btnAdd">Adicionar</button>
+`
+
+el.querySelector("button").onclick=()=>{
+addCarrinho(produto)
+}
+
+qs("lista").appendChild(el)
+
+})
+
+}
 /* =========================
 CARRINHO
 ========================= */
-
-let valorFrete = 0
 
 function totalItens(){
 return carrinho.reduce((s,i)=>s+i.preco*i.qtd,0)
@@ -504,11 +681,16 @@ valorFrete = 8
 
 }
 
-qs("bairro")?.addEventListener("input",()=>{
+/* Atualiza frete quando digita bairro */
+setTimeout(()=>{
+if(qs("bairro")){
+qs("bairro").addEventListener("input",()=>{
 calcularFreteAutomatico()
 renderCarrinho()
 renderCheckoutResumo()
 })
+}
+},500)
 
 /* =========================
 RENDER CARRINHO
@@ -541,16 +723,18 @@ qs("cLista").appendChild(div)
 qs("qtd").innerText=qtdTotal
 qs("total").innerText=totalGeral().toFixed(2)
 
+/* frete */
+
 if(valorFrete>0){
-qs("linhaFreteCarrinho").style.display="block"
-qs("freteCarrinhoTxt").innerText=
-valorFrete.toFixed(2)
+qs("linhaFrete").style.display="block"
+qs("freteTxt").innerText=valorFrete.toFixed(2)
 }else{
-qs("linhaFreteCarrinho").style.display="none"
+qs("linhaFrete").style.display="none"
 }
 
 renderCheckoutResumo()
 }
+
 /* =========================
 RESUMO CHECKOUT
 ========================= */
@@ -594,11 +778,29 @@ qs("checkoutItens").appendChild(freteDiv)
 
 }
 
+if(qs("checkoutTotal")){
 qs("checkoutTotal").innerText=
 totalGeral().toFixed(2)
+}
 
 }
 
+/* =========================
+IR PARA CHECKOUT
+========================= */
+
+window.irCheckout = ()=>{
+
+if(!carrinho.length) return
+
+mostrar("telaCheckout")
+renderCheckoutResumo()
+atualizarPix()
+
+qs("pagamento")
+.dispatchEvent(new Event("change"))
+
+}
 /* =========================
 CHECKOUT TIPO PEDIDO
 ========================= */
@@ -646,17 +848,23 @@ qs("pixJaEnviei").checked=false
 
 renderCheckoutResumo()
 }
+
 /* =========================
 PIX
 ========================= */
 
 function atualizarPix(){
 
+if(qs("pixValorTxt")){
 qs("pixValorTxt").innerText =
 totalGeral().toFixed(2)
+}
 
+if(qs("pixChaveTxt")){
 qs("pixChaveTxt").innerText =
 PIX_CHAVE
+}
+
 }
 
 window.copiarPix = ()=>{
@@ -666,17 +874,17 @@ alert("Chave PIX copiada com sucesso ✅")
 
 }
 
+if(qs("pixArquivo")){
 qs("pixArquivo").onchange = ()=>{
-
 if(qs("pixArquivo").files.length>0)
 pixComprovanteOK=true
-
+}
 }
 
+if(qs("pixJaEnviei")){
 qs("pixJaEnviei").onchange = e=>{
-
 pixComprovanteOK = e.target.checked
-
+}
 }
 
 /* =========================
@@ -699,22 +907,6 @@ encodeURIComponent(texto)
 
 }
 
-/* =========================
-IR PARA CHECKOUT
-========================= */
-
-window.irCheckout = ()=>{
-
-if(!carrinho.length) return
-
-mostrar("telaCheckout")
-renderCheckoutResumo()
-atualizarPix()
-
-qs("pagamento")
-.dispatchEvent(new Event("change"))
-
-}
 /* =========================
 FINALIZAR PEDIDO
 ========================= */
@@ -782,7 +974,7 @@ renderCarrinho()
 qs("carrinho").classList.remove("aberto")
 document.body.style.overflow="auto"
 
-mostrar("telaInicial")
+mostrar("telaEscolha")
 
 }
 
@@ -795,6 +987,7 @@ const audioNotificacao = new Audio(
 )
 
 let primeiraCarga=true
+
 /* =========================
 SINCRONIZAR PEDIDOS (ADMIN)
 ========================= */
@@ -830,7 +1023,6 @@ primeiraCarga=false
 })
 
 }
-
 /* =========================
 SALVAR CARDÁPIO FIREBASE
 ========================= */
@@ -892,6 +1084,7 @@ deleteDoc(docu.ref)
 })
 
 }
+
 /* =========================
 ADMIN - ABAS
 ========================= */
@@ -1062,6 +1255,7 @@ await salvarCardapioFirebase()
 abrirEditorItens()
 
 }
+
 /* =========================
 RELATÓRIOS
 ========================= */
@@ -1202,7 +1396,7 @@ INICIAR SISTEMA
 initSistema()
 
 /* =========================
-FIM DO SCRIPT
+FECHAR SCRIPT E HTML
 ========================= */
 </script>
 </body>
