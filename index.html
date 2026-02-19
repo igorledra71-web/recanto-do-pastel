@@ -7,11 +7,20 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins}
-html,body{height:100%;background:#fff7e6}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins;
+}
+
+html,body{
+height:100%;
+background:#fff7e6;
+}
 
 /* =========================
 TELAS
@@ -23,45 +32,18 @@ inset:0;
 display:none;
 flex-direction:column;
 align-items:center;
-padding:18px;
+padding:20px;
 overflow:auto;
 z-index:100;
 text-align:center;
 }
-.tela.ativa{display:flex}
 
-/* =========================
-BOTÕES FIXOS
-========================= */
-
-.btnConfig{
-position:fixed;
-top:12px;
-right:14px;
-z-index:4000;
-font-size:26px;
-background:white;
-border:none;
-border-radius:14px;
-padding:10px;
-box-shadow:0 4px 12px rgba(0,0,0,.2);
-}
-
-.btnVoltarGlobal{
-position:fixed;
-bottom:12px;
-left:12px;
-z-index:3000;
-background:#333;
-color:white;
-border:none;
-border-radius:14px;
-padding:12px 16px;
-font-weight:700;
+.tela.ativa{
+display:flex;
 }
 
 /* =========================
-TELA ESCOLHA INICIAL
+TELA ESCOLHA
 ========================= */
 
 #telaEscolha{
@@ -70,66 +52,42 @@ background:linear-gradient(180deg,#ff9800,#ff5722);
 color:white;
 }
 
+.logoTopo{
+width:95%;
+max-width:420px;
+margin-bottom:25px;
+filter:drop-shadow(0 10px 20px rgba(0,0,0,.35));
+}
+
 .btnEscolha{
 background:white;
 color:#ff5722;
 padding:20px;
 border-radius:18px;
 font-size:20px;
-font-weight:800;
+font-weight:900;
 border:none;
 width:100%;
-max-width:340px;
-margin-top:20px;
-}
-
-/* =========================
-TELA INICIAL
-========================= */
-
-#telaInicial{
-justify-content:center;
-background:linear-gradient(180deg,#ff9800,#ff5722);
-color:white;
-}
-
-.logoImg{
-width:95%;
-max-width:520px;
-margin-bottom:10px;
-filter:drop-shadow(0 14px 26px rgba(0,0,0,.35));
-}
-
-.logoNome{
-font-size:28px;
-font-weight:800;
-margin-bottom:24px;
-}
-
-.btnPrincipal{
-background:white;
-color:#ff5722;
-padding:18px;
-border-radius:16px;
-font-size:20px;
-font-weight:800;
-border:none;
-width:100%;
-max-width:320px;
-margin-top:20px;
+max-width:360px;
+margin-top:18px;
+box-shadow:0 6px 14px rgba(0,0,0,.2);
 }
 
 /* =========================
 CARDÁPIO
 ========================= */
 
+#telaCardapio{
+background:#fff7e6;
+}
+
 .topo{
 width:100%;
-max-width:720px;
+max-width:760px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-margin-bottom:14px;
+margin-bottom:16px;
 }
 
 .abas{
@@ -137,16 +95,16 @@ display:flex;
 gap:10px;
 overflow-x:auto;
 width:100%;
-max-width:720px;
-margin-bottom:10px;
+max-width:760px;
+margin-bottom:16px;
 }
 
 .aba{
 background:#ffcc80;
 border:none;
-padding:12px 18px;
+padding:14px 20px;
 border-radius:22px;
-font-weight:800;
+font-weight:900;
 font-size:15px;
 white-space:nowrap;
 color:#bf360c;
@@ -154,33 +112,33 @@ color:#bf360c;
 
 .lista{
 width:100%;
-max-width:720px;
+max-width:760px;
 display:flex;
 flex-direction:column;
-gap:18px;
-padding-bottom:180px;
+gap:20px;
+padding-bottom:200px;
 }
 
 .item{
 background:white;
-border-radius:20px;
-padding:18px;
+border-radius:22px;
+padding:22px;
 display:flex;
 flex-direction:column;
 align-items:center;
-gap:10px;
-box-shadow:0 6px 16px rgba(0,0,0,.15);
+gap:12px;
+box-shadow:0 8px 18px rgba(0,0,0,.15);
 }
 
 .itemNome{
-font-size:20px;
-font-weight:800;
+font-size:22px;
+font-weight:900;
 color:#e65100;
 }
 
 .itemPreco{
-font-size:22px;
-font-weight:800;
+font-size:24px;
+font-weight:900;
 color:#2e7d32;
 }
 
@@ -189,10 +147,10 @@ background:#4caf50;
 color:white;
 border:none;
 border-radius:16px;
-padding:14px 20px;
-font-weight:800;
+padding:14px 22px;
+font-weight:900;
 font-size:18px;
-margin-top:6px;
+margin-top:8px;
 }
 
 /* =========================
@@ -203,7 +161,7 @@ CARRINHO
 position:fixed;
 top:0;
 right:-100%;
-width:94%;
+width:95%;
 max-width:420px;
 height:100%;
 background:#f7f7f7;
@@ -212,181 +170,210 @@ transition:.35s;
 display:flex;
 flex-direction:column;
 z-index:900;
-border-top-left-radius:18px;
-border-bottom-left-radius:18px;
+border-top-left-radius:20px;
+border-bottom-left-radius:20px;
 }
 
-#carrinho.aberto{right:0}
+#carrinho.aberto{
+right:0;
+}
 
 .cLista{
 flex:1;
 overflow:auto;
-padding:16px;
+padding:18px;
 display:flex;
 flex-direction:column;
-gap:14px;
+gap:16px;
 }
 
 .cItem{
 background:white;
-border-radius:16px;
-padding:14px;
+border-radius:18px;
+padding:16px;
 display:flex;
 flex-direction:column;
 gap:6px;
-box-shadow:0 2px 8px rgba(0,0,0,.12);
+box-shadow:0 3px 10px rgba(0,0,0,.15);
 }
 
 .btnFinalizarCarrinho{
-margin:12px;
-padding:16px;
-border-radius:16px;
+margin:14px;
+padding:18px;
+border-radius:18px;
 font-size:18px;
-font-weight:800;
+font-weight:900;
 background:#ff5722;
 color:white;
 border:none;
 }
-
 /* =========================
-FORM
+CHECKOUT
 ========================= */
+
+#telaCheckout{
+background:#fff7e6;
+}
+
+.checkoutResumo{
+width:100%;
+max-width:760px;
+background:white;
+border-radius:22px;
+padding:20px;
+box-shadow:0 8px 18px rgba(0,0,0,.15);
+margin-bottom:18px;
+}
 
 .form{
 width:100%;
-max-width:720px;
+max-width:760px;
 display:flex;
 flex-direction:column;
-gap:14px;
+gap:16px;
 }
 
 input,select,textarea{
-padding:14px;
-border-radius:14px;
+padding:16px;
+border-radius:16px;
 border:1px solid #ccc;
 font-size:16px;
 width:100%;
 }
 
-.checkoutResumo{
-width:100%;
-max-width:720px;
-background:white;
-border-radius:18px;
-padding:16px;
-box-shadow:0 6px 16px rgba(0,0,0,.15);
-margin-bottom:14px;
-}
-
 /* =========================
-ADMIN
+PIX BOX
 ========================= */
 
-#telaAdmin{background:#212121;color:white}
-
-.adminBox{
-background:#424242;
-padding:16px;
-border-radius:14px;
-margin-bottom:14px;
-width:100%;
-max-width:720px;
-}
-
-.adminBtn{
-background:#ff9800;
-border:none;
-color:white;
-padding:14px;
-border-radius:14px;
-margin-top:8px;
-width:100%;
-font-weight:800;
-font-size:16px;
-}
-
-/* =========================
-PIX
-========================= */
-
-.pixProofBox{
+.pixBox{
 background:#fff3e0;
-border-radius:16px;
-padding:14px;
+border-radius:20px;
+padding:18px;
 display:flex;
 flex-direction:column;
-gap:10px;
+gap:12px;
 }
 
 .btnCopiarPix{
 background:#1976d2;
 color:white;
 border:none;
-padding:12px;
-border-radius:12px;
-font-weight:800;
+padding:14px;
+border-radius:14px;
+font-weight:900;
+font-size:16px;
+}
+
+/* =========================
+ADMIN
+========================= */
+
+#telaAdmin{
+background:#212121;
+color:white;
+}
+
+.adminBox{
+background:#424242;
+padding:18px;
+border-radius:18px;
+margin-bottom:18px;
+width:100%;
+max-width:760px;
+}
+
+.adminBtn{
+background:#ff9800;
+border:none;
+color:white;
+padding:16px;
+border-radius:16px;
+margin-top:10px;
+width:100%;
+font-weight:900;
+font-size:16px;
+}
+
+/* =========================
+BOTÕES FIXOS
+========================= */
+
+.btnConfig{
+position:fixed;
+top:14px;
+right:16px;
+z-index:4000;
+font-size:26px;
+background:white;
+border:none;
+border-radius:14px;
+padding:10px;
+box-shadow:0 4px 12px rgba(0,0,0,.2);
+}
+
+.btnVoltar{
+position:fixed;
+bottom:16px;
+left:16px;
+z-index:3000;
+background:#333;
+color:white;
+border:none;
+border-radius:14px;
+padding:12px 16px;
+font-weight:900;
 }
 </style>
 </head>
 <body>
+
+<button class="btnConfig" onclick="abrirAdmin()">⚙️</button>
+
+<button class="btnVoltar" onclick="voltarTela()">←</button>
+
 <!-- =========================
-TELA ESCOLHA ENTREGA OU LOCAL
+TELA ESCOLHA
 ========================= -->
 
 <div id="telaEscolha" class="tela ativa">
+
+<img src="logo-recanto.png" class="logoTopo">
 
 <h1 style="margin-bottom:20px">
 Como deseja pedir?
 </h1>
 
 <button class="btnEscolha"
-onclick="escolherModo('local')">
+onclick="definirModo('local')">
 🍽 Consumir no Local
 </button>
 
 <button class="btnEscolha"
-onclick="escolherModo('delivery')">
+onclick="definirModo('delivery')">
 🛵 Delivery
 </button>
 
 </div>
-
 <!-- =========================
-TELA INICIAL
-========================= -->
-
-<div id="telaInicial" class="tela">
-
-<img src="logo-recanto.png" class="logoImg">
-
-<div class="logoNome">
-Recanto do Pastel
-</div>
-
-<button class="btnPrincipal"
-onclick="abrirCardapio()">
-VER CARDÁPIO
-</button>
-
-</div>
-
-<!-- =========================
-CARDÁPIO
+TELA CARDÁPIO
 ========================= -->
 
 <div id="telaCardapio" class="tela">
 
 <div class="topo">
-<b style="font-size:20px">Cardápio</b>
+<b style="font-size:22px">
+Cardápio
+</b>
 
 <button class="adminBtn"
-style="max-width:180px;background:#ff5722"
+style="max-width:200px;background:#ff5722"
 onclick="toggleCarrinho()">
 Carrinho (<span id="qtd">0</span>)
 </button>
 </div>
 
 <div id="abas" class="abas"></div>
+
 <div id="lista" class="lista"></div>
 
 </div>
@@ -398,9 +385,9 @@ CARRINHO
 <div id="carrinho">
 
 <div style="
-padding:16px;
-font-weight:800;
-font-size:18px;
+padding:20px;
+font-weight:900;
+font-size:20px;
 display:flex;
 justify-content:space-between;
 align-items:center">
@@ -420,541 +407,38 @@ X
 
 <div id="cLista" class="cLista"></div>
 
-<div style="padding:14px">
+<div style="padding:18px">
 
-<div id="linhaFreteCarrinho"
-style="display:none;margin-bottom:8px;font-weight:700">
+<div id="linhaFrete"
+style="
+display:none;
+margin-bottom:10px;
+font-weight:900;
+color:#c62828">
 
 🚚 Taxa de Entrega:
-R$ <span id="freteCarrinhoTxt">0.00</span>
+R$ <span id="freteTxt">0.00</span>
 
 </div>
 
-<b style="font-size:20px">
+<b style="font-size:22px">
 Total:
 R$ <span id="total">0.00</span>
 </b>
 
 </div>
 
-<button class="btnFinalizarCarrinho"
+<button class="btnFinalizar"
 onclick="irCheckout()">
 FINALIZAR PEDIDO
 </button>
 
 </div>
-<!-- =========================
-CHECKOUT
-========================= -->
-
-<div id="telaCheckout" class="tela">
-
-<h2 style="margin-bottom:14px;text-align:center">
-Finalizar Pedido
-</h2>
-
-<div class="checkoutResumo">
-
-<div style="
-font-weight:800;
-margin-bottom:8px;
-text-align:center;
-font-size:18px">
-Resumo do Pedido
-</div>
-
-<div id="checkoutItens"
-style="text-align:center"></div>
-
-<div style="
-margin-top:10px;
-font-weight:800;
-text-align:center;
-font-size:18px">
-
-Total:
-R$ <span id="checkoutTotal">0.00</span>
-
-</div>
-
-</div>
-
-<div class="form">
-
-<select id="tipoPedido">
-<option value="local">Consumir no local</option>
-<option value="entrega">Entrega</option>
-</select>
-
-<div id="boxMesa">
-<input id="mesaInput"
-placeholder="Número da mesa (opcional)">
-</div>
-
-<input id="nome"
-placeholder="Nome do cliente">
-
-<input id="telefone"
-placeholder="Telefone">
-
-<div id="boxEndereco" style="display:none">
-
-<input id="rua" placeholder="Rua">
-<input id="bairro" placeholder="Bairro">
-<input id="numero" placeholder="Número">
-
-</div>
-
-<select id="pagamento">
-<option>PIX</option>
-<option>Débito</option>
-<option>Crédito</option>
-<option>Dinheiro</option>
-</select>
-
-<div id="boxTroco" style="display:none">
-<input id="troco" placeholder="Troco para quanto?">
-</div>
-
-<!-- =========================
-PIX BOX
-========================= -->
-
-<div id="boxPix"
-style="display:none"
-class="pixProofBox">
-
-<div style="text-align:center;font-weight:800">
-Chave PIX
-</div>
-
-<div style="
-text-align:center;
-font-size:18px;
-color:#ff5722;
-margin-bottom:6px">
-
-<span id="pixChaveTxt"></span>
-
-</div>
-
-<button class="btnPrincipal"
-style="margin:6px 0"
-onclick="copiarPix()">
-COPIAR CHAVE PIX
-</button>
-
-<div style="
-text-align:center;
-margin-top:8px;
-font-weight:800">
-
-Valor:
-R$ <span id="pixValorTxt">0.00</span>
-
-</div>
-
-<button class="adminBtn"
-style="background:#25d366;margin-top:10px"
-onclick="abrirZapComprovante()">
-Enviar comprovante no WhatsApp
-</button>
-
-<label style="
-display:flex;
-gap:8px;
-align-items:center;
-margin-top:8px;
-justify-content:center">
-
-<input type="checkbox" id="pixJaEnviei">
-Já enviei comprovante
-
-</label>
-
-<input type="file"
-id="pixArquivo"
-accept="image/*,application/pdf">
-
-</div>
-
-<input id="frete" value="0" readonly>
-
-<button id="btnFinalizarPedido"
-class="btnPrincipal"
-style="background:#ff5722;color:white"
-onclick="finalizarPedido()">
-ENVIAR PEDIDO
-</button>
-
-</div>
-</div>
-<!-- =========================
-PAINEL ADMIN
-========================= -->
-
-<div id="telaAdmin" class="tela">
-
-<h2 style="margin-bottom:16px;text-align:center">
-Painel Admin
-</h2>
-
-<div class="adminBox">
-
-<b>Abas do Cardápio</b>
-
-<button class="adminBtn"
-onclick="adminNovaAba()">
-Nova Aba
-</button>
-
-<button class="adminBtn"
-onclick="abrirRemoverAbaUI()">
-Remover Aba
-</button>
-
-</div>
-
-<div class="adminBox">
-
-<b>Produtos</b>
-
-<button class="adminBtn"
-onclick="abrirNovoProdutoUI()">
-Adicionar Produto
-</button>
-
-<button class="adminBtn"
-onclick="abrirEditorItens()">
-Editar / Remover Produtos
-</button>
-
-</div>
-
-<div class="adminBox">
-
-<b>Pedidos ao Vivo</b>
-
-<div id="adminPedidos"
-style="margin-top:8px;font-size:14px"></div>
-
-</div>
-
-<div class="adminBox">
-
-<b>Relatórios</b>
-
-<button class="adminBtn"
-onclick="relatorioHoje()">Hoje</button>
-
-<button class="adminBtn"
-onclick="relatorioMes()">Mês</button>
-
-<button class="adminBtn"
-onclick="relatorioAno()">Ano</button>
-
-<button class="adminBtn"
-onclick="exportarExcel()">
-Exportar Excel
-</button>
-
-<button class="adminBtn"
-onclick="zerarRelatorios()">
-Zerar Dados
-</button>
-
-</div>
-
-</div>
-
-<!-- =========================
-EDITOR PRODUTOS
-========================= -->
-
-<div id="telaEditorItens" class="tela">
-
-<h2 style="margin-bottom:16px;text-align:center">
-Editor de Produtos
-</h2>
-
-<div id="listaEditor" class="lista"></div>
-
-</div>
-
-<!-- =========================
-REMOVER ABA
-========================= -->
-
-<div id="uiRemoverAba" class="tela">
-
-<h2 style="margin-bottom:16px;text-align:center">
-Remover Aba
-</h2>
-
-<div id="listaAbasRemover"
-class="lista"></div>
-
-</div>
-
-<!-- =========================
-NOVO PRODUTO
-========================= -->
-
-<div id="uiNovoProduto" class="tela">
-
-<h2 style="margin-bottom:16px;text-align:center">
-Novo Produto
-</h2>
-
-<div class="form">
-
-<input id="novoProdNome"
-placeholder="Nome do produto">
-
-<input id="novoProdPreco"
-placeholder="Preço">
-
-<select id="novoProdAba"></select>
-
-<button class="btnPrincipal"
-onclick="confirmarNovoProduto()">
-Salvar Produto
-</button>
-
-</div>
-
-</div>
-
-<script type="module">
-/* =========================
-CONFIGURAÇÕES
-========================= */
-
-const ADMIN_SENHA = "1234"
-let WHATSAPP_LOJA = "5549991610137"
-let PIX_CHAVE = "pix-recanto@pix"
-
-/* =========================
-FIREBASE
-========================= */
-
-import { initializeApp } from
-"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"
-
-import {
-getFirestore,
-collection,
-addDoc,
-onSnapshot,
-getDocs,
-deleteDoc
-} from
-"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
-
-const firebaseConfig = {
-apiKey:"AIzaSyCE6daBipSq0Xjxt3ofW9anxMdN-AecI4w",
-authDomain:"recanto-do-pastel-bcea2.firebaseapp.com",
-projectId:"recanto-do-pastel-bcea2",
-storageBucket:"recanto-do-pastel-bcea2.firebasestorage.app",
-messagingSenderId:"304374292790",
-appId:"1:304374292790:web:5bd235b7c0419a8dfe1397"
-}
-
-let db = null
-
-try {
-db = getFirestore(initializeApp(firebaseConfig))
-} catch(e){}
-
-/* =========================
-ESTADO GLOBAL
-========================= */
-
-let carrinho = []
-let pedidosCache = []
-let historico = ["telaInicial"]
-let pixComprovanteOK = false
-let modoPedido = null // delivery ou local
-
-/* =========================
-CARDÁPIO BASE
-========================= */
-
-let cardapio = {
-"Pastéis":[
-{nome:"Pastel Carne",preco:12},
-{nome:"Pastel Queijo",preco:11}
-],
-"Bebidas":[
-{nome:"Refrigerante Lata",preco:6}
-]
-}
-
-/* =========================
-UTIL
-========================= */
-
-const qs = id => document.getElementById(id)
-
-/* =========================
-CONTROLE DE TELAS
-========================= */
-
-function mostrar(id){
-
-document.querySelectorAll(".tela")
-.forEach(t => t.classList.remove("ativa"))
-
-qs("carrinho").classList.remove("aberto")
-document.body.style.overflow = "auto"
-
-qs(id).classList.add("ativa")
-historico.push(id)
-}
-
-window.voltarUniversal = ()=>{
-historico.pop()
-mostrar(historico.pop() || "telaInicial")
-}
-
-/* =========================
-ESCOLHA DO MODO (DELIVERY/LOCAL)
-========================= */
-
-window.selecionarModo = (modo)=>{
-modoPedido = modo
-mostrar("telaCardapio")
-renderAbas()
-}
-/* =========================
-FILTRO DELIVERY
-========================= */
-
-function produtoPermitidoParaDelivery(produto, aba){
-
-if(modoPedido !== "delivery") return true
-
-let nome = produto.nome.toLowerCase()
-
-// bloquear bebidas delicadas
-if(
-aba.toLowerCase().includes("sucos") ||
-aba.toLowerCase().includes("doses") ||
-aba.toLowerCase().includes("caip") ||
-aba.toLowerCase().includes("batidas") ||
-aba.toLowerCase().includes("vitamina")
-){
-return false
-}
-
-if(
-nome.includes("suco") ||
-nome.includes("dose") ||
-nome.includes("caip") ||
-nome.includes("batida") ||
-nome.includes("vitamina")
-){
-return false
-}
-
-return true
-}
-
-/* =========================
-RENDER ABAS
-========================= */
-
-function renderAbas(){
-
-qs("abas").innerHTML = ""
-
-Object.keys(cardapio).forEach(aba=>{
-
-let btn = document.createElement("button")
-btn.className = "aba"
-btn.innerText = aba
-
-btn.onclick = ()=>{
-renderItens(aba)
-}
-
-qs("abas").appendChild(btn)
-
-})
-
-}
-
-/* =========================
-RENDER ITENS
-========================= */
-
-function renderItens(nomeAba){
-
-qs("lista").innerHTML = ""
-
-let lista = cardapio[nomeAba]
-
-lista.forEach(produto=>{
-
-if(!produtoPermitidoParaDelivery(produto, nomeAba))
-return
-
-let el = document.createElement("div")
-el.className = "item"
-
-el.innerHTML = `
-<div style="flex:1;text-align:center">
-<div style="
-font-size:20px;
-font-weight:700;
-color:#e65100;
-margin-bottom:4px">
-${produto.nome}
-</div>
-
-<div style="
-font-size:18px;
-font-weight:700;
-color:#2e7d32">
-R$ ${produto.preco.toFixed(2)}
-</div>
-</div>
-
-<button class="btnAdd">+</button>
-`
-
-el.querySelector("button").onclick = ()=>{
-addCarrinho(produto)
-}
-
-qs("lista").appendChild(el)
-
-})
-
-}
-
-/* =========================
-ABRIR CARDÁPIO
-========================= */
-
-window.abrirCardapio = ()=>{
-mostrar("telaModoPedido")
-}
-
-/* =========================
-SOM NOTIFICAÇÃO ADMIN
-========================= */
-
-function tocarSomNovoPedido(){
-
-if(!qs("somAdmin")) return
-
-qs("somAdmin").play().catch(()=>{})
-
-}
 /* =========================
 CARRINHO
 ========================= */
+
+let valorFrete = 0
 
 function totalItens(){
 return carrinho.reduce((s,i)=>s+i.preco*i.qtd,0)
@@ -996,7 +480,7 @@ document.body.style.overflow = aberto ? "hidden" : "auto"
 }
 
 /* =========================
-FRETE INTELIGENTE
+FRETE AUTOMÁTICO INTELIGENTE
 ========================= */
 
 function calcularFreteAutomatico(){
@@ -1057,8 +541,6 @@ qs("cLista").appendChild(div)
 qs("qtd").innerText=qtdTotal
 qs("total").innerText=totalGeral().toFixed(2)
 
-/* frete */
-
 if(valorFrete>0){
 qs("linhaFreteCarrinho").style.display="block"
 qs("freteCarrinhoTxt").innerText=
@@ -1069,7 +551,6 @@ qs("linhaFreteCarrinho").style.display="none"
 
 renderCheckoutResumo()
 }
-
 /* =========================
 RESUMO CHECKOUT
 ========================= */
@@ -1081,37 +562,45 @@ if(!qs("checkoutItens")) return
 qs("checkoutItens").innerHTML=""
 
 carrinho.forEach(i=>{
+
 let d=document.createElement("div")
 d.style.marginBottom="6px"
 d.style.textAlign="center"
+
 d.innerHTML=`
 <span style="font-weight:600">
 ${i.qtd}x ${i.nome}
 </span>
- — 
+ —
 <span style="color:#2e7d32;font-weight:700">
 R$ ${(i.qtd*i.preco).toFixed(2)}
 </span>
 `
+
 qs("checkoutItens").appendChild(d)
+
 })
 
 if(valorFrete>0){
+
 let freteDiv=document.createElement("div")
 freteDiv.style.marginTop="8px"
 freteDiv.style.fontWeight="700"
 freteDiv.style.color="#c62828"
 freteDiv.innerText=
 `Taxa de entrega: R$ ${valorFrete.toFixed(2)}`
+
 qs("checkoutItens").appendChild(freteDiv)
+
 }
 
 qs("checkoutTotal").innerText=
 totalGeral().toFixed(2)
 
 }
+
 /* =========================
-CHECKOUT
+CHECKOUT TIPO PEDIDO
 ========================= */
 
 qs("tipoPedido").onchange = e=>{
@@ -1119,18 +608,23 @@ qs("tipoPedido").onchange = e=>{
 let tipo = e.target.value
 
 if(tipo==="entrega"){
+
 modoPedido="delivery"
 qs("boxEndereco").style.display="block"
 qs("boxMesa").style.display="none"
+
 }else{
+
 modoPedido="local"
 qs("boxEndereco").style.display="none"
 qs("boxMesa").style.display="block"
 valorFrete=0
+
 }
 
 calcularFreteAutomatico()
 renderCarrinho()
+
 }
 
 /* =========================
@@ -1152,7 +646,6 @@ qs("pixJaEnviei").checked=false
 
 renderCheckoutResumo()
 }
-
 /* =========================
 PIX
 ========================= */
@@ -1167,17 +660,23 @@ PIX_CHAVE
 }
 
 window.copiarPix = ()=>{
+
 navigator.clipboard.writeText(PIX_CHAVE)
 alert("Chave PIX copiada com sucesso ✅")
+
 }
 
 qs("pixArquivo").onchange = ()=>{
+
 if(qs("pixArquivo").files.length>0)
 pixComprovanteOK=true
+
 }
 
 qs("pixJaEnviei").onchange = e=>{
+
 pixComprovanteOK = e.target.checked
+
 }
 
 /* =========================
@@ -1201,7 +700,7 @@ encodeURIComponent(texto)
 }
 
 /* =========================
-IR CHECKOUT
+IR PARA CHECKOUT
 ========================= */
 
 window.irCheckout = ()=>{
@@ -1216,7 +715,6 @@ qs("pagamento")
 .dispatchEvent(new Event("change"))
 
 }
-
 /* =========================
 FINALIZAR PEDIDO
 ========================= */
@@ -1233,7 +731,7 @@ alert("Preencha nome e telefone")
 return
 }
 
-/* valida pix delivery */
+/* validar PIX para delivery */
 
 if(tipo==="entrega" && pag==="PIX" && !pixComprovanteOK){
 alert("Envie o comprovante PIX para finalizar")
@@ -1249,13 +747,13 @@ modo:modoPedido,
 data:new Date().toISOString()
 }
 
-/* salvar firebase */
+/* salvar no Firebase */
 
 try{
 if(db) await addDoc(collection(db,"pedidos"),pedido)
 }catch(e){}
 
-/* mensagem whatsapp */
+/* mensagem WhatsApp */
 
 let txt = "🥟 RECANTO DO PASTEL\n\n"
 
@@ -1287,6 +785,7 @@ document.body.style.overflow="auto"
 mostrar("telaInicial")
 
 }
+
 /* =========================
 SOM NOTIFICAÇÃO ADMIN
 ========================= */
@@ -1296,9 +795,8 @@ const audioNotificacao = new Audio(
 )
 
 let primeiraCarga=true
-
 /* =========================
-SINCRONIZAR PEDIDOS
+SINCRONIZAR PEDIDOS (ADMIN)
 ========================= */
 
 if(db){
@@ -1313,15 +811,18 @@ let p=d.data()
 pedidosCache.push(p)
 
 qs("adminPedidos").innerHTML+=
-`<div style="margin-bottom:6px">
-<b>${p.cliente.nome}</b> — R$ ${p.total.toFixed(2)}
+`<div style="margin-bottom:8px">
+<b>${p.cliente.nome}</b><br>
+<span style="color:#4caf50;font-weight:700">
+R$ ${Number(p.total).toFixed(2)}
+</span>
 </div>`
 })
 
 /* tocar som apenas após primeira carga */
 
 if(!primeiraCarga && pedidosCache.length>0){
-audioNotificacao.play()
+audioNotificacao.play().catch(()=>{})
 }
 
 primeiraCarga=false
@@ -1340,7 +841,7 @@ if(!db) return
 
 try{
 
-await deleteColecao("cardapio")
+await deletarColecao("cardapio")
 
 for(let aba in cardapio){
 
@@ -1382,7 +883,7 @@ renderAbas()
 DELETAR COLEÇÃO
 ========================= */
 
-async function deleteColecao(nome){
+async function deletarColecao(nome){
 
 let snap = await getDocs(collection(db,nome))
 
@@ -1391,9 +892,8 @@ deleteDoc(docu.ref)
 })
 
 }
-
 /* =========================
-ADMIN ABAS
+ADMIN - ABAS
 ========================= */
 
 window.adminNovaAba = async()=>{
@@ -1494,17 +994,19 @@ R$ ${i.preco}
 </div>
 
 <div style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="btnEditNome"
+<button class="adminBtn"
 onclick="editNome('${a}','${i.nome}')">
 Editar Nome
 </button>
 
-<button class="btnEditPreco"
+<button class="adminBtn"
 onclick="editPreco('${a}','${i.nome}')">
 Editar Preço
 </button>
 
-<button onclick="remItem('${a}','${i.nome}')">
+<button class="adminBtn"
+style="background:#c62828"
+onclick="remItem('${a}','${i.nome}')">
 Remover
 </button>
 </div>
@@ -1668,10 +1170,8 @@ INIT SISTEMA
 
 async function initSistema(){
 
-/* Carregar cardápio do Firebase */
 await carregarCardapioFirebase()
 
-/* Se não houver nada salvo, cria padrão */
 if(Object.keys(cardapio).length===0){
 
 cardapio={
@@ -1696,13 +1196,13 @@ renderAbas()
 }
 
 /* =========================
-CARREGAR SISTEMA
+INICIAR SISTEMA
 ========================= */
 
 initSistema()
 
 /* =========================
-FIM
+FIM DO SCRIPT
 ========================= */
 </script>
 </body>
