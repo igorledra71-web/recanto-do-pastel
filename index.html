@@ -4,26 +4,22 @@
 <meta charset="UTF-8">
 <title>Recanto do Pastel</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport"
+content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
-
-/* =========================
-RESET GLOBAL
-========================= */
-
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Poppins',sans-serif;
+font-family:Poppins, sans-serif;
 }
 
 html,body{
 height:100%;
-background:#f5f5f5;
+background:#f4f4f4;
 overflow-x:hidden;
 }
 
@@ -40,8 +36,7 @@ align-items:center;
 padding:20px;
 overflow:auto;
 z-index:100;
-text-align:center;
-background:#f5f5f5;
+background:#f4f4f4;
 }
 
 .tela.ativa{
@@ -56,11 +51,12 @@ TELA ESCOLHA
 justify-content:center;
 background:linear-gradient(180deg,#ff9800,#ff5722);
 color:white;
+text-align:center;
 }
 
 .logoTopo{
-width:95%;
-max-width:420px;
+width:90%;
+max-width:380px;
 margin-bottom:25px;
 filter:drop-shadow(0 10px 20px rgba(0,0,0,.35));
 }
@@ -82,12 +78,16 @@ transition:.2s;
 }
 
 .btnEscolha:active{
-transform:scale(.97);
+transform:scale(.96);
 }
 
 /* =========================
 CARDÁPIO
 ========================= */
+
+#telaCardapio{
+background:#f4f4f4;
+}
 
 .topo{
 width:100%;
@@ -105,7 +105,7 @@ color:#222;
 
 .abas{
 display:flex;
-gap:10px;
+gap:8px;
 overflow-x:auto;
 width:100%;
 max-width:760px;
@@ -119,7 +119,7 @@ border:1px solid #ddd;
 padding:12px 18px;
 border-radius:20px;
 font-weight:800;
-font-size:14px;
+font-size:13px;
 white-space:nowrap;
 color:#333;
 cursor:pointer;
@@ -138,7 +138,7 @@ max-width:760px;
 display:flex;
 flex-direction:column;
 gap:18px;
-padding-bottom:200px;
+padding-bottom:180px;
 }
 
 .item{
@@ -150,12 +150,12 @@ flex-direction:column;
 align-items:center;
 gap:10px;
 border:1px solid #e0e0e0;
-box-shadow:0 4px 12px rgba(0,0,0,.08);
+box-shadow:0 4px 10px rgba(0,0,0,.06);
 }
 
 .itemNome{
 font-size:18px;
-font-weight:800;
+font-weight:900;
 color:#222;
 text-align:center;
 }
@@ -166,44 +166,21 @@ font-weight:900;
 color:#ff5722;
 }
 
-.tamanhoBox{
-display:flex;
-gap:10px;
-margin-top:6px;
-}
-
-.btnTamanho{
-padding:8px 14px;
-border-radius:14px;
-border:1px solid #ff5722;
-background:white;
-color:#ff5722;
-font-weight:800;
-cursor:pointer;
-}
-
-.btnTamanho.ativo{
-background:#ff5722;
-color:white;
-}
-
 .btnAdd{
 background:#ff5722;
 color:white;
 border:none;
 border-radius:14px;
 padding:12px 18px;
-font-weight:800;
-font-size:15px;
+font-weight:900;
+font-size:14px;
 cursor:pointer;
-margin-top:8px;
 transition:.2s;
 }
 
 .btnAdd:active{
 transform:scale(.95);
 }
-
 /* =========================
 CARRINHO
 ========================= */
@@ -212,7 +189,7 @@ CARRINHO
 position:fixed;
 top:0;
 right:-100%;
-width:95%;
+width:92%;
 max-width:420px;
 height:100%;
 background:white;
@@ -242,11 +219,14 @@ gap:14px;
 background:#fafafa;
 border-radius:14px;
 padding:14px;
+display:flex;
+flex-direction:column;
+gap:6px;
 border:1px solid #eee;
 text-align:center;
 }
 
-.btnFinalizar{
+.btnFinalizarCarrinho{
 margin:14px;
 padding:16px;
 border-radius:16px;
@@ -262,13 +242,17 @@ cursor:pointer;
 CHECKOUT
 ========================= */
 
+#telaCheckout{
+background:#f4f4f4;
+}
+
 .checkoutResumo{
 width:100%;
 max-width:760px;
 background:white;
 border-radius:18px;
 padding:18px;
-border:1px solid #eee;
+border:1px solid #e0e0e0;
 margin-bottom:18px;
 }
 
@@ -282,9 +266,10 @@ gap:14px;
 
 input,select{
 padding:14px;
-border-radius:14px;
+border-radius:12px;
 border:1px solid #ccc;
-font-size:15px;
+font-size:14px;
+width:100%;
 }
 
 /* =========================
@@ -295,19 +280,20 @@ PIX BOX
 background:#f9f9f9;
 border-radius:16px;
 padding:16px;
-border:1px solid #ddd;
-display:none;
+display:flex;
 flex-direction:column;
 gap:10px;
+border:1px solid #ddd;
 }
 
-.btnCopiar{
+.btnCopiarPix{
 background:#1565c0;
 color:white;
 border:none;
 padding:12px;
 border-radius:12px;
 font-weight:800;
+font-size:14px;
 cursor:pointer;
 }
 
@@ -316,12 +302,12 @@ ADMIN
 ========================= */
 
 #telaAdmin{
-background:#212121;
+background:#1f1f1f;
 color:white;
 }
 
 .adminBox{
-background:#424242;
+background:#2c2c2c;
 padding:16px;
 border-radius:16px;
 margin-bottom:16px;
@@ -338,11 +324,8 @@ border-radius:14px;
 margin-top:8px;
 width:100%;
 font-weight:800;
+font-size:14px;
 cursor:pointer;
-}
-
-.adminBtn:hover{
-background:#111;
 }
 
 /* =========================
@@ -352,13 +335,13 @@ BOTÕES FIXOS
 .btnConfig{
 position:fixed;
 top:14px;
-right:16px;
+right:14px;
 z-index:4000;
 font-size:20px;
 background:white;
 border:none;
 border-radius:12px;
-padding:8px;
+padding:8px 10px;
 box-shadow:0 4px 10px rgba(0,0,0,.2);
 cursor:pointer;
 }
@@ -368,18 +351,180 @@ position:fixed;
 bottom:16px;
 left:16px;
 z-index:3000;
-background:#333;
+background:#222;
 color:white;
 border:none;
 border-radius:12px;
 padding:10px 14px;
-font-weight:800;
+font-weight:900;
 cursor:pointer;
+}
+
+
+/* =========================
+TOAST NOTIFICATION
+========================= */
+
+.toast{
+position:fixed;
+bottom:100px;
+left:50%;
+transform:translateX(-50%);
+background:#333;
+color:white;
+padding:12px 24px;
+border-radius:30px;
+font-weight:700;
+font-size:14px;
+z-index:9999;
+opacity:0;
+transition:opacity .3s;
+pointer-events:none;
+}
+
+.toast.mostrar{
+opacity:1;
+}
+
+/* =========================
+MODAL TAMANHO
+========================= */
+
+.modalOverlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.5);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:5000;
+}
+
+.modalBox{
+background:white;
+border-radius:20px;
+padding:24px;
+width:90%;
+max-width:360px;
+text-align:center;
+}
+
+.modalBox h3{
+font-size:20px;
+margin-bottom:16px;
+color:#222;
+}
+
+.modalBtnTam{
+width:100%;
+padding:16px;
+border-radius:14px;
+font-size:16px;
+font-weight:900;
+border:none;
+cursor:pointer;
+margin-bottom:10px;
+transition:.2s;
+}
+
+.modalBtnTam:active{
+transform:scale(.96);
+}
+
+.modalBtnP{
+background:#ff9800;
+color:white;
+}
+
+.modalBtnG{
+background:#ff5722;
+color:white;
+}
+
+.modalBtnCancelar{
+background:#eee;
+color:#666;
+font-size:14px;
+padding:12px;
+}
+
+/* =========================
+BUSCA CARDAPIO
+========================= */
+
+.buscaInput{
+width:100%;
+max-width:760px;
+padding:14px 18px;
+border-radius:14px;
+border:1px solid #ddd;
+font-size:14px;
+margin-bottom:12px;
+background:white;
+}
+
+.buscaInput:focus{
+outline:none;
+border-color:#ff5722;
+}
+
+/* =========================
+CARRINHO +/- BOTOES
+========================= */
+
+.qtdControle{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:12px;
+margin-top:6px;
+}
+
+.btnQtd{
+width:36px;
+height:36px;
+border-radius:50%;
+border:none;
+font-size:18px;
+font-weight:900;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.btnQtdMenos{
+background:#eee;
+color:#333;
+}
+
+.btnQtdMais{
+background:#ff5722;
+color:white;
+}
+
+.qtdNum{
+font-size:18px;
+font-weight:900;
+min-width:30px;
+text-align:center;
+}
+
+/* =========================
+OBS ITEM
+========================= */
+
+.obsItem{
+font-size:12px;
+color:#888;
+font-style:italic;
+margin-top:2px;
 }
 
 </style>
 </head>
 <body>
+
 <button class="btnConfig" onclick="abrirAdmin()">⚙️</button>
 <button class="btnVoltar" onclick="voltarTela()">←</button>
 
@@ -415,12 +560,13 @@ TELA CARDÁPIO
 <b>Cardápio</b>
 
 <button class="adminBtn"
-style="max-width:200px;background:#ff5722"
+style="max-width:160px;background:#ff5722"
 onclick="toggleCarrinho()">
 Carrinho (<span id="qtd">0</span>)
 </button>
 </div>
 
+<input type="text" id="buscaCardapio" class="buscaInput" placeholder="Buscar no cardápio..." oninput="filtrarCardapio()">
 <div id="abas" class="abas"></div>
 <div id="lista" class="lista"></div>
 
@@ -432,57 +578,30 @@ CARRINHO
 
 <div id="carrinho">
 
-<div style="
-padding:18px;
-font-weight:900;
-font-size:18px;
-display:flex;
-justify-content:space-between;
-align-items:center">
-
+<div style="padding:18px;font-weight:900;font-size:18px;display:flex;justify-content:space-between">
 Seu Pedido
-
-<button onclick="toggleCarrinho()"
-style="
-background:#eee;
-border:none;
-border-radius:10px;
-padding:6px 10px;
-cursor:pointer">
-X
-</button>
-
+<button onclick="toggleCarrinho()" style="background:#ddd;border:none;border-radius:8px;padding:6px 10px">X</button>
 </div>
 
 <div id="cLista" class="cLista"></div>
 
 <div style="padding:16px">
 
-<div id="linhaFrete"
-style="
-display:none;
-margin-bottom:8px;
-font-weight:800;
-color:#d32f2f">
-
-🚚 Taxa de Entrega:
-R$ <span id="freteTxt">0.00</span>
-
+<div id="linhaFrete" style="display:none;font-weight:900;color:#c62828;margin-bottom:6px">
+🚚 Frete: R$ <span id="freteTxt">0.00</span>
 </div>
 
 <b style="font-size:18px">
-Total:
-R$ <span id="total">0.00</span>
+Total: R$ <span id="total">0.00</span>
 </b>
 
 </div>
 
-<button class="btnFinalizar" onclick="irCheckout()">
+<button class="btnFinalizarCarrinho" onclick="irCheckout()">
 FINALIZAR PEDIDO
 </button>
 
 </div>
-
 <!-- =========================
 TELA CHECKOUT
 ========================= -->
@@ -495,13 +614,13 @@ Finalizar Pedido
 
 <div class="checkoutResumo">
 
-<div style="font-weight:900;margin-bottom:8px;font-size:16px">
+<div style="font-weight:900;margin-bottom:10px">
 Resumo do Pedido
 </div>
 
 <div id="checkoutItens"></div>
 
-<div style="margin-top:10px;font-weight:900;font-size:16px">
+<div style="margin-top:10px;font-weight:900">
 Total: R$ <span id="checkoutTotal">0.00</span>
 </div>
 
@@ -522,11 +641,9 @@ Total: R$ <span id="checkoutTotal">0.00</span>
 <input id="telefone" placeholder="Telefone">
 
 <div id="boxEndereco" style="display:none">
-
 <input id="rua" placeholder="Rua">
 <input id="bairro" placeholder="Bairro">
 <input id="numero" placeholder="Número">
-
 </div>
 
 <select id="pagamento">
@@ -544,7 +661,7 @@ Total: R$ <span id="checkoutTotal">0.00</span>
 PIX
 ========================= -->
 
-<div id="boxPix" class="pixBox">
+<div id="boxPix" class="pixBox" style="display:none">
 
 <div style="font-weight:900">Chave PIX</div>
 
@@ -552,11 +669,11 @@ PIX
 <span id="pixChaveTxt"></span>
 </div>
 
-<button class="btnCopiar" onclick="copiarPix()">
+<button class="btnCopiarPix" onclick="copiarPix()">
 COPIAR CHAVE PIX
 </button>
 
-<div style="font-weight:800">
+<div style="font-weight:900">
 Valor: R$ <span id="pixValorTxt">0.00</span>
 </div>
 
@@ -566,7 +683,7 @@ onclick="abrirZapComprovante()">
 Enviar comprovante no WhatsApp
 </button>
 
-<label style="display:flex;gap:8px;align-items:center;justify-content:center">
+<label style="display:flex;gap:6px;align-items:center;justify-content:center">
 <input type="checkbox" id="pixJaEnviei">
 Já enviei comprovante
 </label>
@@ -577,124 +694,89 @@ accept="image/*,application/pdf">
 
 </div>
 
-<button class="btnFinalizar" onclick="finalizarPedido()">
+<button class="btnFinalizarCarrinho"
+onclick="finalizarPedido()">
 ENVIAR PEDIDO
 </button>
 
 </div>
-
 </div>
+
 <!-- =========================
 TELA ADMIN
 ========================= -->
 
 <div id="telaAdmin" class="tela">
 
-<h2 style="margin-bottom:18px">Painel Admin</h2>
+<h2 style="margin-bottom:16px">Painel Admin</h2>
 
 <div class="adminBox">
-
 <b>Pedidos ao Vivo</b>
-
-<div id="adminPedidos"
-style="margin-top:12px;font-size:14px"></div>
-
+<div id="adminPedidos" style="margin-top:10px"></div>
 </div>
 
 <div class="adminBox">
-
 <b>Relatórios</b>
-
 <button class="adminBtn" onclick="relatorioHoje()">Hoje</button>
 <button class="adminBtn" onclick="relatorioMes()">Mês</button>
 <button class="adminBtn" onclick="relatorioAno()">Ano</button>
 <button class="adminBtn" onclick="exportarExcel()">Exportar Excel</button>
 <button class="adminBtn" onclick="zerarRelatorios()">Zerar Dados</button>
-
 </div>
 
 <div class="adminBox">
-
 <b>Gerenciar Cardápio</b>
-
 <button class="adminBtn" onclick="adminNovaAba()">Nova Aba</button>
 <button class="adminBtn" onclick="abrirNovoProdutoUI()">Adicionar Produto</button>
-<button class="adminBtn" onclick="abrirEditorItens()">Editar Produtos</button>
+<button class="adminBtn" onclick="abrirEditorItens()">Editar / Remover Itens</button>
 <button class="adminBtn" onclick="abrirRemoverAbaUI()">Remover Aba</button>
-
 </div>
-
-<button class="btnFinalizar"
-style="background:#b71c1c;margin-top:10px"
-onclick="voltarTela()">
-Sair do Admin
-</button>
 
 </div>
 
 <!-- =========================
-EDITOR PRODUTOS
-========================= -->
-
-<div id="telaEditorItens" class="tela">
-
-<h2 style="margin-bottom:18px">Editor de Produtos</h2>
-
-<div id="listaEditor" class="lista"></div>
-
-<button class="btnFinalizar"
-style="background:#444;margin-top:20px"
-onclick="mostrar('telaAdmin')">
-Voltar
-</button>
-
-</div>
-
-<!-- =========================
-REMOVER ABA
-========================= -->
-
-<div id="uiRemoverAba" class="tela">
-
-<h2 style="margin-bottom:18px">Remover Aba</h2>
-
-<div id="listaAbasRemover" class="lista"></div>
-
-<button class="btnFinalizar"
-style="background:#444;margin-top:20px"
-onclick="mostrar('telaAdmin')">
-Voltar
-</button>
-
-</div>
-
-<!-- =========================
-NOVO PRODUTO
+TELA NOVO PRODUTO
 ========================= -->
 
 <div id="uiNovoProduto" class="tela">
 
-<h2 style="margin-bottom:18px">Novo Produto</h2>
+<h2 style="margin-bottom:16px;color:#222">Adicionar Produto</h2>
 
-<div class="form">
-
-<input id="novoProdNome" placeholder="Nome do produto">
-<input id="novoProdPreco" placeholder="Preço">
-
+<div class="form" style="max-width:760px">
 <select id="novoProdAba"></select>
-
-<button class="btnFinalizar"
-onclick="confirmarNovoProduto()">
-Salvar Produto
-</button>
-
-<button class="btnFinalizar"
-style="background:#444"
-onclick="mostrar('telaAdmin')">
-Cancelar
-</button>
+<input id="novoProdNome" placeholder="Nome do produto">
+<input id="novoProdPreco" type="number" step="0.01" placeholder="Preço (ex: 17.00)">
+<button class="btnFinalizarCarrinho" onclick="confirmarNovoProduto()">ADICIONAR PRODUTO</button>
+<button class="btnVoltar" style="position:static;margin-top:10px" onclick="mostrar('telaAdmin')">&larr; Voltar ao Admin</button>
+</div>
 
 </div>
+
+<!-- =========================
+TELA EDITOR DE ITENS
+========================= -->
+
+<div id="telaEditorItens" class="tela">
+
+<h2 style="margin-bottom:16px;color:#222">Editar / Remover Itens</h2>
+
+<div id="listaEditor" style="width:100%;max-width:760px"></div>
+
+<button class="btnVoltar" style="position:static;margin-top:16px" onclick="mostrar('telaAdmin')">&larr; Voltar ao Admin</button>
+
+</div>
+
+<!-- =========================
+TELA REMOVER ABA
+========================= -->
+
+<div id="uiRemoverAba" class="tela">
+
+<h2 style="margin-bottom:16px;color:#222">Remover Aba</h2>
+
+<div id="listaAbasRemover" style="width:100%;max-width:760px"></div>
+
+<button class="btnVoltar" style="position:static;margin-top:16px" onclick="mostrar('telaAdmin')">&larr; Voltar ao Admin</button>
 
 </div>
 
@@ -703,6 +785,7 @@ INÍCIO SCRIPT
 ========================= -->
 
 <script type="module">
+
 /* =========================
 CONFIGURAÇÕES
 ========================= */
@@ -714,10 +797,10 @@ let PIX_CHAVE = "pix-recanto@pix"
 let modoPedido = null
 let valorFrete = 0
 let pixComprovanteOK = false
+let primeiraCarga = true
+
 let carrinho = []
 let pedidosCache = []
-let bloqueioFinalizacao = false
-let primeiraCarga = true
 
 /* =========================
 FIREBASE
@@ -749,24 +832,30 @@ const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
 
 /* =========================
-UTILITÁRIOS
+UTIL
 ========================= */
 
 const qs = id => document.getElementById(id)
+/* =========================
+CONTROLE DE TELAS
+========================= */
 
 function mostrar(id){
+
 document.querySelectorAll(".tela")
 .forEach(t=>t.classList.remove("ativa"))
 
 qs(id).classList.add("ativa")
 
-fecharCarrinho()
-}
-
-function fecharCarrinho(){
+/* sempre fechar carrinho ao trocar tela */
 qs("carrinho").classList.remove("aberto")
 document.body.style.overflow="auto"
+
 }
+
+/* =========================
+RESET TOTAL DO SISTEMA
+========================= */
 
 function resetarSistema(){
 
@@ -774,6 +863,7 @@ carrinho = []
 valorFrete = 0
 pixComprovanteOK = false
 
+/* limpar carrinho visual */
 if(qs("cLista")) qs("cLista").innerHTML=""
 if(qs("qtd")) qs("qtd").innerText="0"
 if(qs("total")) qs("total").innerText="0.00"
@@ -781,13 +871,14 @@ if(qs("checkoutItens")) qs("checkoutItens").innerHTML=""
 if(qs("checkoutTotal")) qs("checkoutTotal").innerText="0.00"
 if(qs("linhaFrete")) qs("linhaFrete").style.display="none"
 
+/* limpar formulários */
 if(qs("nome")) qs("nome").value=""
 if(qs("telefone")) qs("telefone").value=""
 if(qs("rua")) qs("rua").value=""
 if(qs("bairro")) qs("bairro").value=""
 if(qs("numero")) qs("numero").value=""
-if(qs("mesaInput")) qs("mesaInput").value=""
 if(qs("troco")) qs("troco").value=""
+if(qs("mesaInput")) qs("mesaInput").value=""
 
 if(qs("pixJaEnviei")) qs("pixJaEnviei").checked=false
 if(qs("pixArquivo")) qs("pixArquivo").value=""
@@ -797,10 +888,11 @@ if(qs("boxPix")) qs("boxPix").style.display="none"
 if(qs("boxTroco")) qs("boxTroco").style.display="none"
 
 modoPedido = null
+
 }
 
 /* =========================
-CONTROLE DE TELAS
+BOTÕES PRINCIPAIS
 ========================= */
 
 window.voltarTela = ()=>{
@@ -822,45 +914,12 @@ ESCOLHER MODO
 ========================= */
 
 window.definirModo = (modo)=>{
-
 resetarSistema()
-
 modoPedido = modo
-
 mostrar("telaCardapio")
 renderAbas()
 }
 
-/* =========================
-FRETE AUTOMÁTICO
-========================= */
-
-function calcularFreteAutomatico(){
-
-if(modoPedido !== "delivery"){
-valorFrete = 0
-return
-}
-
-let bairro = qs("bairro")?.value || ""
-bairro = bairro.toLowerCase()
-
-if(
-bairro.includes("igaras") ||
-bairro.includes("igarinha")
-){
-valorFrete = 10
-}else{
-valorFrete = 8
-}
-
-renderCarrinho()
-renderCheckoutResumo()
-}
-
-if(qs("bairro")){
-qs("bairro").addEventListener("input",calcularFreteAutomatico)
-}
 /* =========================
 CARDÁPIO COMPLETO
 ========================= */
@@ -870,6 +929,7 @@ let cardapio = {
 /* =========================
 PASTÉIS SALGADOS P
 ========================= */
+
 "Pastéis Salgados P":[
 {nome:"Aipim c/ Bacon P",preco:17},
 {nome:"Bacon P",preco:17},
@@ -901,6 +961,7 @@ PASTÉIS SALGADOS P
 /* =========================
 PASTÉIS SALGADOS G
 ========================= */
+
 "Pastéis Salgados G":[
 {nome:"Aipim c/ Bacon G",preco:22},
 {nome:"Bacon G",preco:22},
@@ -932,6 +993,7 @@ PASTÉIS SALGADOS G
 /* =========================
 PASTÉIS DOCES P
 ========================= */
+
 "Pastéis Doces P":[
 {nome:"Banana P",preco:17},
 {nome:"Chocolate Preto P",preco:17},
@@ -953,6 +1015,7 @@ PASTÉIS DOCES P
 /* =========================
 PASTÉIS DOCES G
 ========================= */
+
 "Pastéis Doces G":[
 {nome:"Banana G",preco:22},
 {nome:"Chocolate Preto G",preco:22},
@@ -1051,28 +1114,28 @@ PASTÉIS DOCES G
 ]
 
 }
-
 /* =========================
-FILTRO DELIVERY (REMOVE ABAS)
+BLOQUEIO DE ABAS NO DELIVERY
 ========================= */
 
-function abaPermitidaDelivery(nomeAba){
+function abaPermitida(aba){
 
 if(modoPedido !== "delivery") return true
 
-let a = nomeAba.toLowerCase()
+let nome = aba.toLowerCase()
 
 if(
-a.includes("sucos") ||
-a.includes("doses") ||
-a.includes("caip") ||
-a.includes("batida") ||
-a.includes("vitamina")
+nome.includes("sucos") ||
+nome.includes("doses") ||
+nome.includes("caip") ||
+nome.includes("batida") ||
+nome.includes("vitamina")
 ){
 return false
 }
 
 return true
+
 }
 
 /* =========================
@@ -1086,7 +1149,7 @@ qs("lista").innerHTML=""
 
 Object.keys(cardapio).forEach((aba,index)=>{
 
-if(!abaPermitidaDelivery(aba)) return
+if(!abaPermitida(aba)) return
 
 let btn = document.createElement("button")
 btn.className="aba"
@@ -1094,6 +1157,7 @@ btn.innerText = aba
 
 btn.onclick = ()=>{
 
+/* remover ativa anterior */
 document.querySelectorAll(".aba")
 .forEach(a=>a.classList.remove("ativa"))
 
@@ -1106,15 +1170,16 @@ renderItens(aba)
 qs("abas").appendChild(btn)
 
 /* abrir primeira aba automaticamente */
-if(index===0){
-setTimeout(()=>btn.click(),50)
+if(index === 0){
+setTimeout(()=>{ btn.click() }, 50)
 }
 
 })
 
 }
+
 /* =========================
-ORGANIZAR TAMANHOS (P / G / Único)
+ORGANIZAR TAMANHOS (P / G / ÚNICO)
 ========================= */
 
 function organizarTamanhos(lista){
@@ -1131,11 +1196,13 @@ if(!agrupado[base]){
 agrupado[base] = {}
 }
 
-if(item.nome.endsWith(" P")){
+if(item.nome.includes(" P")){
 agrupado[base]["P"] = item.preco
-}else if(item.nome.endsWith(" G")){
+}
+else if(item.nome.includes(" G")){
 agrupado[base]["G"] = item.preco
-}else{
+}
+else{
 agrupado[base]["Único"] = item.preco
 }
 
@@ -1156,9 +1223,13 @@ qs("lista").innerHTML=""
 let produtos = cardapio[aba]
 if(!produtos) return
 
+let busca = qs("buscaCardapio")?.value?.toLowerCase() || ""
+
 let organizados = organizarTamanhos(produtos)
 
 Object.keys(organizados).forEach(nomeBase=>{
+
+if(busca && !nomeBase.toLowerCase().includes(busca)) return
 
 let tamanhos = organizados[nomeBase]
 
@@ -1167,7 +1238,6 @@ el.className="item"
 
 let html = `<div class="itemNome">${nomeBase}</div>`
 
-/* Mostrar tamanhos claros */
 Object.keys(tamanhos).forEach(t=>{
 
 html += `
@@ -1183,46 +1253,21 @@ html += `<button class="btnAdd">Adicionar</button>`
 
 el.innerHTML = html
 
-/* Clique adicionar */
 el.querySelector("button").onclick=()=>{
 
-/* Se tiver P e G, perguntar claramente */
 if(tamanhos["P"] && tamanhos["G"]){
 
-let escolha = prompt(
-`Escolha o tamanho:
-Digite P para Pequeno
-Digite G para Grande`
-)
+mostrarModalTamanho(nomeBase, tamanhos)
 
-if(!escolha) return
-
-escolha = escolha.toUpperCase()
-
-if(escolha === "P"){
-addCarrinho({
-nome:nomeBase+" P",
-preco:tamanhos["P"]
-})
-}else if(escolha === "G"){
-addCarrinho({
-nome:nomeBase+" G",
-preco:tamanhos["G"]
-})
-}else{
-alert("Escolha inválida")
 }
+else{
 
-}else{
+let preco =
+tamanhos["Único"] ||
+tamanhos["P"] ||
+tamanhos["G"]
 
-let preco = tamanhos["Único"] 
-|| tamanhos["P"] 
-|| tamanhos["G"]
-
-addCarrinho({
-nome:nomeBase,
-preco:preco
-})
+pedirObservacao(nomeBase, preco)
 
 }
 
@@ -1235,25 +1280,24 @@ qs("lista").appendChild(el)
 }
 
 /* =========================
-CARRINHO
+FUNÇÃO ADICIONAR CARRINHO
 ========================= */
-
-function totalItens(){
-return carrinho.reduce((s,i)=>s+i.preco*i.qtd,0)
-}
-
-function totalGeral(){
-return totalItens() + valorFrete
-}
 
 function addCarrinho(produto){
 
-let existe = carrinho.find(i=>i.nome===produto.nome)
+let existe = carrinho.find(
+i => i.nome === produto.nome && i.obs === (produto.obs || "")
+)
 
 if(existe){
 existe.qtd++
 }else{
-carrinho.push({...produto,qtd:1})
+carrinho.push({
+nome: produto.nome,
+preco: produto.preco,
+qtd: 1,
+obs: produto.obs || ""
+})
 }
 
 qs("carrinho").classList.add("aberto")
@@ -1261,15 +1305,33 @@ document.body.style.overflow="hidden"
 
 renderCarrinho()
 
+mostrarToast(produto.nome + " adicionado!")
+
+}
+
+/* =========================
+TOTAL ITENS
+========================= */
+
+function totalItens(){
+return carrinho.reduce((s,i)=> s + (i.preco * i.qtd), 0)
+}
+
+/* =========================
+TOTAL GERAL
+========================= */
+
+function totalGeral(){
+return totalItens() + valorFrete
 }
 
 /* =========================
 REMOVER ITEM
 ========================= */
 
-window.removerItem = nome=>{
+window.removerItem = (nome)=>{
 
-carrinho = carrinho.filter(i=>i.nome!==nome)
+carrinho = carrinho.filter(i=> i.nome !== nome)
 
 renderCarrinho()
 
@@ -1280,7 +1342,7 @@ fecharCarrinho()
 }
 
 /* =========================
-TOGGLE CARRINHO
+ABRIR / FECHAR CARRINHO
 ========================= */
 
 window.toggleCarrinho = ()=>{
@@ -1292,51 +1354,16 @@ document.body.style.overflow = aberto ? "hidden" : "auto"
 }
 
 /* =========================
-RENDER CARRINHO
+FECHAR CARRINHO FORÇADO
 ========================= */
 
-function renderCarrinho(){
-
-qs("cLista").innerHTML=""
-let qtdTotal = 0
-
-carrinho.forEach(i=>{
-
-qtdTotal += i.qtd
-
-let div = document.createElement("div")
-div.className="cItem"
-
-div.innerHTML=`
-<div>
-<b>${i.qtd}x ${i.nome}</b><br>
-<span style="color:#ff5722;font-weight:700">
-R$ ${(i.qtd*i.preco).toFixed(2)}
-</span>
-</div>
-<button onclick="removerItem('${i.nome}')">X</button>
-`
-
-qs("cLista").appendChild(div)
-
-})
-
-qs("qtd").innerText=qtdTotal
-qs("total").innerText=totalGeral().toFixed(2)
-
-/* Frete */
-if(valorFrete>0){
-qs("linhaFrete").style.display="block"
-qs("freteTxt").innerText=valorFrete.toFixed(2)
-}else{
-qs("linhaFrete").style.display="none"
+function fecharCarrinho(){
+qs("carrinho").classList.remove("aberto")
+document.body.style.overflow="auto"
 }
 
-renderCheckoutResumo()
-
-}
 /* =========================
-FRETE AUTOMÁTICO INTELIGENTE
+FRETE AUTOMÁTICO
 ========================= */
 
 function calcularFreteAutomatico(){
@@ -1360,14 +1387,82 @@ valorFrete = 8
 
 }
 
-/* Atualiza frete ao digitar bairro */
+/* Atualiza frete ao digitar */
+
+setTimeout(()=>{
 
 if(qs("bairro")){
+
 qs("bairro").addEventListener("input",()=>{
+
 calcularFreteAutomatico()
 renderCarrinho()
 renderCheckoutResumo()
+
 })
+
+}
+
+},500)
+
+/* =========================
+RENDER CARRINHO
+========================= */
+
+function renderCarrinho(){
+
+qs("cLista").innerHTML=""
+
+let qtdTotal = 0
+
+carrinho.forEach((i, idx)=>{
+
+qtdTotal += i.qtd
+
+let div = document.createElement("div")
+div.className="cItem"
+
+let obsHtml = i.obs ? `<div class="obsItem">Obs: ${i.obs}</div>` : ""
+
+div.innerHTML = `
+<div style="width:100%">
+<b style="font-size:17px">
+${i.nome}
+</b>
+${obsHtml}
+<br>
+<span style="color:#ff5722;font-weight:700">
+R$ ${(i.qtd * i.preco).toFixed(2)}
+</span>
+</div>
+
+<div class="qtdControle">
+<button class="btnQtd btnQtdMenos" onclick="alterarQtd(${idx}, -1)">-</button>
+<span class="qtdNum">${i.qtd}</span>
+<button class="btnQtd btnQtdMais" onclick="alterarQtd(${idx}, 1)">+</button>
+</div>
+`
+
+qs("cLista").appendChild(div)
+
+})
+
+qs("qtd").innerText = qtdTotal
+qs("total").innerText = totalGeral().toFixed(2)
+
+if(valorFrete > 0){
+
+qs("linhaFrete").style.display="block"
+qs("freteTxt").innerText = valorFrete.toFixed(2)
+
+}else{
+
+qs("linhaFrete").style.display="none"
+
+}
+
+renderCheckoutResumo()
+
 }
 
 /* =========================
@@ -1382,17 +1477,20 @@ qs("checkoutItens").innerHTML=""
 
 carrinho.forEach(i=>{
 
-let d=document.createElement("div")
+let d = document.createElement("div")
 d.style.marginBottom="6px"
 d.style.textAlign="center"
 
-d.innerHTML=`
+let obsCheckout = i.obs ? `<div class="obsItem">Obs: ${i.obs}</div>` : ""
+
+d.innerHTML = `
 <span style="font-weight:600">
 ${i.qtd}x ${i.nome}
 </span>
+${obsCheckout}
  —
 <span style="color:#ff5722;font-weight:700">
-R$ ${(i.qtd*i.preco).toFixed(2)}
+R$ ${(i.qtd * i.preco).toFixed(2)}
 </span>
 `
 
@@ -1400,13 +1498,14 @@ qs("checkoutItens").appendChild(d)
 
 })
 
-if(valorFrete>0){
+if(valorFrete > 0){
 
-let freteDiv=document.createElement("div")
+let freteDiv = document.createElement("div")
 freteDiv.style.marginTop="8px"
 freteDiv.style.fontWeight="700"
 freteDiv.style.color="#c62828"
-freteDiv.innerText=
+
+freteDiv.innerText =
 `Taxa de entrega: R$ ${valorFrete.toFixed(2)}`
 
 qs("checkoutItens").appendChild(freteDiv)
@@ -1414,12 +1513,11 @@ qs("checkoutItens").appendChild(freteDiv)
 }
 
 if(qs("checkoutTotal")){
-qs("checkoutTotal").innerText=
+qs("checkoutTotal").innerText =
 totalGeral().toFixed(2)
 }
 
 }
-
 /* =========================
 IR PARA CHECKOUT
 ========================= */
@@ -1437,14 +1535,13 @@ renderCheckoutResumo()
 atualizarPix()
 
 if(qs("pagamento")){
-qs("pagamento")
-.dispatchEvent(new Event("change"))
+qs("pagamento").dispatchEvent(new Event("change"))
 }
 
 }
 
 /* =========================
-TIPO DE PEDIDO
+TIPO PEDIDO (LOCAL / ENTREGA)
 ========================= */
 
 if(qs("tipoPedido")){
@@ -1453,21 +1550,21 @@ qs("tipoPedido").onchange = e=>{
 
 let tipo = e.target.value
 
-if(tipo==="entrega"){
+if(tipo === "entrega"){
 
-modoPedido="delivery"
+modoPedido = "delivery"
 
 qs("boxEndereco").style.display="block"
 qs("boxMesa").style.display="none"
 
 }else{
 
-modoPedido="local"
+modoPedido = "local"
 
 qs("boxEndereco").style.display="none"
 qs("boxMesa").style.display="block"
 
-valorFrete=0
+valorFrete = 0
 
 }
 
@@ -1490,19 +1587,17 @@ qs("pagamento").onchange = e=>{
 let p = e.target.value
 
 if(qs("boxPix")){
-qs("boxPix").style.display =
-(p==="PIX") ? "block" : "none"
+qs("boxPix").style.display = (p === "PIX") ? "block" : "none"
 }
 
 if(qs("boxTroco")){
-qs("boxTroco").style.display =
-(p==="Dinheiro") ? "block" : "none"
+qs("boxTroco").style.display = (p === "Dinheiro") ? "block" : "none"
 }
 
-pixComprovanteOK=false
+pixComprovanteOK = false
 
 if(qs("pixJaEnviei")){
-qs("pixJaEnviei").checked=false
+qs("pixJaEnviei").checked = false
 }
 
 renderCheckoutResumo()
@@ -1518,47 +1613,74 @@ ATUALIZAR PIX
 function atualizarPix(){
 
 if(qs("pixValorTxt")){
-qs("pixValorTxt").innerText =
-totalGeral().toFixed(2)
+qs("pixValorTxt").innerText = totalGeral().toFixed(2)
 }
 
 if(qs("pixChaveTxt")){
-qs("pixChaveTxt").innerText =
-PIX_CHAVE
+qs("pixChaveTxt").innerText = PIX_CHAVE
 }
 
 }
 
 /* =========================
-COPIAR CHAVE PIX
+COPIAR PIX
 ========================= */
 
 window.copiarPix = ()=>{
 
 navigator.clipboard.writeText(PIX_CHAVE)
+.then(()=>{
 alert("Chave PIX copiada com sucesso ✅")
+})
+.catch(()=>{
+alert("Não foi possível copiar automaticamente.")
+})
 
 }
 
 /* =========================
-COMPROVANTE PIX
+CONFIRMAÇÃO COMPROVANTE
 ========================= */
 
 if(qs("pixArquivo")){
+
 qs("pixArquivo").onchange = ()=>{
-if(qs("pixArquivo").files.length>0){
-pixComprovanteOK=true
-}
+if(qs("pixArquivo").files.length > 0){
+pixComprovanteOK = true
 }
 }
 
+}
+
 if(qs("pixJaEnviei")){
+
 qs("pixJaEnviei").onchange = e=>{
 pixComprovanteOK = e.target.checked
 }
+
 }
+
 /* =========================
-MENSAGEM WHATSAPP PROFISSIONAL
+WHATSAPP COMPROVANTE
+========================= */
+
+window.abrirZapComprovante = ()=>{
+
+let valor = totalGeral().toFixed(2)
+
+let texto =
+`Comprovante PIX - Recanto do Pastel\nValor: R$ ${valor}`
+
+window.open(
+`https://wa.me/${WHATSAPP_LOJA}?text=${encodeURIComponent(texto)}`
+)
+
+pixComprovanteOK = true
+
+}
+
+/* =========================
+MONTAR MENSAGEM WHATSAPP
 ========================= */
 
 function montarMensagemWhatsApp(pedido){
@@ -1567,32 +1689,30 @@ let msg = `🥟 *RECANTO DO PASTEL*\n\n`
 
 msg += `👤 Cliente: ${pedido.cliente.nome}\n`
 msg += `📱 Telefone: ${pedido.cliente.tel}\n`
-msg += `📦 Tipo: ${pedido.modo === "delivery" ? "Delivery" : "Consumir no Local"}\n\n`
+msg += `📦 Tipo: ${pedido.modo === "delivery" ? "Delivery" : "Local"}\n\n`
 
-msg += `🧾 *Itens do Pedido:*\n`
+msg += `🧾 *Itens:*\n`
 
 pedido.itens.forEach(i=>{
-msg += `• ${i.qtd}x ${i.nome} — R$ ${(i.qtd*i.preco).toFixed(2)}\n`
+msg += `• ${i.qtd}x ${i.nome} - R$ ${(i.qtd * i.preco).toFixed(2)}\n`
+if(i.obs) msg += `  📝 Obs: ${i.obs}\n`
 })
 
-if(pedido.frete>0){
+if(pedido.frete > 0){
 msg += `\n🚚 Frete: R$ ${pedido.frete.toFixed(2)}`
 }
 
 msg += `\n\n💰 *TOTAL: R$ ${pedido.total.toFixed(2)}*`
 
 return msg
+
 }
 
 /* =========================
-PROTEÇÃO CONTRA DUPLO CLIQUE
+FINALIZAR PEDIDO
 ========================= */
 
 let bloqueioFinalizacao = false
-
-/* =========================
-FINALIZAR PEDIDO DEFINITIVO
-========================= */
 
 window.finalizarPedido = async()=>{
 
@@ -1605,20 +1725,22 @@ let tipo = qs("tipoPedido")?.value
 let pag  = qs("pagamento")?.value
 
 if(!nome || !tel){
+
 alert("Preencha nome e telefone")
-bloqueioFinalizacao=false
+bloqueioFinalizacao = false
 return
+
 }
 
-/* validar PIX para delivery */
+if(tipo === "entrega" && pag === "PIX" && !pixComprovanteOK){
 
-if(tipo==="entrega" && pag==="PIX" && !pixComprovanteOK){
 alert("Envie o comprovante PIX para finalizar")
-bloqueioFinalizacao=false
+bloqueioFinalizacao = false
 return
+
 }
 
-/* montar objeto pedido */
+/* Montar pedido */
 
 let pedido = {
 cliente:{nome,tel},
@@ -1629,7 +1751,7 @@ modo:modoPedido,
 data:new Date().toISOString()
 }
 
-/* salvar no Firebase */
+/* Salvar no Firebase */
 
 try{
 await addDoc(collection(db,"pedidos"),pedido)
@@ -1637,82 +1759,27 @@ await addDoc(collection(db,"pedidos"),pedido)
 console.log("Erro ao salvar:",e)
 }
 
-/* enviar WhatsApp */
+/* Enviar WhatsApp */
 
 let mensagem = montarMensagemWhatsApp(pedido)
 
 window.open(
-`https://wa.me/${WHATSAPP_LOJA}?text=${
-encodeURIComponent(mensagem)
-}`
+`https://wa.me/${WHATSAPP_LOJA}?text=${encodeURIComponent(mensagem)}`
 )
 
-/* RESET COMPLETO */
+/* Reset total */
 
 resetarSistema()
 
 mostrar("telaEscolha")
 
-/* liberar botão após 2s */
-
 setTimeout(()=>{
-bloqueioFinalizacao=false
+bloqueioFinalizacao = false
 },2000)
 
 }
-
 /* =========================
-RESET COMPLETO DO SISTEMA
-========================= */
-
-function resetarSistema(){
-
-/* limpar carrinho */
-carrinho=[]
-valorFrete=0
-pixComprovanteOK=false
-
-/* fechar carrinho */
-qs("carrinho").classList.remove("aberto")
-document.body.style.overflow="auto"
-
-/* limpar lista visual */
-if(qs("cLista")) qs("cLista").innerHTML=""
-if(qs("lista")) qs("lista").innerHTML=""
-if(qs("abas")) qs("abas").innerHTML=""
-
-/* limpar totais */
-if(qs("qtd")) qs("qtd").innerText="0"
-if(qs("total")) qs("total").innerText="0.00"
-if(qs("checkoutTotal")) qs("checkoutTotal").innerText="0.00"
-if(qs("linhaFrete")) qs("linhaFrete").style.display="none"
-
-/* limpar formulário */
-if(qs("nome")) qs("nome").value=""
-if(qs("telefone")) qs("telefone").value=""
-if(qs("rua")) qs("rua").value=""
-if(qs("bairro")) qs("bairro").value=""
-if(qs("numero")) qs("numero").value=""
-if(qs("mesaInput")) qs("mesaInput").value=""
-if(qs("troco")) qs("troco").value=""
-
-if(qs("pixJaEnviei")) qs("pixJaEnviei").checked=false
-if(qs("pixArquivo")) qs("pixArquivo").value=""
-
-/* esconder blocos */
-if(qs("boxEndereco")) qs("boxEndereco").style.display="none"
-if(qs("boxPix")) qs("boxPix").style.display="none"
-if(qs("boxTroco")) qs("boxTroco").style.display="none"
-
-/* remover aba ativa */
-document.querySelectorAll(".aba")
-.forEach(b=>b.classList.remove("ativa"))
-
-modoPedido=null
-
-}
-/* =========================
-SOM NOTIFICAÇÃO ADMIN
+SOM DE NOTIFICAÇÃO (ADMIN)
 ========================= */
 
 const audioNotificacao = new Audio(
@@ -1720,152 +1787,145 @@ const audioNotificacao = new Audio(
 )
 
 /* =========================
-SINCRONIZAR PEDIDOS EM TEMPO REAL
+PEDIDOS AO VIVO (FIREBASE)
 ========================= */
 
-onSnapshot(collection(db,"pedidos"),snap=>{
+onSnapshot(collection(db,"pedidos"), snap => {
 
-pedidosCache=[]
+pedidosCache = []
 
 let box = qs("adminPedidos")
-if(box) box.innerHTML=""
 
-snap.forEach(d=>{
+if(box) box.innerHTML = ""
 
-let p=d.data()
+snap.forEach(doc => {
+
+let p = doc.data()
+
 pedidosCache.push(p)
 
 if(box){
 
-box.innerHTML+=`
+box.innerHTML += `
 <div style="
 margin-bottom:12px;
 padding:12px;
 background:#333;
-border-radius:12px;
-text-align:left">
+border-radius:12px">
 
 <b>${p.cliente.nome}</b><br>
-<span style="font-size:13px">
-${new Date(p.data).toLocaleString()}
+
+<span style="color:#4caf50;font-weight:700">
+R$ ${Number(p.total).toFixed(2)}
 </span><br>
 
-<span style="
-color:#4caf50;
-font-weight:900;
-font-size:16px">
-R$ ${Number(p.total).toFixed(2)}
+<span style="font-size:12px;color:#ccc">
+${new Date(p.data).toLocaleString()}
 </span>
 
-</div>`
+</div>
+`
 
 }
 
 })
 
-/* tocar som apenas quando novo pedido */
+/* tocar som apenas quando já tiver carregado antes */
 
-if(!primeiraCarga && pedidosCache.length>0){
+if(!primeiraCarga && pedidosCache.length > 0){
 audioNotificacao.play().catch(()=>{})
 }
 
-primeiraCarga=false
+primeiraCarga = false
 
 })
 
 /* =========================
-FUNÇÃO SOMA FILTRADA
+RELATÓRIOS
 ========================= */
 
-function somaRelatorio(fn){
+function somaPedidos(filtro){
+
 return pedidosCache
-.filter(fn)
-.reduce((s,p)=>s+Number(p.total||0),0)
+.filter(filtro)
+.reduce((s,p)=> s + Number(p.total || 0), 0)
+
 }
 
-/* =========================
-RELATÓRIO HOJE
-========================= */
+window.relatorioHoje = ()=>{
 
-window.relatorioHoje=()=>{
+let hoje = new Date().toDateString()
 
-let hoje=new Date().toDateString()
-
-let total=somaRelatorio(p=>
-new Date(p.data).toDateString()===hoje
+let total = somaPedidos(p =>
+new Date(p.data).toDateString() === hoje
 )
 
-alert("Total Hoje: R$ "+total.toFixed(2))
+alert("Total Hoje: R$ " + total.toFixed(2))
 
 }
 
-/* =========================
-RELATÓRIO MÊS
-========================= */
+window.relatorioMes = ()=>{
 
-window.relatorioMes=()=>{
+let mes = new Date().getMonth()
+let ano = new Date().getFullYear()
 
-let mes=new Date().getMonth()
-let ano=new Date().getFullYear()
+let total = somaPedidos(p => {
 
-let total=somaRelatorio(p=>{
-let d=new Date(p.data)
-return d.getMonth()===mes && d.getFullYear()===ano
+let d = new Date(p.data)
+return d.getMonth() === mes && d.getFullYear() === ano
+
 })
 
-alert("Total do Mês: R$ "+total.toFixed(2))
+alert("Total do Mês: R$ " + total.toFixed(2))
 
 }
 
-/* =========================
-RELATÓRIO ANO
-========================= */
+window.relatorioAno = ()=>{
 
-window.relatorioAno=()=>{
+let ano = new Date().getFullYear()
 
-let ano=new Date().getFullYear()
-
-let total=somaRelatorio(p=>
-new Date(p.data).getFullYear()===ano
+let total = somaPedidos(p =>
+new Date(p.data).getFullYear() === ano
 )
 
-alert("Total do Ano: R$ "+total.toFixed(2))
+alert("Total do Ano: R$ " + total.toFixed(2))
 
 }
 
 /* =========================
-EXPORTAR EXCEL COMPLETO
+EXPORTAR CSV COMPLETO
 ========================= */
 
-window.exportarExcel=()=>{
+window.exportarExcel = ()=>{
 
-let csv="cliente,item,quantidade,valor_unitario,total_pedido,data\n"
+let csv = "cliente,item,quantidade,valor_unitario,total_pedido,data\n"
 
-let totalGeralRel=0
+let totalGeralRel = 0
 
-pedidosCache.forEach(p=>{
+pedidosCache.forEach(p => {
 
-totalGeralRel+=Number(p.total)||0
+totalGeralRel += Number(p.total) || 0
 
-;(p.itens||[]).forEach(it=>{
+;(p.itens || []).forEach(it => {
 
-csv+=`${p.cliente.nome},`
-csv+=`${it.nome},`
-csv+=`${it.qtd},`
-csv+=`${it.preco},`
-csv+=`${p.total},`
-csv+=`${p.data}\n`
-
-})
+csv += `${p.cliente.nome},`
+csv += `${it.nome},`
+csv += `${it.qtd},`
+csv += `${it.preco},`
+csv += `${p.total},`
+csv += `${p.data}\n`
 
 })
 
-csv+=`\n,,,,TOTAL VENDIDO,${totalGeralRel.toFixed(2)}\n`
+})
 
-let blob=new Blob([csv],{type:"text/csv"})
-let a=document.createElement("a")
-a.href=URL.createObjectURL(blob)
-a.download="relatorio_recanto_do_pastel.csv"
+csv += `\n,,,,TOTAL VENDIDO,${totalGeralRel.toFixed(2)}\n`
+
+let blob = new Blob([csv],{type:"text/csv"})
+let a = document.createElement("a")
+
+a.href = URL.createObjectURL(blob)
+a.download = "relatorio_recanto_do_pastel.csv"
 a.click()
 
 }
@@ -1876,55 +1936,68 @@ ZERAR TODOS OS PEDIDOS
 
 window.zerarRelatorios = async()=>{
 
-if(!confirm("Deseja apagar TODOS os pedidos?"))
-return
+if(!confirm("Deseja apagar TODOS os pedidos?")) return
 
 let snap = await getDocs(collection(db,"pedidos"))
 
-snap.forEach(docu=>{
-deleteDoc(docu.ref)
-})
+for(let doc of snap.docs){
+await deleteDoc(doc.ref)
+}
 
 alert("Pedidos apagados com sucesso")
 
 }
 
 /* =========================
-GERENCIAR CARDÁPIO (ADMIN)
+ADMIN - NOVA ABA
 ========================= */
 
 window.adminNovaAba = ()=>{
 
-let nome = prompt("Nome da nova aba:")
+let nome = prompt("Nome da nova aba")
+
 if(!nome) return
 
 if(cardapio[nome]){
-alert("Essa aba já existe")
+alert("Essa aba já existe.")
 return
 }
 
-cardapio[nome]=[]
+cardapio[nome] = []
+
+salvarCardapioFirebase()
+
 renderAbas()
 
 alert("Aba criada com sucesso")
 
 }
 
+/* =========================
+ADMIN - ABRIR NOVO PRODUTO UI
+========================= */
+
 window.abrirNovoProdutoUI = ()=>{
+
+qs("novoProdAba").innerHTML = ""
+
+Object.keys(cardapio).forEach(aba => {
+
+let opt = document.createElement("option")
+opt.value = aba
+opt.innerText = aba
+
+qs("novoProdAba").appendChild(opt)
+
+})
 
 mostrar("uiNovoProduto")
 
-let select = qs("novoProdAba")
-select.innerHTML=""
-
-Object.keys(cardapio).forEach(aba=>{
-let op=document.createElement("option")
-op.value=aba
-op.innerText=aba
-select.appendChild(op)
-})
-
 }
+
+/* =========================
+CONFIRMAR NOVO PRODUTO
+========================= */
 
 window.confirmarNovoProduto = ()=>{
 
@@ -1932,97 +2005,157 @@ let nome = qs("novoProdNome").value
 let preco = parseFloat(qs("novoProdPreco").value)
 let aba = qs("novoProdAba").value
 
-if(!nome || !preco){
-alert("Preencha nome e preço")
+if(!nome || isNaN(preco)){
+alert("Preencha corretamente.")
 return
 }
 
-cardapio[aba].push({nome,preco})
+cardapio[aba].push({
+nome:nome,
+preco:preco
+})
+
+salvarCardapioFirebase()
 
 qs("novoProdNome").value=""
 qs("novoProdPreco").value=""
 
 mostrar("telaAdmin")
-renderAbas()
 
-alert("Produto adicionado")
+alert("Produto adicionado!")
 
 }
+
+/* =========================
+ADMIN - EDITAR PRODUTOS
+========================= */
 
 window.abrirEditorItens = ()=>{
 
+qs("listaEditor").innerHTML = ""
+
+Object.keys(cardapio).forEach(aba => {
+
+cardapio[aba].forEach((produto,index)=>{
+
+let el = document.createElement("div")
+el.className = "adminBox"
+
+el.innerHTML = `
+<b>${aba}</b><br>
+${produto.nome} — R$ ${produto.preco}
+<br>
+<button class="adminBtn"
+onclick="editarProduto('${aba}',${index})">
+Editar
+</button>
+<button class="adminBtn"
+onclick="removerProduto('${aba}',${index})">
+Remover
+</button>
+`
+
+qs("listaEditor").appendChild(el)
+
+})
+
+})
+
 mostrar("telaEditorItens")
 
-let box = qs("listaEditor")
-box.innerHTML=""
+}
 
-Object.keys(cardapio).forEach(aba=>{
+window.editarProduto = (aba,index)=>{
 
-cardapio[aba].forEach((item,index)=>{
+let novoNome = prompt("Novo nome:",
+cardapio[aba][index].nome)
 
-let div=document.createElement("div")
-div.className="item"
+let novoPreco = prompt("Novo preço:",
+cardapio[aba][index].preco)
 
-div.innerHTML=`
-<div class="itemNome">${item.nome}</div>
-<div class="itemPreco">R$ ${item.preco.toFixed(2)}</div>
-<button class="adminBtn">Excluir</button>
-`
+if(!novoNome || isNaN(parseFloat(novoPreco))) return
 
-div.querySelector("button").onclick=()=>{
-cardapio[aba].splice(index,1)
+cardapio[aba][index].nome = novoNome
+cardapio[aba][index].preco = parseFloat(novoPreco)
+
+salvarCardapioFirebase()
 abrirEditorItens()
-}
-
-box.appendChild(div)
-
-})
-
-})
 
 }
 
-window.abrirRemoverAbaUI = ()=>{
+window.removerProduto = (aba,index)=>{
 
-mostrar("uiRemoverAba")
+if(!confirm("Remover produto?")) return
 
-let box = qs("listaAbasRemover")
-box.innerHTML=""
+cardapio[aba].splice(index,1)
 
-Object.keys(cardapio).forEach(aba=>{
-
-let div=document.createElement("div")
-div.className="item"
-
-div.innerHTML=`
-<div class="itemNome">${aba}</div>
-<button class="adminBtn">Remover</button>
-`
-
-div.querySelector("button").onclick=()=>{
-delete cardapio[aba]
-abrirRemoverAbaUI()
-}
-
-box.appendChild(div)
-
-})
+salvarCardapioFirebase()
+abrirEditorItens()
 
 }
 /* =========================
-SALVAR CARDÁPIO NO FIREBASE
+ADMIN - REMOVER ABA UI
+========================= */
+
+window.abrirRemoverAbaUI = ()=>{
+
+qs("listaAbasRemover").innerHTML = ""
+
+Object.keys(cardapio).forEach(aba => {
+
+let el = document.createElement("div")
+el.className = "adminBox"
+
+el.innerHTML = `
+<b>${aba}</b>
+<button class="adminBtn"
+onclick="removerAbaConfirmada('${aba}')">
+Remover Aba
+</button>
+`
+
+qs("listaAbasRemover").appendChild(el)
+
+})
+
+mostrar("uiRemoverAba")
+
+}
+
+/* =========================
+REMOVER ABA CONFIRMAÇÃO
+========================= */
+
+window.removerAbaConfirmada = async (aba)=>{
+
+if(!confirm(`Remover a aba "${aba}"?`)) return
+
+delete cardapio[aba]
+
+await salvarCardapioFirebase()
+
+mostrar("telaAdmin")
+
+alert("Aba removida com sucesso")
+
+}
+
+/* =========================
+SALVAR CARDÁPIO FIREBASE
 ========================= */
 
 async function salvarCardapioFirebase(){
 
 try{
 
+/* apagar tudo */
 let snap = await getDocs(collection(db,"cardapio"))
 
-snap.forEach(docu=>{
-deleteDoc(docu.ref)
-})
+for(let doc of snap.docs){
+await deleteDoc(doc.ref)
+}
 
+/* salvar novamente */
 for(let aba in cardapio){
 
 await addDoc(collection(db,"cardapio"),{
@@ -2033,7 +2166,7 @@ itens:cardapio[aba]
 }
 
 }catch(e){
-console.log("Erro ao salvar cardápio:",e)
+console.log("Erro salvar cardápio:",e)
 }
 
 }
@@ -2050,12 +2183,17 @@ let snap = await getDocs(collection(db,"cardapio"))
 
 if(snap.empty) return
 
-cardapio={}
+let novoCardapio = {}
 
-snap.forEach(docu=>{
-let d=docu.data()
-cardapio[d.nomeAba]=d.itens||[]
+snap.forEach(doc => {
+
+let d = doc.data()
+
+novoCardapio[d.nomeAba] = d.itens || []
+
 })
+
+cardapio = novoCardapio
 
 }catch(e){
 console.log("Erro carregar cardápio:",e)
@@ -2064,143 +2202,172 @@ console.log("Erro carregar cardápio:",e)
 }
 
 /* =========================
-ATUALIZAR PIX DINAMICAMENTE
+TOAST NOTIFICATION
 ========================= */
 
-function atualizarPix(){
-
-if(qs("pixValorTxt")){
-qs("pixValorTxt").innerText =
-totalGeral().toFixed(2)
+function mostrarToast(texto){
+let t = qs("toast")
+if(!t) return
+t.innerText = texto
+t.classList.add("mostrar")
+setTimeout(()=>{
+t.classList.remove("mostrar")
+},1800)
 }
 
-if(qs("pixChaveTxt")){
-qs("pixChaveTxt").innerText =
-PIX_CHAVE
+/* =========================
+MODAL TAMANHO P/G
+========================= */
+
+function mostrarModalTamanho(nomeBase, tamanhos){
+
+let overlay = document.createElement("div")
+overlay.className = "modalOverlay"
+
+overlay.innerHTML = `
+<div class="modalBox">
+<h3>${nomeBase}</h3>
+<button class="modalBtnTam modalBtnP" data-tam="P">
+Pequeno - R$ ${tamanhos["P"].toFixed(2)}
+</button>
+<button class="modalBtnTam modalBtnG" data-tam="G">
+Grande - R$ ${tamanhos["G"].toFixed(2)}
+</button>
+<button class="modalBtnTam modalBtnCancelar" data-tam="cancelar">
+Cancelar
+</button>
+</div>
+`
+
+overlay.querySelector('[data-tam="P"]').onclick = ()=>{
+document.body.removeChild(overlay)
+pedirObservacao(nomeBase + " P", tamanhos["P"])
 }
+
+overlay.querySelector('[data-tam="G"]').onclick = ()=>{
+document.body.removeChild(overlay)
+pedirObservacao(nomeBase + " G", tamanhos["G"])
+}
+
+overlay.querySelector('[data-tam="cancelar"]').onclick = ()=>{
+document.body.removeChild(overlay)
+}
+
+document.body.appendChild(overlay)
 
 }
 
 /* =========================
-COPIAR PIX
+PEDIR OBSERVAÇÃO DO ITEM
 ========================= */
 
-window.copiarPix = ()=>{
+function pedirObservacao(nome, preco){
 
-navigator.clipboard.writeText(PIX_CHAVE)
-.then(()=>{
-alert("Chave PIX copiada ✅")
-})
-.catch(()=>{
-alert("Erro ao copiar PIX")
-})
+let obs = prompt("Observação (opcional):\nEx: sem cebola, bem passado...")
 
-}
-
-/* =========================
-COMPROVANTE PIX
-========================= */
-
-if(qs("pixArquivo")){
-
-qs("pixArquivo").addEventListener("change",()=>{
-if(qs("pixArquivo").files.length>0){
-pixComprovanteOK=true
-}
-})
-
-}
-
-if(qs("pixJaEnviei")){
-
-qs("pixJaEnviei").addEventListener("change",e=>{
-pixComprovanteOK = e.target.checked
+addCarrinho({
+nome: nome,
+preco: preco,
+obs: obs || ""
 })
 
 }
 
 /* =========================
-WHATSAPP COMPROVANTE
+FILTRAR CARDÁPIO (BUSCA)
 ========================= */
 
-window.abrirZapComprovante = ()=>{
+window.filtrarCardapio = ()=>{
 
-let valor = totalGeral().toFixed(2)
+let busca = qs("buscaCardapio")?.value?.toLowerCase() || ""
 
-let texto =
-`Comprovante PIX - Recanto do Pastel
-Valor: R$ ${valor}`
+if(!busca){
+document.querySelectorAll(".aba").forEach(a=>a.classList.remove("ativa"))
+let primeira = document.querySelector(".aba")
+if(primeira){
+primeira.classList.add("ativa")
+primeira.click()
+}
+return
+}
 
-window.open(
-`https://wa.me/${WHATSAPP_LOJA}?text=${
-encodeURIComponent(texto)
-}`
-)
+document.querySelectorAll(".aba").forEach(a=>a.classList.remove("ativa"))
+
+qs("lista").innerHTML = ""
+
+Object.keys(cardapio).forEach(aba=>{
+
+if(!abaPermitida(aba)) return
+
+let produtos = cardapio[aba]
+let organizados = organizarTamanhos(produtos)
+
+Object.keys(organizados).forEach(nomeBase=>{
+
+if(!nomeBase.toLowerCase().includes(busca)) return
+
+let tamanhos = organizados[nomeBase]
+
+let el = document.createElement("div")
+el.className="item"
+
+let html = `<div class="itemNome">${nomeBase}</div>`
+html += `<div style="font-size:12px;color:#999;margin-bottom:4px">${aba}</div>`
+
+Object.keys(tamanhos).forEach(t=>{
+html += `
+<div style="font-size:18px;font-weight:700;color:#ff5722">
+${t==="Único"?"":t+" - "}
+R$ ${tamanhos[t].toFixed(2)}
+</div>
+`
+})
+
+html += `<button class="btnAdd">Adicionar</button>`
+
+el.innerHTML = html
+
+el.querySelector("button").onclick=()=>{
+if(tamanhos["P"] && tamanhos["G"]){
+mostrarModalTamanho(nomeBase, tamanhos)
+}else{
+let preco = tamanhos["Único"] || tamanhos["P"] || tamanhos["G"]
+pedirObservacao(nomeBase, preco)
+}
+}
+
+qs("lista").appendChild(el)
+
+})
+
+})
 
 }
 
 /* =========================
-CALCULAR FRETE AO DIGITAR
+ALTERAR QUANTIDADE (+/-)
 ========================= */
 
-if(qs("bairro")){
+window.alterarQtd = (idx, delta)=>{
 
-qs("bairro").addEventListener("input",()=>{
-calcularFreteAutomatico()
+if(idx < 0 || idx >= carrinho.length) return
+
+carrinho[idx].qtd += delta
+
+if(carrinho[idx].qtd <= 0){
+carrinho.splice(idx, 1)
+}
+
 renderCarrinho()
-renderCheckoutResumo()
-})
+
+if(!carrinho.length){
+fecharCarrinho()
+}
 
 }
 
 /* =========================
-PWA - INSTALÁVEL
-========================= */
-
-if("serviceWorker" in navigator){
-
-navigator.serviceWorker.register("sw.js")
-.then(()=>console.log("Service Worker registrado"))
-.catch(()=>console.log("Falha SW"))
-
-}
-
-/* =========================
-CRIAR MANIFEST DINÂMICO
-========================= */
-
-const manifestData = {
-"name":"Recanto do Pastel",
-"short_name":"Recanto",
-"start_url":"./index.html",
-"display":"standalone",
-"background_color":"#ffffff",
-"theme_color":"#ff5722",
-"icons":[
-{
-"src":"logo-recanto.png",
-"sizes":"192x192",
-"type":"image/png"
-},
-{
-"src":"logo-recanto.png",
-"sizes":"512x512",
-"type":"image/png"
-}
-]
-}
-
-const stringManifest = JSON.stringify(manifestData)
-const blob = new Blob([stringManifest], {type: 'application/json'})
-const manifestURL = URL.createObjectURL(blob)
-
-let link = document.createElement('link')
-link.rel = 'manifest'
-link.href = manifestURL
-document.head.appendChild(link)
-
-/* =========================
-INICIALIZAÇÃO FINAL DO SISTEMA
+INIT FINAL DO SISTEMA
 ========================= */
 
 async function initSistema(){
@@ -2218,23 +2385,9 @@ mostrar("telaEscolha")
 initSistema()
 
 /* =========================
-GARANTIR TELA INICIAL
-========================= */
-
-window.addEventListener("pageshow",()=>{
-resetarSistema()
-mostrar("telaEscolha")
-})
-
-window.addEventListener("load",()=>{
-resetarSistema()
-mostrar("telaEscolha")
-})
-
-/* =========================
 FIM DEFINITIVO DO SCRIPT
 ========================= */
 </script>
+<div id="toast" class="toast"></div>
 </body>
 </html>
-
