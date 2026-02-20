@@ -1470,7 +1470,7 @@ const qs = id => document.getElementById(id)
 CONTROLE DE TELAS
 ========================= */
 
-function mostrar(id){
+window.mostrar = function mostrar(id){
 
 document.querySelectorAll(".tela")
 .forEach(t=>t.classList.remove("ativa"))
@@ -1524,6 +1524,24 @@ BOTÕES PRINCIPAIS
 ========================= */
 
 window.voltarTela = ()=>{
+let telaAtual = document.querySelector(".tela.ativa")
+let telasAdmin = ["telaMesas","telaPedidosLocal","uiNovoProduto","telaEditorItens","uiRemoverAba"]
+/* Se garçom está no cardápio/checkout de mesa, voltar pra mesas */
+if(mesaSelecionada && telaAtual && (telaAtual.id === "telaCardapio" || telaAtual.id === "telaCheckout")){
+carrinho = []
+renderCarrinho()
+mesaSelecionada = null
+mostrar("telaMesas")
+return
+}
+if(telaAtual && telasAdmin.includes(telaAtual.id)){
+mostrar("telaAdmin")
+return
+}
+if(telaAtual && telaAtual.id === "telaAdmin"){
+mostrar("telaEscolha")
+return
+}
 resetarSistema()
 if(qs("deliveryFechado")) qs("deliveryFechado").style.display = "none"
 if(qs("btnDeliveryMain")) qs("btnDeliveryMain").style.display = ""
@@ -2575,7 +2593,7 @@ await addDoc(collection(db,"pedidos"),pedido)
 console.log("Erro ao salvar:",e)
 }
 
-alert("Pedido da Mesa " + mesaSelecionada + " enviado!")
+alert("Pedido da Mesa " + mesaSelecionada + " enviado!\n\n🖨️ O pedido será impresso automaticamente na impressora da loja.")
 carrinho = []
 renderCarrinho()
 mesaSelecionada = null
