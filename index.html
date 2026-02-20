@@ -1936,7 +1936,7 @@ infoDiv.appendChild(descEl)
 let precosDiv = document.createElement("div")
 precosDiv.className = "itemPrecos"
 
-Object.keys(tamanhos).filter(t=> t!=="desc" && t!=="pratoFeito").forEach(t=>{
+Object.keys(tamanhos).filter(t=> t!=="desc" && t!=="pratoFeito" && t!=="num").forEach(t=>{
 let span = document.createElement("span")
 span.className = "itemPreco"
 span.textContent = (t === "Único" ? "" : t + " ") + "R$ " + tamanhos[t].toFixed(2)
