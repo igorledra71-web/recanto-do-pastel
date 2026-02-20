@@ -282,6 +282,25 @@ color:var(--text);
 line-height:1.3;
 }
 
+.btnImprimir{
+width:100%;
+padding:12px;
+margin-top:8px;
+border:2px solid var(--accent2);
+background:transparent;
+color:var(--accent2);
+font-size:14px;
+font-weight:700;
+border-radius:12px;
+cursor:pointer;
+transition:all .2s;
+}
+.btnImprimir:active{
+transform:scale(.96);
+background:var(--accent2);
+color:#fff;
+}
+
 .btnMaisItens{
 width:100%;
 padding:14px;
@@ -984,6 +1003,88 @@ RESPONSIVE
 .btnVoltar{bottom:12px;left:12px;padding:10px 12px;font-size:12px}
 .btnConfig{top:10px;right:10px;padding:8px 10px;font-size:16px}
 }
+
+/* =========================
+IMPRESSÃO CUPOM TÉRMICO (80mm)
+========================= */
+@media print {
+body, html {
+margin:0 !important;
+padding:0 !important;
+background:#fff !important;
+}
+.tela, #carrinho, .btnVoltar, .btnAdmin, header, footer, nav {
+display:none !important;
+}
+#cupomImpressao {
+display:block !important;
+width:72mm;
+margin:0 auto;
+padding:2mm;
+font-family:'Courier New',monospace;
+font-size:14px;
+color:#000;
+background:#fff;
+}
+.cupomLinha {
+text-align:center;
+margin:0;
+padding:1px 0;
+}
+.cupomTitulo {
+font-size:20px;
+font-weight:900;
+letter-spacing:1px;
+margin-bottom:4px;
+}
+.cupomSub {
+font-size:16px;
+font-weight:700;
+margin:6px 0 2px;
+border-top:1px dashed #000;
+border-bottom:1px dashed #000;
+padding:4px 0;
+}
+.cupomItem {
+text-align:left;
+font-size:14px;
+padding:2px 0;
+}
+.cupomObs {
+text-align:left;
+font-size:12px;
+padding-left:8px;
+font-style:italic;
+}
+.cupomTotal {
+font-size:20px;
+font-weight:900;
+margin-top:6px;
+border-top:2px solid #000;
+padding-top:6px;
+}
+.cupomSep {
+border-top:1px dashed #000;
+margin:4px 0;
+}
+.cupomModo {
+font-size:18px;
+font-weight:900;
+margin:4px 0;
+padding:4px;
+border:2px solid #000;
+}
+.cupomInfo {
+font-size:14px;
+text-align:left;
+padding:2px 0;
+}
+}
+
+#cupomImpressao {
+display:none;
+}
+
 </style>
 </head>
 <body>
@@ -2312,6 +2413,7 @@ msg += `👤 Cliente: ${pedido.cliente.nome}\n`
 msg += `📱 Telefone: ${pedido.cliente.tel}\n`
 msg += `📦 Tipo: ${pedido.modo === "delivery" ? "Delivery" : "Local"}\n`
 msg += `💳 Pagamento: ${pedido.pagamento || "PIX"}\n`
+if(pedido.troco) msg += `💵 Troco para: R$ ${pedido.troco}\n`
 
 if(pedido.modo === "delivery" && pedido.endereco){
 let e = pedido.endereco
@@ -2386,6 +2488,7 @@ total:totalGeral(),
 frete:valorFrete,
 modo:modoPedido,
 pagamento:pag,
+troco: (pag === "Dinheiro") ? (qs("troco")?.value || "") : "",
 data:new Date().toISOString(),
 visto:false
 }
@@ -2399,7 +2502,6 @@ console.log("Erro ao salvar:",e)
 }
 
 /* Enviar WhatsApp */
-
 let mensagem = montarMensagemWhatsApp(pedido)
 
 location.href = `https://wa.me/${WHATSAPP_LOJA}?text=${encodeURIComponent(mensagem)}`
@@ -2626,6 +2728,12 @@ if(!s) return ""
 return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")
 }
 
+window.reimprimirPedido = (docId)=>{
+let p = pedidosMap[docId]
+if(p) imprimirCupom(p)
+else alert("Pedido não encontrado")
+}
+
 function renderPedidoCard(p, docId){
 
 let nome = escHtml(p.cliente?.nome || "Sem nome")
@@ -2649,6 +2757,7 @@ if(mesa) infoHtml += `🍽️ Mesa: ${mesa}<br>`
 }
 
 infoHtml += `💳 ${pagamento}<br>`
+if(p.troco) infoHtml += `💵 Troco para: R$ ${escHtml(p.troco)}<br>`
 infoHtml += `🕐 ${dataStr}`
 
 let itensHtml = ""
@@ -2673,11 +2782,13 @@ return `<div class="pedidoCard">
 <div class="pedidoItens">${itensHtml}</div>
 <div class="pedidoTotal">💰 R$ ${Number(p.total).toFixed(2)}</div>
 ${btnHtml}
+<button class="btnImprimir" onclick="reimprimirPedido('${docId}')">🖨️ Imprimir</button>
 </div>`
 
 }
 
 let pedidoIdsVistos = new Set()
+let pedidosMap = {}
 
 onSnapshot(collection(db,"pedidos"), snap => {
 
@@ -2692,12 +2803,22 @@ if(boxL) boxL.innerHTML = ""
 let countDeliveryNovos = 0
 let countLocalNovos = 0
 
+let hoje = new Date().toDateString()
+let pedidosParaImprimir = []
+
 snap.forEach(doc => {
 
 let p = doc.data()
 let docId = doc.id
 
 pedidosCache.push(p)
+pedidosMap[docId] = p
+
+let pedidoHoje = new Date(p.data).toDateString() === hoje
+if(!pedidoHoje){
+pedidoIdsVistos.add(docId)
+return
+}
 
 let card = renderPedidoCard(p, docId)
 
@@ -2705,11 +2826,13 @@ if(p.modo === "delivery"){
 if(boxD) boxD.innerHTML += card
 if(!pedidoIdsVistos.has(docId) && !primeiraCarga){
 countDeliveryNovos++
+pedidosParaImprimir.push(p)
 }
 } else {
 if(boxL) boxL.innerHTML += card
 if(!pedidoIdsVistos.has(docId) && !primeiraCarga){
 countLocalNovos++
+pedidosParaImprimir.push(p)
 }
 }
 
@@ -2735,6 +2858,19 @@ if(countDeliveryNovos > 0 || countLocalNovos > 0){
 audioNotificacao.play().catch(()=>{})
 }
 
+/* Auto-imprimir novos pedidos no computador da loja */
+if(pedidosParaImprimir.length > 0){
+let fila = pedidosParaImprimir.slice()
+let idx = 0
+function imprimirFila(){
+if(idx >= fila.length) return
+imprimirCupom(fila[idx])
+idx++
+if(idx < fila.length) setTimeout(imprimirFila, 2000)
+}
+imprimirFila()
+}
+
 }
 
 if(boxD && boxD.innerHTML === "") boxD.innerHTML = "<div style='color:#7a6a5a;text-align:center;padding:20px'>Nenhum pedido delivery</div>"
@@ -2743,6 +2879,77 @@ if(boxL && boxL.innerHTML === "") boxL.innerHTML = "<div style='color:#7a6a5a;te
 primeiraCarga = false
 
 })
+
+/* =========================
+IMPRESSÃO DE CUPOM
+========================= */
+
+function imprimirCupom(pedido){
+
+let div = document.getElementById("cupomImpressao")
+if(!div) return
+
+let dataObj = new Date(pedido.data)
+let dataStr = dataObj.toLocaleDateString("pt-BR")
+let horaStr = dataObj.toLocaleTimeString("pt-BR")
+
+let modoTxt = pedido.modo === "delivery" ? "DELIVERY" : "LOCAL"
+
+let html = ""
+
+html += '<div class="cupomLinha cupomTitulo">RECANTO DO PASTEL</div>'
+html += '<div class="cupomSep"></div>'
+
+html += '<div class="cupomLinha cupomModo">' + modoTxt + '</div>'
+
+if(pedido.modo === "local" && pedido.cliente.mesa){
+html += '<div class="cupomLinha" style="font-size:18px;font-weight:900">MESA ' + escHtml(pedido.cliente.mesa) + '</div>'
+}
+
+html += '<div class="cupomSep"></div>'
+
+html += '<div class="cupomInfo">Data: ' + dataStr + '</div>'
+html += '<div class="cupomInfo">Hora: ' + horaStr + '</div>'
+
+if(pedido.modo === "delivery"){
+html += '<div class="cupomSep"></div>'
+html += '<div class="cupomInfo">Cliente: ' + escHtml(pedido.cliente.nome || "") + '</div>'
+html += '<div class="cupomInfo">Tel: ' + escHtml(pedido.cliente.tel || "") + '</div>'
+if(pedido.endereco){
+let e = pedido.endereco
+if(e.rua) html += '<div class="cupomInfo">End: ' + escHtml(e.rua) + ', ' + escHtml(e.numero || "") + '</div>'
+if(e.bairro) html += '<div class="cupomInfo">Bairro: ' + escHtml(e.bairro) + '</div>'
+}
+html += '<div class="cupomInfo">Pagamento: ' + escHtml(pedido.pagamento || "PIX") + '</div>'
+if(pedido.troco) html += '<div class="cupomInfo">Troco para: R$ ' + escHtml(pedido.troco) + '</div>'
+}
+
+html += '<div class="cupomLinha cupomSub">ITENS</div>'
+
+;(pedido.itens || []).forEach(i => {
+html += '<div class="cupomItem">' + i.qtd + 'x ' + escHtml(i.nome) + '</div>'
+html += '<div class="cupomItem" style="text-align:right">R$ ' + (i.qtd * i.preco).toFixed(2) + '</div>'
+if(i.obs) html += '<div class="cupomObs">Obs: ' + escHtml(i.obs) + '</div>'
+})
+
+if(pedido.frete > 0){
+html += '<div class="cupomSep"></div>'
+html += '<div class="cupomItem">Frete: R$ ' + pedido.frete.toFixed(2) + '</div>'
+}
+
+html += '<div class="cupomLinha cupomTotal">TOTAL: R$ ' + Number(pedido.total).toFixed(2) + '</div>'
+
+html += '<div class="cupomSep"></div>'
+html += '<div class="cupomLinha" style="font-size:11px;margin-top:6px">Obrigado pela preferencia!</div>'
+html += '<div class="cupomLinha" style="font-size:11px">Recanto do Pastel</div>'
+
+div.innerHTML = html
+
+setTimeout(()=>{
+window.print()
+},300)
+
+}
 
 /* =========================
 RELATÓRIOS
@@ -3307,5 +3514,8 @@ FIM DEFINITIVO DO SCRIPT
 ========================= */
 </script>
 <div id="toast" class="toast"></div>
+
+<div id="cupomImpressao"></div>
+
 </body>
 </html>
