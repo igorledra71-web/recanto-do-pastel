@@ -282,6 +282,30 @@ color:var(--text);
 line-height:1.3;
 }
 
+.btnMaisItens{
+width:100%;
+padding:14px;
+margin-top:12px;
+border:2px dashed var(--accent);
+background:transparent;
+color:var(--accent);
+font-size:15px;
+font-weight:700;
+border-radius:12px;
+cursor:pointer;
+transition:all .2s;
+}
+.btnMaisItens:active{
+transform:scale(.96);
+}
+
+.itemNum{
+color:var(--accent);
+font-weight:700;
+font-size:clamp(13px,3vw,15px);
+opacity:0.85;
+}
+
 .itemDesc{
 font-size:12px;
 color:var(--text2);
@@ -1447,95 +1471,95 @@ CARDÁPIO COMPLETO
 let cardapio = {
 
 "Pastéis Salgados P":[
-{nome:"Aipim c/ Bacon P",preco:17,desc:"Mussarela, aipim, bacon e orégano"},
-{nome:"Bacon P",preco:17,desc:"Mussarela, bacon e orégano"},
-{nome:"Brócolis P",preco:17,desc:"Mussarela, brócolis e orégano"},
-{nome:"Calabresa P",preco:17,desc:"Mussarela, calabresa e orégano"},
-{nome:"Camarão P",preco:20,desc:"Mussarela, camarão e orégano"},
-{nome:"Carne P",preco:17,desc:"Mussarela, carne, azeitonas, palmito, ovo e catupiry"},
-{nome:"Carne c/ Ovos P",preco:17,desc:"Mussarela, carne e ovos"},
-{nome:"Coração de Frango P",preco:18,desc:"Mussarela, coração de frango, catupiry e orégano"},
-{nome:"Crocante P",preco:17,desc:"Mussarela, batata palha e catupiry"},
-{nome:"Frango c/ Catupiry P",preco:17,desc:"Mussarela, frango, catupiry e orégano"},
-{nome:"Lombinho P",preco:17,desc:"Mussarela, lombinho e orégano"},
-{nome:"Milho P",preco:17,desc:"Mussarela, milho e orégano"},
-{nome:"Napolitana P",preco:17,desc:"Mussarela, tomate e orégano"},
-{nome:"Ovo P",preco:17,desc:"Mussarela, ovo e orégano"},
-{nome:"Palmito P",preco:17,desc:"Mussarela, palmito e orégano"},
-{nome:"Paulista P",preco:17,desc:"Mussarela, palmito, orégano, milho e ervilha"},
-{nome:"Portuguesa P",preco:17,desc:"Mussarela, presunto, cebola, ovo, azeitona e orégano"},
-{nome:"Quatro Queijos P",preco:17,desc:"Mussarela, parmesão, cheddar, catupiry e orégano"},
-{nome:"Romana P",preco:17,desc:"Mussarela, presunto, ovo e orégano"},
-{nome:"Pizza P",preco:17,desc:"Mussarela, presunto, orégano e tomate"},
-{nome:"Hot Dog P",preco:17,desc:"Mussarela, salsicha, milho, ervilha e batata palha"},
-{nome:"Do Chef P",preco:17,desc:"Mussarela, frango, bacon, tomate e orégano"},
-{nome:"Vegetariana P",preco:17,desc:"Mussarela, brócolis, tomate, cenoura, palmito e orégano"},
-{nome:"Strogonoff P",preco:17,desc:"Mussarela, frango ao molho e orégano"},
-{nome:"Especial (5 Sabores) P",preco:18,desc:"Escolha 5 sabores entre os ingredientes disponíveis"}
+{nome:"Aipim c/ Bacon P",preco:17,desc:"Mussarela, aipim, bacon e orégano",num:1},
+{nome:"Bacon P",preco:17,desc:"Mussarela, bacon e orégano",num:2},
+{nome:"Brócolis P",preco:17,desc:"Mussarela, brócolis e orégano",num:3},
+{nome:"Calabresa P",preco:17,desc:"Mussarela, calabresa e orégano",num:4},
+{nome:"Camarão P",preco:20,desc:"Mussarela, camarão e orégano",num:5},
+{nome:"Carne P",preco:17,desc:"Mussarela, carne, azeitonas, palmito, ovo e catupiry",num:6},
+{nome:"Carne c/ Ovos P",preco:17,desc:"Mussarela, carne e ovos",num:7},
+{nome:"Coração de Frango P",preco:18,desc:"Mussarela, coração de frango, catupiry e orégano",num:8},
+{nome:"Crocante P",preco:17,desc:"Mussarela, batata palha e catupiry",num:9},
+{nome:"Frango c/ Catupiry P",preco:17,desc:"Mussarela, frango, catupiry e orégano",num:10},
+{nome:"Lombinho P",preco:17,desc:"Mussarela, lombinho e orégano",num:11},
+{nome:"Milho P",preco:17,desc:"Mussarela, milho e orégano",num:12},
+{nome:"Napolitana P",preco:17,desc:"Mussarela, tomate e orégano",num:13},
+{nome:"Ovo P",preco:17,desc:"Mussarela, ovo e orégano",num:14},
+{nome:"Palmito P",preco:17,desc:"Mussarela, palmito e orégano",num:15},
+{nome:"Paulista P",preco:17,desc:"Mussarela, palmito, orégano, milho e ervilha",num:16},
+{nome:"Portuguesa P",preco:17,desc:"Mussarela, presunto, cebola, ovo, azeitona e orégano",num:17},
+{nome:"Quatro Queijos P",preco:17,desc:"Mussarela, parmesão, cheddar, catupiry e orégano",num:18},
+{nome:"Romana P",preco:17,desc:"Mussarela, presunto, ovo e orégano",num:19},
+{nome:"Pizza P",preco:17,desc:"Mussarela, presunto, orégano e tomate",num:20},
+{nome:"Hot Dog P",preco:17,desc:"Mussarela, salsicha, milho, ervilha e batata palha",num:21},
+{nome:"Do Chef P",preco:17,desc:"Mussarela, frango, bacon, tomate e orégano",num:22},
+{nome:"Vegetariana P",preco:17,desc:"Mussarela, brócolis, tomate, cenoura, palmito e orégano",num:23},
+{nome:"Strogonoff P",preco:17,desc:"Mussarela, frango ao molho e orégano",num:24},
+{nome:"Especial (5 Sabores) P",preco:18,desc:"Escolha 5 sabores entre os ingredientes disponíveis",num:25}
 ],
 
 "Pastéis Salgados G":[
-{nome:"Aipim c/ Bacon G",preco:22,desc:"Mussarela, aipim, bacon e orégano"},
-{nome:"Bacon G",preco:22,desc:"Mussarela, bacon e orégano"},
-{nome:"Brócolis G",preco:22,desc:"Mussarela, brócolis e orégano"},
-{nome:"Calabresa G",preco:22,desc:"Mussarela, calabresa e orégano"},
-{nome:"Camarão G",preco:29,desc:"Mussarela, camarão e orégano"},
-{nome:"Carne G",preco:22,desc:"Mussarela, carne, azeitonas, palmito, ovo e catupiry"},
-{nome:"Carne c/ Ovos G",preco:22,desc:"Mussarela, carne e ovos"},
-{nome:"Coração de Frango G",preco:22,desc:"Mussarela, coração de frango, catupiry e orégano"},
-{nome:"Crocante G",preco:22,desc:"Mussarela, batata palha e catupiry"},
-{nome:"Frango c/ Catupiry G",preco:22,desc:"Mussarela, frango, catupiry e orégano"},
-{nome:"Lombinho G",preco:22,desc:"Mussarela, lombinho e orégano"},
-{nome:"Milho G",preco:22,desc:"Mussarela, milho e orégano"},
-{nome:"Napolitana G",preco:22,desc:"Mussarela, tomate e orégano"},
-{nome:"Ovo G",preco:22,desc:"Mussarela, ovo e orégano"},
-{nome:"Palmito G",preco:22,desc:"Mussarela, palmito e orégano"},
-{nome:"Paulista G",preco:22,desc:"Mussarela, palmito, orégano, milho e ervilha"},
-{nome:"Portuguesa G",preco:22,desc:"Mussarela, presunto, cebola, ovo, azeitona e orégano"},
-{nome:"Quatro Queijos G",preco:22,desc:"Mussarela, parmesão, cheddar, catupiry e orégano"},
-{nome:"Romana G",preco:22,desc:"Mussarela, presunto, ovo e orégano"},
-{nome:"Pizza G",preco:22,desc:"Mussarela, presunto, orégano e tomate"},
-{nome:"Hot Dog G",preco:22,desc:"Mussarela, salsicha, milho, ervilha e batata palha"},
-{nome:"Do Chef G",preco:22,desc:"Mussarela, frango, bacon, tomate e orégano"},
-{nome:"Vegetariana G",preco:22,desc:"Mussarela, brócolis, tomate, cenoura, palmito e orégano"},
-{nome:"Strogonoff G",preco:22,desc:"Mussarela, frango ao molho e orégano"},
-{nome:"Especial (5 Sabores) G",preco:24,desc:"Escolha 5 sabores entre os ingredientes disponíveis"}
+{nome:"Aipim c/ Bacon G",preco:22,desc:"Mussarela, aipim, bacon e orégano",num:1},
+{nome:"Bacon G",preco:22,desc:"Mussarela, bacon e orégano",num:2},
+{nome:"Brócolis G",preco:22,desc:"Mussarela, brócolis e orégano",num:3},
+{nome:"Calabresa G",preco:22,desc:"Mussarela, calabresa e orégano",num:4},
+{nome:"Camarão G",preco:29,desc:"Mussarela, camarão e orégano",num:5},
+{nome:"Carne G",preco:22,desc:"Mussarela, carne, azeitonas, palmito, ovo e catupiry",num:6},
+{nome:"Carne c/ Ovos G",preco:22,desc:"Mussarela, carne e ovos",num:7},
+{nome:"Coração de Frango G",preco:22,desc:"Mussarela, coração de frango, catupiry e orégano",num:8},
+{nome:"Crocante G",preco:22,desc:"Mussarela, batata palha e catupiry",num:9},
+{nome:"Frango c/ Catupiry G",preco:22,desc:"Mussarela, frango, catupiry e orégano",num:10},
+{nome:"Lombinho G",preco:22,desc:"Mussarela, lombinho e orégano",num:11},
+{nome:"Milho G",preco:22,desc:"Mussarela, milho e orégano",num:12},
+{nome:"Napolitana G",preco:22,desc:"Mussarela, tomate e orégano",num:13},
+{nome:"Ovo G",preco:22,desc:"Mussarela, ovo e orégano",num:14},
+{nome:"Palmito G",preco:22,desc:"Mussarela, palmito e orégano",num:15},
+{nome:"Paulista G",preco:22,desc:"Mussarela, palmito, orégano, milho e ervilha",num:16},
+{nome:"Portuguesa G",preco:22,desc:"Mussarela, presunto, cebola, ovo, azeitona e orégano",num:17},
+{nome:"Quatro Queijos G",preco:22,desc:"Mussarela, parmesão, cheddar, catupiry e orégano",num:18},
+{nome:"Romana G",preco:22,desc:"Mussarela, presunto, ovo e orégano",num:19},
+{nome:"Pizza G",preco:22,desc:"Mussarela, presunto, orégano e tomate",num:20},
+{nome:"Hot Dog G",preco:22,desc:"Mussarela, salsicha, milho, ervilha e batata palha",num:21},
+{nome:"Do Chef G",preco:22,desc:"Mussarela, frango, bacon, tomate e orégano",num:22},
+{nome:"Vegetariana G",preco:22,desc:"Mussarela, brócolis, tomate, cenoura, palmito e orégano",num:23},
+{nome:"Strogonoff G",preco:22,desc:"Mussarela, frango ao molho e orégano",num:24},
+{nome:"Especial (5 Sabores) G",preco:24,desc:"Escolha 5 sabores entre os ingredientes disponíveis",num:25}
 ],
 
 "Pastéis Doces P":[
-{nome:"Banana P",preco:17,desc:"Mussarela, banana e canela"},
-{nome:"Chocolate Preto P",preco:17,desc:"Mussarela e chocolate preto"},
-{nome:"Chocolate Branco P",preco:17,desc:"Mussarela e chocolate branco"},
-{nome:"Krot P",preco:17,desc:"Chocolate preto, amendoim e leite condensado"},
-{nome:"Morango P",preco:17,desc:"Mussarela, morango e leite condensado"},
-{nome:"Prestígio P",preco:17,desc:"Mussarela, chocolate preto e coco"},
-{nome:"Romeu e Julieta P",preco:17,desc:"Mussarela e goiabada"},
-{nome:"Sedução P",preco:17,desc:"Chocolate branco, morango e leite condensado"},
-{nome:"Sonho de Valsa P",preco:17,desc:"Mussarela, sonho de valsa e leite condensado"},
-{nome:"Mocinha P",preco:17,desc:"Mussarela, doce de leite e coco ralado"},
-{nome:"Charge P",preco:17,desc:"Mussarela, doce de leite e amendoim"},
-{nome:"Bob Marley P",preco:17,desc:"Mussarela, brigadeiro e confetes"},
-{nome:"Choquito P",preco:17,desc:"Mussarela, chocolate preto e branco e flocos de arroz"},
-{nome:"Dois Amores P",preco:17,desc:"Mussarela, chocolate preto e branco"},
-{nome:"Ouro Branco P",preco:17,desc:"Queijo e ouro branco"}
+{nome:"Banana P",preco:17,desc:"Mussarela, banana e canela",num:1},
+{nome:"Chocolate Preto P",preco:17,desc:"Mussarela e chocolate preto",num:2},
+{nome:"Chocolate Branco P",preco:17,desc:"Mussarela e chocolate branco",num:3},
+{nome:"Krot P",preco:17,desc:"Chocolate preto, amendoim e leite condensado",num:4},
+{nome:"Morango P",preco:17,desc:"Mussarela, morango e leite condensado",num:5},
+{nome:"Prestígio P",preco:17,desc:"Mussarela, chocolate preto e coco",num:6},
+{nome:"Romeu e Julieta P",preco:17,desc:"Mussarela e goiabada",num:7},
+{nome:"Sedução P",preco:17,desc:"Chocolate branco, morango e leite condensado",num:8},
+{nome:"Sonho de Valsa P",preco:17,desc:"Mussarela, sonho de valsa e leite condensado",num:9},
+{nome:"Mocinha P",preco:17,desc:"Mussarela, doce de leite e coco ralado",num:10},
+{nome:"Charge P",preco:17,desc:"Mussarela, doce de leite e amendoim",num:11},
+{nome:"Bob Marley P",preco:17,desc:"Mussarela, brigadeiro e confetes",num:12},
+{nome:"Choquito P",preco:17,desc:"Mussarela, chocolate preto e branco e flocos de arroz",num:13},
+{nome:"Dois Amores P",preco:17,desc:"Mussarela, chocolate preto e branco",num:14},
+{nome:"Ouro Branco P",preco:17,desc:"Queijo e ouro branco",num:15}
 ],
 
 "Pastéis Doces G":[
-{nome:"Banana G",preco:22,desc:"Mussarela, banana e canela"},
-{nome:"Chocolate Preto G",preco:22,desc:"Mussarela e chocolate preto"},
-{nome:"Chocolate Branco G",preco:22,desc:"Mussarela e chocolate branco"},
-{nome:"Krot G",preco:22,desc:"Chocolate preto, amendoim e leite condensado"},
-{nome:"Morango G",preco:22,desc:"Mussarela, morango e leite condensado"},
-{nome:"Prestígio G",preco:22,desc:"Mussarela, chocolate preto e coco"},
-{nome:"Romeu e Julieta G",preco:22,desc:"Mussarela e goiabada"},
-{nome:"Sedução G",preco:22,desc:"Chocolate branco, morango e leite condensado"},
-{nome:"Sonho de Valsa G",preco:22,desc:"Mussarela, sonho de valsa e leite condensado"},
-{nome:"Mocinha G",preco:22,desc:"Mussarela, doce de leite e coco ralado"},
-{nome:"Charge G",preco:22,desc:"Mussarela, doce de leite e amendoim"},
-{nome:"Bob Marley G",preco:22,desc:"Mussarela, brigadeiro e confetes"},
-{nome:"Choquito G",preco:22,desc:"Mussarela, chocolate preto e branco e flocos de arroz"},
-{nome:"Dois Amores G",preco:22,desc:"Mussarela, chocolate preto e branco"},
-{nome:"Ouro Branco G",preco:22,desc:"Queijo e ouro branco"}
+{nome:"Banana G",preco:22,desc:"Mussarela, banana e canela",num:1},
+{nome:"Chocolate Preto G",preco:22,desc:"Mussarela e chocolate preto",num:2},
+{nome:"Chocolate Branco G",preco:22,desc:"Mussarela e chocolate branco",num:3},
+{nome:"Krot G",preco:22,desc:"Chocolate preto, amendoim e leite condensado",num:4},
+{nome:"Morango G",preco:22,desc:"Mussarela, morango e leite condensado",num:5},
+{nome:"Prestígio G",preco:22,desc:"Mussarela, chocolate preto e coco",num:6},
+{nome:"Romeu e Julieta G",preco:22,desc:"Mussarela e goiabada",num:7},
+{nome:"Sedução G",preco:22,desc:"Chocolate branco, morango e leite condensado",num:8},
+{nome:"Sonho de Valsa G",preco:22,desc:"Mussarela, sonho de valsa e leite condensado",num:9},
+{nome:"Mocinha G",preco:22,desc:"Mussarela, doce de leite e coco ralado",num:10},
+{nome:"Charge G",preco:22,desc:"Mussarela, doce de leite e amendoim",num:11},
+{nome:"Bob Marley G",preco:22,desc:"Mussarela, brigadeiro e confetes",num:12},
+{nome:"Choquito G",preco:22,desc:"Mussarela, chocolate preto e branco e flocos de arroz",num:13},
+{nome:"Dois Amores G",preco:22,desc:"Mussarela, chocolate preto e branco",num:14},
+{nome:"Ouro Branco G",preco:22,desc:"Queijo e ouro branco",num:15}
 ],
 
 "Lanches":[
@@ -1725,6 +1749,7 @@ let base = item.nome.replace(" P","")
 if(!grupos[nomeGrupo][base]) grupos[nomeGrupo][base] = {}
 grupos[nomeGrupo][base]["P"] = item.preco
 grupos[nomeGrupo][base]["desc"] = item.desc || ""
+if(item.num) grupos[nomeGrupo][base]["num"] = item.num
 })
 
 listaG.forEach(item=>{
@@ -1773,7 +1798,13 @@ infoDiv.className = "itemInfo"
 
 let nomeEl = document.createElement("div")
 nomeEl.className = "itemNome"
-nomeEl.textContent = nomeBase
+if(tamanhos.num){
+let numSpan = document.createElement("span")
+numSpan.className = "itemNum"
+numSpan.textContent = tamanhos.num + ". "
+nomeEl.appendChild(numSpan)
+}
+nomeEl.appendChild(document.createTextNode(nomeBase))
 infoDiv.appendChild(nomeEl)
 
 if(tamanhos.desc){
@@ -2025,6 +2056,14 @@ R$ ${(i.qtd * i.preco).toFixed(2)}
 qs("cLista").appendChild(div)
 
 })
+
+if(modoPedido === "delivery" && carrinho.length > 0){
+let btnMais = document.createElement("button")
+btnMais.className = "btnMaisItens"
+btnMais.innerHTML = "+ Adicionar mais itens"
+btnMais.onclick = ()=>{ fecharCarrinho() }
+qs("cLista").appendChild(btnMais)
+}
 
 qs("qtd").innerText = qtdTotal
 qs("total").innerText = totalGeral().toFixed(2)
