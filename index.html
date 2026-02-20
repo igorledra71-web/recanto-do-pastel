@@ -790,7 +790,7 @@ BOTÕES FIXOS
 position:fixed;
 top:14px;
 right:14px;
-z-index:4000;
+z-index:9999;
 font-size:18px;
 background:white;
 border:none;
@@ -798,6 +798,26 @@ border-radius:12px;
 padding:10px 12px;
 box-shadow:0 2px 10px rgba(60,30,10,.12);
 color:var(--text);
+cursor:pointer;
+}
+
+.btnReload{
+position:fixed;
+bottom:16px;
+right:16px;
+z-index:3000;
+background:rgba(255,255,255,0.85);
+border:none;
+border-radius:50%;
+width:42px;
+height:42px;
+font-size:18px;
+box-shadow:0 2px 8px rgba(60,30,10,.15);
+cursor:pointer;
+transition:all .2s;
+}
+.btnReload:active{
+transform:scale(.9) rotate(180deg);
 }
 
 .btnVoltar{
@@ -1091,6 +1111,7 @@ display:none;
 
 <button class="btnConfig" onclick="abrirAdmin()">⚙️</button>
 <button class="btnVoltar" onclick="voltarTela()">←</button>
+<button class="btnReload" onclick="location.reload()" title="Atualizar">🔄</button>
 
 <!-- =========================
 TELA ESCOLHA
