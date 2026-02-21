@@ -1457,6 +1457,7 @@ let WHATSAPP_LOJA = "5549991610137"
 let PIX_CHAVE = "pix-recanto@pix"
 
 let modoPedido = null
+let categoriaAtual = ""
 let valorFrete = 0
 let pixComprovanteOK = false
 let primeiraCarga = true
@@ -1887,6 +1888,11 @@ qs("lista").appendChild(container)
 
 }
 
+const ORDEM_ABAS = [
+"Pastéis Salgados","Pastéis Doces","Lanches","Porções Inteira","Porções Meia",
+"Prato Feito","Bebidas","Refrigerantes","Sucos","Doses","Caipiras","Batidas","Vitaminas"
+]
+
 function agruparCategorias(){
 
 let grupos = {}
@@ -1990,7 +1996,7 @@ infoDiv.appendChild(descEl)
 let precosDiv = document.createElement("div")
 precosDiv.className = "itemPrecos"
 
-Object.keys(tamanhos).filter(t=> t!=="desc" && t!=="pratoFeito" && t!=="num" && t!=="_isPastel").forEach(t=>{
+Object.keys(tamanhos).filter(t=> t!=="desc" && t!=="pratoFeito" && t!=="num" && t!=="_isPastel" && t!=="_categoria").forEach(t=>{
 let span = document.createElement("span")
 span.className = "itemPreco"
 span.textContent = (t === "Único" ? "" : t + " ") + "R$ " + tamanhos[t].toFixed(2)
@@ -2005,6 +2011,7 @@ btn.className = "btnAdd"
 btn.textContent = "Adicionar"
 
 btn.onclick = ()=>{
+categoriaAtual = tamanhos._categoria || ""
 if(tamanhos.pratoFeito){
 mostrarModalPratoFeito(nomeBase, tamanhos["Único"] || tamanhos[Object.keys(tamanhos).filter(t=>t!=="desc"&&t!=="pratoFeito")[0]])
 return
@@ -2067,6 +2074,8 @@ FUNÇÃO ADICIONAR CARRINHO
 ========================= */
 
 function addCarrinho(produto){
+
+if(categoriaAtual) produto.categoria = categoriaAtual
 
 let existe = carrinho.find(
 i => i.nome === produto.nome && i.obs === (produto.obs || "")
@@ -3590,7 +3599,7 @@ infoDiv.appendChild(nomeEl)
 let precosDiv = document.createElement("div")
 precosDiv.className = "itemPrecos"
 
-Object.keys(tamanhos).filter(t=> t!=="desc" && t!=="pratoFeito" && t!=="num" && t!=="_isPastel").forEach(t=>{
+Object.keys(tamanhos).filter(t=> t!=="desc" && t!=="pratoFeito" && t!=="num" && t!=="_isPastel" && t!=="_categoria").forEach(t=>{
 let span = document.createElement("span")
 span.className = "itemPreco"
 span.textContent = (t === "Único" ? "" : t + " ") + "R$ " + tamanhos[t].toFixed(2)
