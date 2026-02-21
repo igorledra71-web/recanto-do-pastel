@@ -1843,6 +1843,11 @@ return true
 RENDER ABAS
 ========================= */
 
+const ORDEM_ABAS = [
+"Pastéis Salgados","Pastéis Doces","Lanches","Porções Inteira","Porções Meia",
+"Prato Feito","Bebidas","Refrigerantes","Sucos","Doses","Caipiras","Batidas","Vitaminas"
+]
+
 function renderAbas(){
 
 qs("abas").innerHTML=""
@@ -1850,7 +1855,12 @@ qs("lista").innerHTML=""
 
 let categoriasAgrupadas = agruparCategorias()
 
-Object.keys(categoriasAgrupadas).forEach((nomeGrupo)=>{
+/* Ordenar abas conforme ORDEM_ABAS */
+let chavesOrdenadas = []
+ORDEM_ABAS.forEach(nome=>{ if(categoriasAgrupadas[nome]) chavesOrdenadas.push(nome) })
+Object.keys(categoriasAgrupadas).forEach(nome=>{ if(!chavesOrdenadas.includes(nome)) chavesOrdenadas.push(nome) })
+
+chavesOrdenadas.forEach((nomeGrupo)=>{
 
 let grupo = categoriasAgrupadas[nomeGrupo]
 
@@ -1888,10 +1898,6 @@ qs("lista").appendChild(container)
 
 }
 
-const ORDEM_ABAS = [
-"Pastéis Salgados","Pastéis Doces","Lanches","Porções Inteira","Porções Meia",
-"Prato Feito","Bebidas","Refrigerantes","Sucos","Doses","Caipiras","Batidas","Vitaminas"
-]
 
 function agruparCategorias(){
 
