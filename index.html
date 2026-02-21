@@ -301,6 +301,32 @@ background:var(--accent2);
 color:#fff;
 }
 
+.adicionaisGrid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:6px;
+margin-bottom:16px;
+max-height:40vh;
+overflow-y:auto;
+padding:4px;
+}
+.adicionalLabel{
+display:flex;
+align-items:center;
+gap:6px;
+font-size:14px;
+color:var(--text);
+padding:8px;
+background:#fdf6ee;
+border-radius:8px;
+cursor:pointer;
+}
+.adicionalLabel input{
+width:18px;
+height:18px;
+accent-color:var(--accent);
+}
+
 .btnMaisItens{
 width:100%;
 padding:14px;
@@ -1375,8 +1401,13 @@ TELA NOVO PRODUTO
 
 <div class="form" style="max-width:760px">
 <select id="novoProdAba"></select>
-<input id="novoProdNome" placeholder="Nome do produto">
-<input id="novoProdPreco" type="number" step="0.01" placeholder="Preço (ex: 17.00)">
+<input id="novoProdNome" placeholder="Nome do produto (sem P/G)">
+<input id="novoProdDesc" placeholder="Descrição (ex: Mussarela, bacon e orégano)">
+<div style="display:flex;gap:10px">
+<input id="novoProdPrecoP" type="number" step="0.01" placeholder="Preço P (ex: 17.00)" style="flex:1">
+<input id="novoProdPrecoG" type="number" step="0.01" placeholder="Preço G (ex: 22.00)" style="flex:1">
+</div>
+<p style="font-size:12px;color:#7a6a5a;margin:4px 0">Se não tiver tamanhos, preencha só o Preço P como preço único</p>
 <button class="btnFinalizarCarrinho" onclick="confirmarNovoProduto()">ADICIONAR PRODUTO</button>
 <button class="btnVoltar" style="position:static;margin-top:10px" onclick="mostrar('telaAdmin')">&larr; Voltar ao Admin</button>
 </div>
@@ -1890,6 +1921,7 @@ if(!grupos[nomeGrupo][base]) grupos[nomeGrupo][base] = {}
 grupos[nomeGrupo][base]["P"] = item.preco
 grupos[nomeGrupo][base]["desc"] = item.desc || ""
 if(item.num) grupos[nomeGrupo][base]["num"] = item.num
+if(nomeGrupo.startsWith("Pastéis")) grupos[nomeGrupo][base]["_isPastel"] = true
 })
 
 listaG.forEach(item=>{
@@ -1897,6 +1929,7 @@ let base = item.nome.replace(" G","")
 if(!grupos[nomeGrupo][base]) grupos[nomeGrupo][base] = {}
 grupos[nomeGrupo][base]["G"] = item.preco
 if(!grupos[nomeGrupo][base]["desc"]) grupos[nomeGrupo][base]["desc"] = item.desc || ""
+if(nomeGrupo.startsWith("Pastéis")) grupos[nomeGrupo][base]["_isPastel"] = true
 })
 
 processados.add(aba)
@@ -1957,7 +1990,7 @@ infoDiv.appendChild(descEl)
 let precosDiv = document.createElement("div")
 precosDiv.className = "itemPrecos"
 
-Object.keys(tamanhos).filter(t=> t!=="desc" && t!=="pratoFeito" && t!=="num").forEach(t=>{
+Object.keys(tamanhos).filter(t=> t!=="desc" && t!=="pratoFeito" && t!=="num" && t!=="_isPastel").forEach(t=>{
 let span = document.createElement("span")
 span.className = "itemPreco"
 span.textContent = (t === "Único" ? "" : t + " ") + "R$ " + tamanhos[t].toFixed(2)
@@ -2197,7 +2230,7 @@ qs("cLista").appendChild(div)
 
 })
 
-if(modoPedido === "delivery" && carrinho.length > 0){
+if(carrinho.length > 0 && (modoPedido === "delivery" || modoPedido === "local" || mesaSelecionada)){
 let btnMais = document.createElement("button")
 btnMais.className = "btnMaisItens"
 btnMais.innerHTML = "+ Adicionar mais itens"
@@ -2968,7 +3001,7 @@ html += '<div class="cupomLinha cupomSub">ITENS</div>'
 ;(pedido.itens || []).forEach(i => {
 html += '<div class="cupomItem">' + i.qtd + 'x ' + escHtml(i.nome) + '</div>'
 html += '<div class="cupomItem" style="text-align:right">R$ ' + (i.qtd * i.preco).toFixed(2) + '</div>'
-if(i.obs) html += '<div class="cupomObs">Obs: ' + escHtml(i.obs) + '</div>'
+if(i.obs) html += '<div class="cupomObs">  -> ' + escHtml(i.nome) + ': ' + escHtml(i.obs) + '</div>'
 })
 
 if(pedido.frete > 0){
@@ -3131,11 +3164,17 @@ window.abrirNovoProdutoUI = ()=>{
 
 qs("novoProdAba").innerHTML = ""
 
+let abasVistas = new Set()
 Object.keys(cardapio).forEach(aba => {
+let base = aba.replace(" P","").replace(" G","")
+if(abasVistas.has(base)) return
+abasVistas.add(base)
 
+let temPG = cardapio[base + " P"] && cardapio[base + " G"]
 let opt = document.createElement("option")
-opt.value = aba
-opt.innerText = aba
+opt.value = temPG ? base + " P" : aba
+opt.innerText = base
+opt.dataset.temPG = temPG ? "1" : "0"
 
 qs("novoProdAba").appendChild(opt)
 
@@ -3151,24 +3190,35 @@ CONFIRMAR NOVO PRODUTO
 
 window.confirmarNovoProduto = ()=>{
 
-let nome = qs("novoProdNome").value
-let preco = parseFloat(qs("novoProdPreco").value)
+let nome = qs("novoProdNome").value.trim()
+let desc = qs("novoProdDesc").value.trim()
+let precoP = parseFloat(qs("novoProdPrecoP").value)
+let precoG = parseFloat(qs("novoProdPrecoG").value)
 let aba = qs("novoProdAba").value
 
-if(!nome || isNaN(preco)){
-alert("Preencha corretamente.")
+if(!nome || isNaN(precoP)){
+alert("Preencha o nome e pelo menos o preço P.")
 return
 }
 
-cardapio[aba].push({
-nome:nome,
-preco:preco
-})
+/* Se a aba tem P/G (ex: Pastéis Salgados), adiciona em ambas */
+let abaBase = aba.replace(" P","").replace(" G","")
+let abaP = abaBase + " P"
+let abaG = abaBase + " G"
+
+if(cardapio[abaP] && cardapio[abaG] && !isNaN(precoG)){
+cardapio[abaP].push({nome: nome + " P", preco: precoP, desc: desc})
+cardapio[abaG].push({nome: nome + " G", preco: precoG, desc: desc})
+} else {
+cardapio[aba].push({nome: nome, preco: precoP, desc: desc})
+}
 
 salvarCardapioFirebase()
 
 qs("novoProdNome").value=""
-qs("novoProdPreco").value=""
+qs("novoProdDesc").value=""
+qs("novoProdPrecoP").value=""
+qs("novoProdPrecoG").value=""
 
 mostrar("telaAdmin")
 
@@ -3391,12 +3441,20 @@ Cancelar
 
 overlay.querySelector('[data-tam="P"]').onclick = ()=>{
 document.body.removeChild(overlay)
+if(tamanhos._isPastel && !nomeBase.includes("Especial") && !nomeBase.includes("Camarão")){
+mostrarModalAdicionais(nomeBase, "P", tamanhos["P"])
+} else {
 pedirObservacao(nomeBase + " P", tamanhos["P"])
+}
 }
 
 overlay.querySelector('[data-tam="G"]').onclick = ()=>{
 document.body.removeChild(overlay)
+if(tamanhos._isPastel && !nomeBase.includes("Especial") && !nomeBase.includes("Camarão")){
+mostrarModalAdicionais(nomeBase, "G", tamanhos["G"])
+} else {
 pedirObservacao(nomeBase + " G", tamanhos["G"])
+}
 }
 
 overlay.querySelector('[data-tam="cancelar"]').onclick = ()=>{
@@ -3405,6 +3463,62 @@ document.body.removeChild(overlay)
 
 document.body.appendChild(overlay)
 
+}
+
+
+/* =========================
+ADICIONAIS DE PASTEL
+========================= */
+
+const ADICIONAIS_PASTEL = [
+"Frango","Aipim","Bacon","Calabresa","Carne","Lombinho",
+"Coração de Frango","Presunto","Ovo","Ervilha","Tomate",
+"Palmito","Azeitona","Catupiry","Batata Palha","Brócolis",
+"Cenoura Ralada","Salsicha","Orégano","Cheddar","Cebola","Alho",
+"Mussarela","Milho"
+]
+
+const PRECO_COM_ADICIONAIS = { P: 18, G: 24 }
+
+function mostrarModalAdicionais(nomeBase, tamanho, precoOriginal){
+
+let overlay = document.createElement("div")
+overlay.className = "modalOverlay"
+
+let listHtml = ADICIONAIS_PASTEL.map((a,i) =>
+`<label class="adicionalLabel"><input type="checkbox" value="${a}" class="adicionalCheck"> ${a}</label>`
+).join("")
+
+overlay.innerHTML = `
+<div class="modalBox" style="max-height:80vh;overflow-y:auto">
+<h3>${nomeBase} ${tamanho}</h3>
+<p style="font-size:13px;color:#7a6a5a;margin-bottom:10px">Adicionais (1 grátis, a partir de 2: R$ ${PRECO_COM_ADICIONAIS[tamanho].toFixed(2)})</p>
+<div class="adicionaisGrid">${listHtml}</div>
+<button class="modalBtnTam modalBtnG" id="btnConfirmAdc">Confirmar</button>
+<button class="modalBtnTam modalBtnCancelar" id="btnCancelAdc">Sem adicionais</button>
+</div>
+`
+
+overlay.querySelector("#btnConfirmAdc").onclick = ()=>{
+let selecionados = [...overlay.querySelectorAll(".adicionalCheck:checked")].map(c=>c.value)
+let precoFinal = precoOriginal
+if(selecionados.length >= 2){
+precoFinal = PRECO_COM_ADICIONAIS[tamanho]
+}
+let nomeFinal = nomeBase + " " + tamanho
+if(selecionados.length > 0){
+nomeFinal += " + " + selecionados.join(", ")
+}
+document.body.removeChild(overlay)
+pedirObservacao(nomeFinal, precoFinal)
+}
+
+overlay.querySelector("#btnCancelAdc").onclick = ()=>{
+document.body.removeChild(overlay)
+pedirObservacao(nomeBase + " " + tamanho, precoOriginal)
+}
+
+document.body.appendChild(overlay)
 }
 
 /* =========================
@@ -3476,7 +3590,7 @@ infoDiv.appendChild(nomeEl)
 let precosDiv = document.createElement("div")
 precosDiv.className = "itemPrecos"
 
-Object.keys(tamanhos).forEach(t=>{
+Object.keys(tamanhos).filter(t=> t!=="desc" && t!=="pratoFeito" && t!=="num" && t!=="_isPastel").forEach(t=>{
 let span = document.createElement("span")
 span.className = "itemPreco"
 span.textContent = (t === "Único" ? "" : t + " ") + "R$ " + tamanhos[t].toFixed(2)
