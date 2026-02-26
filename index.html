@@ -1131,6 +1131,102 @@ padding:2px 0;
 display:none;
 }
 
+
+.editorAbaHeader{
+width:100%;max-width:760px;padding:14px 18px;margin:6px auto;
+background:var(--accent);color:#fff;border:none;border-radius:10px;
+font-size:1.05rem;text-align:left;cursor:pointer;display:flex;
+justify-content:space-between;align-items:center;
+transition:background .2s;
+}
+.editorAbaHeader:hover{background:var(--accent2)}
+.editorAbaHeader .editorSeta{transition:transform .2s;font-size:.8rem}
+.editorAbaHeader.aberta .editorSeta{transform:rotate(90deg)}
+.editorAbaItens{
+display:none;width:100%;max-width:760px;margin:0 auto 10px;
+}
+.editorAbaItens.visivel{display:block}
+.editorItem{
+display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+padding:10px 14px;margin:4px 0;
+}
+.editorProdNome{font-weight:600;flex:1;min-width:180px}
+.editorVisBadge{
+color:#fff;font-size:.7rem;padding:2px 8px;border-radius:10px;
+font-weight:600;text-transform:uppercase;
+}
+.editorBtns{display:flex;gap:6px}
+.editorBtnRemover{background:#c0392b!important;color:#fff!important}
+.editorBtnRemover:hover{background:#e74c3c!important}
+
+.btnCancelarPedido{
+width:100%;padding:10px;margin-top:6px;
+background:#c0392b;color:#fff;border:none;border-radius:8px;
+font-size:.9rem;font-weight:600;cursor:pointer;
+transition:background .2s;
+}
+.btnCancelarPedido:hover{background:#e74c3c}
+
+.relDataContainer{
+width:100%;max-width:760px;margin:0 auto;
+}
+.relDataCalendario{
+background:#fff;border-radius:14px;padding:16px;
+box-shadow:0 2px 10px rgba(0,0,0,.08);margin-bottom:16px;
+}
+.relDataNav{
+display:flex;justify-content:space-between;align-items:center;
+margin-bottom:12px;
+}
+.relDataNavBtn{
+background:var(--accent);color:#fff;border:none;border-radius:8px;
+padding:8px 16px;font-size:1.1rem;cursor:pointer;
+transition:background .2s;
+}
+.relDataNavBtn:hover{background:var(--accent2)}
+.relDataMesAno{
+font-size:1.1rem;font-weight:700;color:var(--text);
+text-transform:capitalize;
+}
+.relDataSemana{
+display:grid;grid-template-columns:repeat(7,1fr);
+text-align:center;font-size:.75rem;font-weight:600;
+color:#999;margin-bottom:6px;
+}
+.relDataDias{
+display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
+}
+.relDataDia{
+padding:10px 0;text-align:center;border-radius:8px;
+cursor:pointer;font-size:.9rem;font-weight:500;
+color:var(--text);transition:all .15s;border:none;background:transparent;
+}
+.relDataDia:hover{background:var(--accent2);color:#fff}
+.relDataDia.hoje{border:2px solid var(--accent);font-weight:700}
+.relDataDia.selecionado{background:var(--accent);color:#fff;font-weight:700}
+.relDataDia.vazio{cursor:default;pointer-events:none}
+.relDataDia.temPedido{position:relative}
+.relDataDia.temPedido::after{
+content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+width:5px;height:5px;border-radius:50%;background:var(--accent);
+}
+.relDataDia.selecionado.temPedido::after{background:#fff}
+.relDataResultado{
+background:#fff;border-radius:14px;padding:20px;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+.relDataResumo{
+font-size:1rem;color:var(--text);line-height:1.7;
+}
+.relDataResumo b{color:var(--accent)}
+.relDataPedidoLista{
+margin-top:14px;border-top:1px solid #eee;padding-top:14px;
+}
+.relDataPedidoItem{
+background:#fdf6ee;border-radius:10px;padding:12px;margin-bottom:8px;
+font-size:.85rem;color:var(--text);
+}
+.relDataPedidoItem b{display:block;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -1348,6 +1444,7 @@ Local
 <button class="adminBtn" onclick="relatorioHoje()">Hoje</button>
 <button class="adminBtn" onclick="relatorioMes()">Mês</button>
 <button class="adminBtn" onclick="relatorioAno()">Ano</button>
+<button class="adminBtn" onclick="abrirRelatorioPorData()">📅 Por Data</button>
 <button class="adminBtn" onclick="exportarExcel()">Exportar Excel</button>
 <button class="adminBtn" onclick="zerarRelatorios()">Zerar Dados</button>
 </div>
@@ -1408,6 +1505,12 @@ TELA NOVO PRODUTO
 <input id="novoProdPrecoG" type="number" step="0.01" placeholder="Preço G (ex: 22.00)" style="flex:1">
 </div>
 <p style="font-size:12px;color:#7a6a5a;margin:4px 0">Se não tiver tamanhos, preencha só o Preço P como preço único</p>
+<div style="margin:10px 0;padding:10px;background:rgba(0,0,0,.05);border-radius:8px">
+<p style="font-size:13px;font-weight:600;margin:0 0 6px;color:var(--text)">Disponível para:</p>
+<label style="margin-right:14px;cursor:pointer"><input type="radio" name="novoProdVis" value="ambos" checked> Ambos</label>
+<label style="margin-right:14px;cursor:pointer"><input type="radio" name="novoProdVis" value="local"> Local</label>
+<label style="cursor:pointer"><input type="radio" name="novoProdVis" value="delivery"> Delivery</label>
+</div>
 <button class="btnFinalizarCarrinho" onclick="confirmarNovoProduto()">ADICIONAR PRODUTO</button>
 <button class="btnVoltar" style="position:static;margin-top:10px" onclick="mostrar('telaAdmin')">&larr; Voltar ao Admin</button>
 </div>
@@ -1423,6 +1526,38 @@ TELA EDITOR DE ITENS
 <h2 style="margin-bottom:16px">Editar / Remover Itens</h2>
 
 <div id="listaEditor" style="width:100%;max-width:760px"></div>
+
+<button class="btnVoltar" style="position:static;margin-top:16px" onclick="mostrar('telaAdmin')">&larr; Voltar ao Admin</button>
+
+</div>
+
+<!-- =========================
+TELA RELATÓRIO POR DATA
+========================= -->
+
+<div id="telaRelatorioPorData" class="tela">
+
+<h2 style="margin-bottom:16px">Relatório por Data</h2>
+
+<div class="relDataContainer">
+
+<div class="relDataCalendario">
+<div class="relDataNav">
+<button class="relDataNavBtn" onclick="relDataMesAnterior()">◀</button>
+<span id="relDataMesAno" class="relDataMesAno"></span>
+<button class="relDataNavBtn" onclick="relDataMesProximo()">▶</button>
+</div>
+<div class="relDataSemana">
+<span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+</div>
+<div id="relDataDias" class="relDataDias"></div>
+</div>
+
+<div id="relDataResultado" class="relDataResultado">
+<p style="color:#999;text-align:center">Selecione uma data no calendário</p>
+</div>
+
+</div>
 
 <button class="btnVoltar" style="position:static;margin-top:16px" onclick="mostrar('telaAdmin')">&larr; Voltar ao Admin</button>
 
@@ -1498,7 +1633,8 @@ collection,
 addDoc,
 onSnapshot,
 getDocs,
-deleteDoc
+deleteDoc,
+doc
 }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
@@ -1578,7 +1714,7 @@ BOTÕES PRINCIPAIS
 
 window.voltarTela = ()=>{
 let telaAtual = document.querySelector(".tela.ativa")
-let telasAdmin = ["telaMesas","telaPedidosLocal","uiNovoProduto","telaEditorItens","uiRemoverAba"]
+let telasAdmin = ["telaMesas","telaPedidosLocal","uiNovoProduto","telaEditorItens","uiRemoverAba","telaRelatorioPorData"]
 /* Se garçom está no cardápio/checkout de mesa, voltar pra mesas */
 if(mesaSelecionada && telaAtual && (telaAtual.id === "telaCardapio" || telaAtual.id === "telaCheckout")){
 carrinho = []
@@ -1781,7 +1917,7 @@ let cardapio = {
 {nome:"KS",preco:5,desc:"Refrigerante KS"},
 {nome:"Lata",preco:6,desc:"Refrigerante lata"},
 {nome:"600ml",preco:9,desc:"Refrigerante 600ml"},
-{nome:"1 Litro",preco:11,desc:"Refrigerante 1 litro"}
+{nome:"1 Litro",preco:11,desc:"Refrigerante 1 litro",vis:"local"}
 ],
 
 "Sucos":[
@@ -1928,11 +2064,14 @@ let listaP = cardapio[aba]
 let listaG = cardapio[abasG[nomeBase]]
 
 listaP.forEach(item=>{
+if(modoPedido === "delivery" && item.vis === "local") return
+if(modoPedido === "local" && item.vis === "delivery") return
 let base = item.nome.replace(" P","")
 if(!grupos[nomeGrupo][base]) grupos[nomeGrupo][base] = {}
 grupos[nomeGrupo][base]["P"] = item.preco
 grupos[nomeGrupo][base]["desc"] = item.desc || ""
 if(item.num) grupos[nomeGrupo][base]["num"] = item.num
+if(item.vis) grupos[nomeGrupo][base]["_vis"] = item.vis
 if(nomeGrupo.startsWith("Pastéis")) grupos[nomeGrupo][base]["_isPastel"] = true
 })
 
@@ -1953,10 +2092,13 @@ return
 if(!grupos[aba]) grupos[aba] = {}
 
 cardapio[aba].forEach(item=>{
+if(modoPedido === "delivery" && item.vis === "local") return
+if(modoPedido === "local" && item.vis === "delivery") return
 if(!grupos[aba][item.nome]) grupos[aba][item.nome] = {}
 grupos[aba][item.nome]["Único"] = item.preco
 grupos[aba][item.nome]["desc"] = item.desc || ""
 grupos[aba][item.nome]["pratoFeito"] = item.pratoFeito || false
+if(item.vis) grupos[aba][item.nome]["_vis"] = item.vis
 })
 
 processados.add(aba)
@@ -2870,8 +3012,20 @@ return `<div class="pedidoCard">
 <div class="pedidoTotal">💰 R$ ${Number(p.total).toFixed(2)}</div>
 ${btnHtml}
 <button class="btnImprimir" onclick="reimprimirPedido('${docId}')">🖨️ Imprimir</button>
+<button class="btnCancelarPedido" onclick="cancelarPedido('${docId}')">❌ Cancelar Pedido</button>
 </div>`
 
+}
+
+window.cancelarPedido = async (docId)=>{
+if(!confirm("Tem certeza que deseja cancelar este pedido?")) return
+try{
+await deleteDoc(doc(db,"pedidos",docId))
+mostrarToast("Pedido cancelado!")
+}catch(e){
+console.log("Erro ao cancelar pedido:",e)
+alert("Erro ao cancelar pedido.")
+}
 }
 
 let pedidoIdsVistos = new Set()
@@ -3091,6 +3245,137 @@ alert("Total do Ano: R$ " + total.toFixed(2))
 }
 
 /* =========================
+RELATÓRIO POR DATA (CALENDÁRIO)
+========================= */
+
+let relDataMesAtual = new Date().getMonth()
+let relDataAnoAtual = new Date().getFullYear()
+let relDataDiaSelecionado = null
+
+window.abrirRelatorioPorData = ()=>{
+relDataMesAtual = new Date().getMonth()
+relDataAnoAtual = new Date().getFullYear()
+relDataDiaSelecionado = null
+renderCalendario()
+qs("relDataResultado").innerHTML = '<p style="color:#999;text-align:center">Selecione uma data no calendário</p>'
+mostrar("telaRelatorioPorData")
+}
+
+window.relDataMesAnterior = ()=>{
+relDataMesAtual--
+if(relDataMesAtual < 0){ relDataMesAtual = 11; relDataAnoAtual-- }
+renderCalendario()
+}
+
+window.relDataMesProximo = ()=>{
+relDataMesAtual++
+if(relDataMesAtual > 11){ relDataMesAtual = 0; relDataAnoAtual++ }
+renderCalendario()
+}
+
+function renderCalendario(){
+let meses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
+
+qs("relDataMesAno").textContent = meses[relDataMesAtual] + " " + relDataAnoAtual
+
+let primeiroDia = new Date(relDataAnoAtual, relDataMesAtual, 1).getDay()
+let diasNoMes = new Date(relDataAnoAtual, relDataMesAtual + 1, 0).getDate()
+let hoje = new Date()
+
+let diasComPedido = new Set()
+pedidosCache.forEach(p=>{
+let d = new Date(p.data)
+if(d.getMonth() === relDataMesAtual && d.getFullYear() === relDataAnoAtual){
+diasComPedido.add(d.getDate())
+}
+})
+
+let html = ""
+
+for(let i = 0; i < primeiroDia; i++){
+html += '<div class="relDataDia vazio"></div>'
+}
+
+for(let dia = 1; dia <= diasNoMes; dia++){
+let classes = "relDataDia"
+if(dia === hoje.getDate() && relDataMesAtual === hoje.getMonth() && relDataAnoAtual === hoje.getFullYear()){
+classes += " hoje"
+}
+if(relDataDiaSelecionado === dia){
+classes += " selecionado"
+}
+if(diasComPedido.has(dia)){
+classes += " temPedido"
+}
+html += '<button class="' + classes + '" onclick="selecionarDiaRelatorio(' + dia + ')">' + dia + '</button>'
+}
+
+qs("relDataDias").innerHTML = html
+}
+
+window.selecionarDiaRelatorio = (dia)=>{
+relDataDiaSelecionado = dia
+renderCalendario()
+mostrarRelatorioData(dia, relDataMesAtual, relDataAnoAtual)
+}
+
+function mostrarRelatorioData(dia, mes, ano){
+let dataSelecionada = new Date(ano, mes, dia)
+let dataStr = dataSelecionada.toDateString()
+
+let pedidosDoDia = pedidosCache.filter(p => new Date(p.data).toDateString() === dataStr)
+
+let totalDia = pedidosDoDia.reduce((s,p) => s + Number(p.total || 0), 0)
+let totalDelivery = pedidosDoDia.filter(p=>p.modo==="delivery").reduce((s,p) => s + Number(p.total||0), 0)
+let totalLocal = pedidosDoDia.filter(p=>p.modo==="local").reduce((s,p) => s + Number(p.total||0), 0)
+let qtdPedidos = pedidosDoDia.length
+let qtdDelivery = pedidosDoDia.filter(p=>p.modo==="delivery").length
+let qtdLocal = pedidosDoDia.filter(p=>p.modo==="local").length
+
+let meses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
+let dataFormatada = dia + " de " + meses[mes] + " de " + ano
+
+let html = '<div class="relDataResumo">'
+html += '<h3 style="margin:0 0 12px;color:var(--accent)">📊 ' + escHtml(dataFormatada) + '</h3>'
+html += '<b>Total do Dia:</b> R$ ' + totalDia.toFixed(2) + '<br>'
+html += '<b>Pedidos:</b> ' + qtdPedidos + ' no total<br>'
+html += '<b>Delivery:</b> ' + qtdDelivery + ' pedido(s) — R$ ' + totalDelivery.toFixed(2) + '<br>'
+html += '<b>Local:</b> ' + qtdLocal + ' pedido(s) — R$ ' + totalLocal.toFixed(2)
+html += '</div>'
+
+if(pedidosDoDia.length > 0){
+html += '<div class="relDataPedidoLista">'
+html += '<h4 style="margin:0 0 10px;color:var(--text)">Detalhes dos Pedidos</h4>'
+
+pedidosDoDia.forEach((p,i)=>{
+let nomeCliente = escHtml(p.cliente?.nome || "Sem nome")
+let modo = p.modo === "delivery" ? "🛵 Delivery" : "🍽️ Local"
+let hora = new Date(p.data).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})
+let pagamento = escHtml(p.pagamento || "N/A")
+
+let itensStr = ""
+;(p.itens || []).forEach(it=>{
+itensStr += "• " + it.qtd + "x " + escHtml(it.nome) + " — R$ " + (it.qtd * it.preco).toFixed(2) + "<br>"
+})
+
+html += '<div class="relDataPedidoItem">'
+html += '<b>#' + (i+1) + ' ' + modo + ' — ' + nomeCliente + ' (' + hora + ')</b>'
+html += '💳 ' + pagamento + '<br>'
+html += itensStr
+html += '<b>Total: R$ ' + Number(p.total).toFixed(2) + '</b>'
+html += '</div>'
+})
+
+html += '</div>'
+} else {
+html += '<p style="color:#999;text-align:center;margin-top:14px">Nenhum pedido nesta data</p>'
+}
+
+qs("relDataResultado").innerHTML = html
+}
+
+
+/* =========================
 EXPORTAR CSV COMPLETO
 ========================= */
 
@@ -3221,11 +3506,13 @@ let abaBase = aba.replace(" P","").replace(" G","")
 let abaP = abaBase + " P"
 let abaG = abaBase + " G"
 
+let vis = document.querySelector('input[name="novoProdVis"]:checked')?.value || "ambos"
+
 if(cardapio[abaP] && cardapio[abaG] && !isNaN(precoG)){
-cardapio[abaP].push({nome: nome + " P", preco: precoP, desc: desc})
-cardapio[abaG].push({nome: nome + " G", preco: precoG, desc: desc})
+cardapio[abaP].push({nome: nome + " P", preco: precoP, desc: desc, vis: vis})
+cardapio[abaG].push({nome: nome + " G", preco: precoG, desc: desc, vis: vis})
 } else {
-cardapio[aba].push({nome: nome, preco: precoP, desc: desc})
+cardapio[aba].push({nome: nome, preco: precoP, desc: desc, vis: vis})
 }
 
 salvarCardapioFirebase()
@@ -3249,30 +3536,60 @@ window.abrirEditorItens = ()=>{
 
 qs("listaEditor").innerHTML = ""
 
-Object.keys(cardapio).forEach(aba => {
+let abasVistas = new Set()
+let abasOrdenadas = []
+
+ORDEM_ABAS.forEach(nome=>{
+let found = Object.keys(cardapio).filter(a=>{
+let base = a.replace(" P","").replace(" G","")
+return base === nome
+})
+found.forEach(a=>{
+if(!abasVistas.has(a)){ abasVistas.add(a); abasOrdenadas.push(a) }
+})
+})
+Object.keys(cardapio).forEach(a=>{
+if(!abasVistas.has(a)){ abasVistas.add(a); abasOrdenadas.push(a) }
+})
+
+abasOrdenadas.forEach(aba=>{
+
+let header = document.createElement("button")
+header.className = "editorAbaHeader"
+header.innerHTML = "<b>" + escHtml(aba) + "</b> <span class='editorSeta'>►</span>"
+
+let container = document.createElement("div")
+container.className = "editorAbaItens"
 
 cardapio[aba].forEach((produto,index)=>{
 
+let vis = produto.vis || "ambos"
+let corVis = vis === "local" ? "#5b8bd4" : vis === "delivery" ? "#e8854a" : "#4caf50"
+let labelVis = vis === "local" ? "Local" : vis === "delivery" ? "Delivery" : "Ambos"
+
 let el = document.createElement("div")
-el.className = "adminBox"
+el.className = "adminBox editorItem"
 
 el.innerHTML = `
-<b>${aba}</b><br>
-${produto.nome} — R$ ${produto.preco}
-<br>
-<button class="adminBtn"
-onclick="editarProduto('${aba}',${index})">
-Editar
-</button>
-<button class="adminBtn"
-onclick="removerProduto('${aba}',${index})">
-Remover
-</button>
+<span class="editorProdNome" style="color:${corVis}">${escHtml(produto.nome)} — R$ ${produto.preco}</span>
+<span class="editorVisBadge" style="background:${corVis}">${labelVis}</span>
+<div class="editorBtns">
+<button class="adminBtn" data-aba="${aba}" data-idx="${index}" onclick="editarProduto(this.dataset.aba,+this.dataset.idx)">Editar</button>
+<button class="adminBtn editorBtnRemover" data-aba="${aba}" data-idx="${index}" onclick="removerProduto(this.dataset.aba,+this.dataset.idx)">Remover</button>
+</div>
 `
 
-qs("listaEditor").appendChild(el)
+container.appendChild(el)
 
 })
+
+header.onclick = ()=>{
+let aberta = header.classList.toggle("aberta")
+container.classList.toggle("visivel")
+}
+
+qs("listaEditor").appendChild(header)
+qs("listaEditor").appendChild(container)
 
 })
 
@@ -3282,19 +3599,49 @@ mostrar("telaEditorItens")
 
 window.editarProduto = (aba,index)=>{
 
-let novoNome = prompt("Novo nome:",
-cardapio[aba][index].nome)
+let prod = cardapio[aba][index]
+let visAtual = prod.vis || "ambos"
 
-let novoPreco = prompt("Novo preço:",
-cardapio[aba][index].preco)
+let overlay = document.createElement("div")
+overlay.className = "modalOverlay"
 
-if(!novoNome || isNaN(parseFloat(novoPreco))) return
+overlay.innerHTML = `
+<div class="modalBox" style="max-width:400px">
+<h3 style="margin-bottom:12px">Editar Produto</h3>
+<label style="display:block;margin:6px 0;font-size:.9rem;font-weight:600">Nome:</label>
+<input id="editProdNome" value="${escHtml(prod.nome)}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;box-sizing:border-box">
+<label style="display:block;margin:10px 0 6px;font-size:.9rem;font-weight:600">Preço:</label>
+<input id="editProdPreco" type="number" step="0.01" value="${prod.preco}" style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc;box-sizing:border-box">
+<label style="display:block;margin:10px 0 6px;font-size:.9rem;font-weight:600">Disponível para:</label>
+<div style="display:flex;gap:14px;margin-bottom:14px">
+<label style="cursor:pointer"><input type="radio" name="editProdVis" value="ambos" ${visAtual==="ambos"?"checked":""}> Ambos</label>
+<label style="cursor:pointer"><input type="radio" name="editProdVis" value="local" ${visAtual==="local"?"checked":""}> Local</label>
+<label style="cursor:pointer"><input type="radio" name="editProdVis" value="delivery" ${visAtual==="delivery"?"checked":""}> Delivery</label>
+</div>
+<button class="modalBtnTam modalBtnP" id="editProdSalvar">Salvar</button>
+<button class="modalBtnTam modalBtnCancelar" id="editProdCancelar">Cancelar</button>
+</div>
+`
+
+document.body.appendChild(overlay)
+
+overlay.querySelector("#editProdSalvar").onclick = ()=>{
+let novoNome = overlay.querySelector("#editProdNome").value.trim()
+let novoPreco = parseFloat(overlay.querySelector("#editProdPreco").value)
+let novoVis = overlay.querySelector('input[name="editProdVis"]:checked')?.value || "ambos"
+
+if(!novoNome || isNaN(novoPreco)){ alert("Preencha nome e preço."); return }
 
 cardapio[aba][index].nome = novoNome
-cardapio[aba][index].preco = parseFloat(novoPreco)
+cardapio[aba][index].preco = novoPreco
+cardapio[aba][index].vis = novoVis
 
 salvarCardapioFirebase()
+overlay.remove()
 abrirEditorItens()
+}
+
+overlay.querySelector("#editProdCancelar").onclick = ()=>{ overlay.remove() }
 
 }
 
