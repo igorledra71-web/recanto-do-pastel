@@ -1255,6 +1255,52 @@ padding:8px 14px;border-radius:8px;border:1px solid #7a6a5a;
 background:#3a2a1a;color:#f0e6da;font-size:.9rem;
 cursor:pointer;
 }
+
+.btnEditarPedido{
+width:100%;padding:10px;margin-top:6px;
+background:#8e44ad;color:#fff;border:none;border-radius:8px;
+font-size:.9rem;font-weight:600;cursor:pointer;
+transition:background .2s;
+}
+.btnEditarPedido:hover{background:#9b59b6}
+.editPedidoItem{
+background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;
+box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;
+gap:10px;flex-wrap:wrap;
+}
+.editPedidoItem .editItemNome{
+flex:1;min-width:150px;font-weight:600;color:var(--text);font-size:.95rem;
+}
+.editPedidoItem .editItemPreco{
+color:var(--accent);font-weight:700;font-size:.95rem;min-width:80px;text-align:right;
+}
+.editPedidoItem .editItemObs{
+width:100%;font-size:.8rem;color:#7a6a5a;margin-top:2px;
+}
+.editItemQtd{
+display:flex;align-items:center;gap:6px;
+}
+.editItemQtd button{
+width:32px;height:32px;border-radius:50%;border:none;
+font-size:1.1rem;font-weight:700;cursor:pointer;transition:background .15s;
+}
+.editItemQtd .editBtnMenos{
+background:#e74c3c;color:#fff;
+}
+.editItemQtd .editBtnMenos:hover{background:#c0392b}
+.editItemQtd .editBtnMais{
+background:#27ae60;color:#fff;
+}
+.editItemQtd .editBtnMais:hover{background:#2ecc71}
+.editItemQtd span{
+font-size:1.1rem;font-weight:700;min-width:24px;text-align:center;color:var(--text);
+}
+.editBtnRemover{
+background:#c0392b;color:#fff;border:none;border-radius:8px;
+padding:6px 14px;font-size:.8rem;font-weight:600;cursor:pointer;
+transition:background .15s;
+}
+.editBtnRemover:hover{background:#e74c3c}
 </style>
 </head>
 <body>
@@ -1517,6 +1563,24 @@ TELA PEDIDOS LOCAL (ADMIN)
 </div>
 
 <!-- =========================
+TELA EDITAR PEDIDO
+========================= -->
+
+<div id="telaEditarPedido" class="tela">
+
+<h2 style="margin-bottom:6px">Editar Pedido</h2>
+<div id="editPedidoInfo" style="margin-bottom:14px;color:var(--text);font-size:.95rem"></div>
+
+<div id="editPedidoItens" style="width:100%;max-width:760px"></div>
+
+<div id="editPedidoTotal" style="text-align:center;font-size:1.2rem;font-weight:700;color:var(--accent);margin:16px 0"></div>
+
+<button class="btnFinalizarCarrinho" onclick="salvarEdicaoPedido()" style="max-width:760px">SALVAR ALTERAÇÕES</button>
+<button class="btnVoltar" style="position:static;margin-top:10px" onclick="cancelarEdicaoPedido()">← Voltar</button>
+
+</div>
+
+<!-- =========================
 TELA NOVO PRODUTO
 ========================= -->
 
@@ -1743,7 +1807,7 @@ BOTÕES PRINCIPAIS
 
 window.voltarTela = ()=>{
 let telaAtual = document.querySelector(".tela.ativa")
-let telasAdmin = ["telaMesas","telaPedidosLocal","uiNovoProduto","telaEditorItens","uiRemoverAba","telaRelatorioPorData"]
+let telasAdmin = ["telaMesas","telaPedidosLocal","uiNovoProduto","telaEditorItens","uiRemoverAba","telaRelatorioPorData","telaEditarPedido"]
 /* Se garçom está no cardápio/checkout de mesa, voltar pra mesas */
 if(mesaSelecionada && telaAtual && (telaAtual.id === "telaCardapio" || telaAtual.id === "telaCheckout")){
 carrinho = []
@@ -3080,10 +3144,124 @@ return `<div class="pedidoCard">
 <div class="pedidoTotal">💰 R$ ${Number(p.total).toFixed(2)}</div>
 ${btnHtml}
 ${btnLocal}
+<button class="btnEditarPedido" onclick="abrirEditarPedido('${docId}')">✏️ Editar Pedido</button>
 <button class="btnImprimir" onclick="reimprimirPedido('${docId}')">🖨️ Imprimir</button>
 <button class="btnCancelarPedido" onclick="cancelarPedido('${docId}')">❌ Cancelar Pedido</button>
 </div>`
 
+}
+
+let editPedidoDocId = null
+let editPedidoItens = []
+let editPedidoTelaAnterior = null
+
+window.abrirEditarPedido = (docId)=>{
+let p = pedidosMap[docId]
+if(!p){ alert("Pedido não encontrado"); return }
+
+editPedidoDocId = docId
+editPedidoItens = (p.itens || []).map(it=>({...it}))
+editPedidoTelaAnterior = document.querySelector(".tela.ativa")?.id || "telaAdmin"
+
+let info = ""
+if(p.modo === "delivery"){
+info = "🛵 Delivery — " + escHtml(p.cliente?.nome || "Sem nome")
+} else {
+info = "🍽️ Mesa " + escHtml(p.cliente?.mesa || "") + " — " + escHtml(p.cliente?.nome || "")
+}
+qs("editPedidoInfo").innerHTML = info
+
+renderEditPedidoItens()
+mostrar("telaEditarPedido")
+}
+
+function renderEditPedidoItens(){
+let box = qs("editPedidoItens")
+if(!box) return
+box.innerHTML = ""
+
+if(!editPedidoItens.length){
+box.innerHTML = "<div style=\'text-align:center;color:#999;padding:20px\'>Nenhum item no pedido</div>"
+}
+
+editPedidoItens.forEach((it, idx)=>{
+let el = document.createElement("div")
+el.className = "editPedidoItem"
+
+let obsHtml = it.obs ? '<div class="editItemObs">📝 ' + escHtml(it.obs) + '</div>' : ""
+
+el.innerHTML = '<div class="editItemNome">' + escHtml(it.nome) + obsHtml + '</div>'
++ '<div class="editItemQtd">'
++ '<button class="editBtnMenos" data-idx="' + idx + '">-</button>'
++ '<span>' + it.qtd + '</span>'
++ '<button class="editBtnMais" data-idx="' + idx + '">+</button>'
++ '</div>'
++ '<div class="editItemPreco">R$ ' + (it.qtd * it.preco).toFixed(2) + '</div>'
++ '<button class="editBtnRemover" data-idx="' + idx + '">Remover</button>'
+
+box.appendChild(el)
+})
+
+/* event delegation */
+box.onclick = (e)=>{
+let btn = e.target.closest("button")
+if(!btn) return
+let idx = parseInt(btn.dataset.idx)
+if(isNaN(idx)) return
+
+if(btn.classList.contains("editBtnMais")){
+editPedidoItens[idx].qtd++
+renderEditPedidoItens()
+}
+if(btn.classList.contains("editBtnMenos")){
+editPedidoItens[idx].qtd--
+if(editPedidoItens[idx].qtd <= 0) editPedidoItens.splice(idx,1)
+renderEditPedidoItens()
+}
+if(btn.classList.contains("editBtnRemover")){
+editPedidoItens.splice(idx,1)
+renderEditPedidoItens()
+}
+}
+
+let total = editPedidoItens.reduce((s,it)=> s + (it.qtd * it.preco), 0)
+qs("editPedidoTotal").textContent = "Total: R$ " + total.toFixed(2)
+}
+
+window.salvarEdicaoPedido = async ()=>{
+if(!editPedidoDocId) return
+
+if(!editPedidoItens.length){
+if(confirm("Pedido ficará sem itens. Deseja cancelar o pedido?")){
+await deleteDoc(doc(db,"pedidos",editPedidoDocId))
+mostrarToast("Pedido cancelado!")
+editPedidoDocId = null
+mostrar("telaAdmin")
+return
+}
+return
+}
+
+let novoTotal = editPedidoItens.reduce((s,it)=> s + (it.qtd * it.preco), 0)
+
+try{
+await updateDoc(doc(db,"pedidos",editPedidoDocId),{
+itens: editPedidoItens,
+total: novoTotal
+})
+mostrarToast("Pedido atualizado!")
+}catch(e){
+console.log("Erro ao atualizar pedido:",e)
+alert("Erro ao atualizar pedido.")
+}
+
+editPedidoDocId = null
+mostrar(editPedidoTelaAnterior || "telaAdmin")
+}
+
+window.cancelarEdicaoPedido = ()=>{
+editPedidoDocId = null
+mostrar(editPedidoTelaAnterior || "telaAdmin")
 }
 
 window.cancelarPedido = async (docId)=>{
@@ -4226,4 +4404,3 @@ FIM DEFINITIVO DO SCRIPT
 
 </body>
 </html>
-
