@@ -2237,7 +2237,7 @@ infoDiv.appendChild(descEl)
 let precosDiv = document.createElement("div")
 precosDiv.className = "itemPrecos"
 
-Object.keys(tamanhos).filter(t=> t!=="desc" && t!=="pratoFeito" && t!=="num" && t!=="_isPastel" && t!=="_categoria").forEach(t=>{
+Object.keys(tamanhos).filter(t=> t!=="desc" && t!=="pratoFeito" && t!=="num" && t!=="_isPastel" && t!=="_categoria" && t!=="_vis").forEach(t=>{
 let span = document.createElement("span")
 span.className = "itemPreco"
 span.textContent = (t === "Único" ? "" : t + " ") + "R$ " + tamanhos[t].toFixed(2)
@@ -4373,7 +4373,7 @@ infoDiv.appendChild(nomeEl)
 let precosDiv = document.createElement("div")
 precosDiv.className = "itemPrecos"
 
-Object.keys(tamanhos).filter(t=> t!=="desc" && t!=="pratoFeito" && t!=="num" && t!=="_isPastel" && t!=="_categoria").forEach(t=>{
+Object.keys(tamanhos).filter(t=> t!=="desc" && t!=="pratoFeito" && t!=="num" && t!=="_isPastel" && t!=="_categoria" && t!=="_vis").forEach(t=>{
 let span = document.createElement("span")
 span.className = "itemPreco"
 span.textContent = (t === "Único" ? "" : t + " ") + "R$ " + tamanhos[t].toFixed(2)
