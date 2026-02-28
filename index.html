@@ -1227,6 +1227,34 @@ background:#fdf6ee;border-radius:10px;padding:12px;margin-bottom:8px;
 font-size:.85rem;color:var(--text);
 }
 .relDataPedidoItem b{display:block;margin-bottom:4px}
+
+.btnAdicionarComanda{
+width:100%;padding:10px;margin-top:6px;
+background:#2980b9;color:#fff;border:none;border-radius:8px;
+font-size:.9rem;font-weight:600;cursor:pointer;
+transition:background .2s;
+}
+.btnAdicionarComanda:hover{background:#3498db}
+.btnFinalizarComanda{
+width:100%;padding:10px;margin-top:6px;
+background:#27ae60;color:#fff;border:none;border-radius:8px;
+font-size:.9rem;font-weight:600;cursor:pointer;
+transition:background .2s;
+}
+.btnFinalizarComanda:hover{background:#2ecc71}
+.itemNovoBadge{
+display:inline-block;background:#e74c3c;color:#fff;
+font-size:.65rem;font-weight:700;padding:1px 6px;
+border-radius:6px;vertical-align:middle;margin-right:2px;
+}
+.miniCalLocal{
+text-align:center;margin-bottom:12px;
+}
+.miniCalInput{
+padding:8px 14px;border-radius:8px;border:1px solid #7a6a5a;
+background:#3a2a1a;color:#f0e6da;font-size:.9rem;
+cursor:pointer;
+}
 </style>
 </head>
 <body>
@@ -1634,7 +1662,8 @@ addDoc,
 onSnapshot,
 getDocs,
 deleteDoc,
-doc
+doc,
+updateDoc
 }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
@@ -2782,6 +2811,10 @@ FINALIZAR PEDIDO LOCAL (GARÇOM)
 ========================= */
 
 window.finalizarPedidoLocal = async()=>{
+if(comandaDocId){
+finalizarAdicionarComanda()
+return
+}
 if(!carrinho.length){
 alert("Carrinho vazio")
 return
@@ -2789,13 +2822,14 @@ return
 
 let pedido = {
 cliente:{nome:"Mesa " + mesaSelecionada, tel:"", mesa:String(mesaSelecionada)},
-itens:carrinho,
+itens:carrinho.map(it=>({...it})),
 total:totalGeral(),
 frete:0,
 modo:"local",
 pagamento:"",
 data:new Date().toISOString(),
-visto:false
+visto:false,
+finalizado:false
 }
 
 try{
@@ -2815,7 +2849,10 @@ mostrar("telaAdmin")
 PEDIDOS NO LOCAL (ADMIN)
 ========================= */
 
+let pedidosLocalDataSel = null
+
 window.abrirPedidosLocal = ()=>{
+pedidosLocalDataSel = new Date().toDateString()
 mostrar("telaPedidosLocal")
 renderPedidosLocal()
 }
@@ -2825,11 +2862,22 @@ let box = document.getElementById("listaPedidosLocal")
 if(!box) return
 box.innerHTML = ""
 
-let locais = pedidosCache.filter(p => p.modo === "local")
+let dataFiltro = pedidosLocalDataSel || new Date().toDateString()
+
+let calHtml = '<div class="miniCalLocal">'
+calHtml += '<input type="date" class="miniCalInput" id="pedidosLocalDatePicker" value="' + formatDateInput(dataFiltro) + '" onchange="filtrarPedidosLocalPorData(this.value)">'
+calHtml += '</div>'
+box.innerHTML = calHtml
+
+let locais = pedidosCache.filter(p => p.modo === "local" && (p.finalizado === true || p.finalizado === undefined) && new Date(p.data).toDateString() === dataFiltro)
+
 if(!locais.length){
-box.innerHTML = "<div style='color:#7a6a5a;text-align:center;padding:20px'>Nenhum pedido local</div>"
+box.innerHTML += "<div style='color:#f0e6da;text-align:center;padding:20px'>Nenhum pedido local finalizado nesta data</div>"
 return
 }
+
+let totalDia = locais.reduce((s,p)=> s + Number(p.total||0), 0)
+box.innerHTML += '<div style="text-align:center;color:#f0e6da;padding:8px;font-weight:600;font-size:1rem">Total do dia: R$ ' + totalDia.toFixed(2) + ' (' + locais.length + ' pedidos)</div>'
 
 locais.forEach(p=>{
 let itensHtml = ""
@@ -2845,6 +2893,20 @@ box.innerHTML += `<div class="pedidoCard">
 <div class="pedidoTotal">💰 R$ ${Number(p.total).toFixed(2)}</div>
 </div>`
 })
+}
+
+function formatDateInput(dateStr){
+let d = new Date(dateStr)
+let y = d.getFullYear()
+let m = String(d.getMonth()+1).padStart(2,'0')
+let day = String(d.getDate()).padStart(2,'0')
+return y + '-' + m + '-' + day
+}
+
+window.filtrarPedidosLocalPorData = (val)=>{
+let d = new Date(val + 'T12:00:00')
+pedidosLocalDataSel = d.toDateString()
+renderPedidosLocal()
 }
 
 /* =========================
@@ -2993,7 +3055,8 @@ let itensHtml = ""
 ;(p.itens || []).forEach(i=>{
 let nomeItem = escHtml(i.nome)
 let obsItem = escHtml(i.obs)
-itensHtml += `• ${i.qtd}x ${nomeItem} - R$ ${(i.qtd * i.preco).toFixed(2)}<br>`
+let novoBadge = i._novo ? '<span class="itemNovoBadge">NOVO</span> ' : ""
+itensHtml += `• ${i.qtd}x ${novoBadge}${nomeItem} - R$ ${(i.qtd * i.preco).toFixed(2)}<br>`
 if(obsItem) itensHtml += `&nbsp;&nbsp;📝 ${obsItem}<br>`
 })
 
@@ -3005,12 +3068,19 @@ if(p.modo === "delivery" && telLimpo){
 btnHtml = `<button class="btnDeliveryCaminho" data-tel="${telLimpo}" data-nome="${nomeLimpo}" onclick="enviarACaminho(this.dataset.tel,this.dataset.nome)">🛵 Enviar "A caminho" no WhatsApp</button>`
 }
 
+let btnLocal = ""
+if(p.modo === "local" && !p.finalizado){
+btnLocal = `<button class="btnAdicionarComanda" onclick="adicionarItensComanda('${docId}')">➕ Adicionar Itens</button>`
+btnLocal += `<button class="btnFinalizarComanda" onclick="finalizarComanda('${docId}')">✅ Finalizar Pedido</button>`
+}
+
 return `<div class="pedidoCard">
 <div class="pedidoNome">👤 ${nome}</div>
 <div class="pedidoInfo">${infoHtml}</div>
 <div class="pedidoItens">${itensHtml}</div>
 <div class="pedidoTotal">💰 R$ ${Number(p.total).toFixed(2)}</div>
 ${btnHtml}
+${btnLocal}
 <button class="btnImprimir" onclick="reimprimirPedido('${docId}')">🖨️ Imprimir</button>
 <button class="btnCancelarPedido" onclick="cancelarPedido('${docId}')">❌ Cancelar Pedido</button>
 </div>`
@@ -3025,6 +3095,75 @@ mostrarToast("Pedido cancelado!")
 }catch(e){
 console.log("Erro ao cancelar pedido:",e)
 alert("Erro ao cancelar pedido.")
+}
+}
+
+/* =========================
+COMANDA - ADICIONAR ITENS
+========================= */
+
+let comandaDocId = null
+
+window.adicionarItensComanda = (docId)=>{
+let p = pedidosMap[docId]
+if(!p){ alert("Pedido não encontrado"); return }
+
+comandaDocId = docId
+let mesaNum = p.cliente?.mesa || ""
+mesaSelecionada = mesaNum
+modoPedido = "local"
+carrinho = []
+renderCarrinho()
+renderAbas()
+mostrar("telaCardapio")
+mostrarToast("Adicione itens à comanda da Mesa " + mesaNum)
+}
+
+window.finalizarAdicionarComanda = async ()=>{
+if(!comandaDocId || !carrinho.length){
+alert("Carrinho vazio")
+return
+}
+
+let p = pedidosMap[comandaDocId]
+if(!p){ alert("Pedido não encontrado"); return }
+
+let novosItens = carrinho.map(it=>({...it, _novo:true}))
+let todosItens = [...(p.itens || []), ...novosItens]
+let novoTotal = todosItens.reduce((s,it)=> s + (it.qtd * it.preco), 0)
+
+try{
+await updateDoc(doc(db,"pedidos",comandaDocId),{
+itens: todosItens,
+total: novoTotal
+})
+mostrarToast("Itens adicionados à comanda!")
+}catch(e){
+console.log("Erro ao atualizar comanda:",e)
+alert("Erro ao atualizar comanda.")
+}
+
+carrinho = []
+renderCarrinho()
+comandaDocId = null
+mesaSelecionada = null
+mostrar("telaAdmin")
+}
+
+window.finalizarComanda = async (docId)=>{
+if(!confirm("Finalizar este pedido? O cliente já pagou?")) return
+
+try{
+let p = pedidosMap[docId]
+let itensLimpos = (p?.itens || []).map(it=>{ let copy={...it}; delete copy._novo; return copy })
+await updateDoc(doc(db,"pedidos",docId),{
+finalizado: true,
+itens: itensLimpos
+})
+mostrarToast("Pedido finalizado!")
+}catch(e){
+console.log("Erro ao finalizar pedido:",e)
+alert("Erro ao finalizar pedido.")
 }
 }
 
@@ -3070,10 +3209,12 @@ countDeliveryNovos++
 pedidosParaImprimir.push(p)
 }
 } else {
+if(p.finalizado === false){
 if(boxL) boxL.innerHTML += card
 if(!pedidoIdsVistos.has(docId) && !primeiraCarga){
 countLocalNovos++
 pedidosParaImprimir.push(p)
+}
 }
 }
 
@@ -3168,7 +3309,8 @@ if(pedido.troco) html += '<div class="cupomInfo">Troco para: R$ ' + escHtml(pedi
 html += '<div class="cupomLinha cupomSub">ITENS</div>'
 
 ;(pedido.itens || []).forEach(i => {
-html += '<div class="cupomItem">' + i.qtd + 'x ' + escHtml(i.nome) + '</div>'
+let cupomNovo = i._novo ? ' ** NOVO **' : ''
+html += '<div class="cupomItem">' + i.qtd + 'x ' + escHtml(i.nome) + cupomNovo + '</div>'
 html += '<div class="cupomItem" style="text-align:right">R$ ' + (i.qtd * i.preco).toFixed(2) + '</div>'
 if(i.obs) html += '<div class="cupomObs">  -> ' + escHtml(i.nome) + ': ' + escHtml(i.obs) + '</div>'
 })
