@@ -3055,8 +3055,7 @@ let itensHtml = ""
 ;(p.itens || []).forEach(i=>{
 let nomeItem = escHtml(i.nome)
 let obsItem = escHtml(i.obs)
-let novoBadge = i._novo ? '<span class="itemNovoBadge">NOVO</span> ' : ""
-itensHtml += `• ${i.qtd}x ${novoBadge}${nomeItem} - R$ ${(i.qtd * i.preco).toFixed(2)}<br>`
+itensHtml += `• ${i.qtd}x ${nomeItem} - R$ ${(i.qtd * i.preco).toFixed(2)}<br>`
 if(obsItem) itensHtml += `&nbsp;&nbsp;📝 ${obsItem}<br>`
 })
 
@@ -3138,6 +3137,8 @@ itens: todosItens,
 total: novoTotal
 })
 mostrarToast("Itens adicionados à comanda!")
+let pedidoParaImprimir = pedidosMap[comandaDocId] || {cliente:{mesa:mesaSelecionada},modo:"local"}
+imprimirCupomAdicionais(pedidoParaImprimir, novosItens)
 }catch(e){
 console.log("Erro ao atualizar comanda:",e)
 alert("Erro ao atualizar comanda.")
@@ -3309,8 +3310,7 @@ if(pedido.troco) html += '<div class="cupomInfo">Troco para: R$ ' + escHtml(pedi
 html += '<div class="cupomLinha cupomSub">ITENS</div>'
 
 ;(pedido.itens || []).forEach(i => {
-let cupomNovo = i._novo ? ' ** NOVO **' : ''
-html += '<div class="cupomItem">' + i.qtd + 'x ' + escHtml(i.nome) + cupomNovo + '</div>'
+html += '<div class="cupomItem">' + i.qtd + 'x ' + escHtml(i.nome) + '</div>'
 html += '<div class="cupomItem" style="text-align:right">R$ ' + (i.qtd * i.preco).toFixed(2) + '</div>'
 if(i.obs) html += '<div class="cupomObs">  -> ' + escHtml(i.nome) + ': ' + escHtml(i.obs) + '</div>'
 })
@@ -3324,6 +3324,56 @@ html += '<div class="cupomLinha cupomTotal">TOTAL: R$ ' + Number(pedido.total).t
 
 html += '<div class="cupomSep"></div>'
 html += '<div class="cupomLinha" style="font-size:11px;margin-top:6px">Obrigado pela preferencia!</div>'
+html += '<div class="cupomLinha" style="font-size:11px">Recanto do Pastel</div>'
+
+div.innerHTML = html
+
+setTimeout(()=>{
+window.print()
+},300)
+
+}
+
+function imprimirCupomAdicionais(pedido, novosItens){
+
+if(!novosItens || !novosItens.length) return
+let div = document.getElementById("cupomImpressao")
+if(!div) return
+
+let dataObj = new Date()
+let dataStr = dataObj.toLocaleDateString("pt-BR")
+let horaStr = dataObj.toLocaleTimeString("pt-BR")
+
+let html = ""
+
+html += '<div class="cupomLinha cupomTitulo">RECANTO DO PASTEL</div>'
+html += '<div class="cupomSep"></div>'
+
+html += '<div class="cupomLinha cupomModo" style="font-size:16px;font-weight:900">ITENS ADICIONAIS</div>'
+
+if(pedido.cliente && pedido.cliente.mesa){
+html += '<div class="cupomLinha" style="font-size:18px;font-weight:900">MESA ' + escHtml(pedido.cliente.mesa) + '</div>'
+}
+
+html += '<div class="cupomSep"></div>'
+
+html += '<div class="cupomInfo">Data: ' + dataStr + '</div>'
+html += '<div class="cupomInfo">Hora: ' + horaStr + '</div>'
+
+html += '<div class="cupomLinha cupomSub">NOVOS ITENS</div>'
+
+let subtotal = 0
+novosItens.forEach(i => {
+html += '<div class="cupomItem">' + i.qtd + 'x ' + escHtml(i.nome) + '</div>'
+html += '<div class="cupomItem" style="text-align:right">R$ ' + (i.qtd * i.preco).toFixed(2) + '</div>'
+if(i.obs) html += '<div class="cupomObs">  -> ' + escHtml(i.nome) + ': ' + escHtml(i.obs) + '</div>'
+subtotal += i.qtd * i.preco
+})
+
+html += '<div class="cupomLinha cupomTotal">SUBTOTAL: R$ ' + subtotal.toFixed(2) + '</div>'
+
+html += '<div class="cupomSep"></div>'
+html += '<div class="cupomLinha" style="font-size:11px;margin-top:6px">Itens adicionados à comanda</div>'
 html += '<div class="cupomLinha" style="font-size:11px">Recanto do Pastel</div>'
 
 div.innerHTML = html
