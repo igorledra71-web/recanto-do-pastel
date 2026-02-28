@@ -2265,7 +2265,11 @@ let preco = tamanhos[keys[0]]
 pedirObservacao(nomeBase, preco)
 } else {
 let preco = tamanhos["Único"] || tamanhos["P"] || tamanhos["G"] || tamanhos["Meia"] || tamanhos[Object.keys(tamanhos)[0]]
+if(itemTemAdicionaisPorcao(nomeBase)){
+mostrarModalAdicionaisPorcao(nomeBase, preco)
+} else {
 pedirObservacao(nomeBase, preco)
+}
 }
 }
 
@@ -3305,7 +3309,7 @@ return
 let p = pedidosMap[comandaDocId]
 if(!p){ alert("Pedido não encontrado"); return }
 
-let novosItens = carrinho.map(it=>({...it, _novo:true}))
+let novosItens = carrinho.map(it=>({...it}))
 let todosItens = [...(p.itens || []), ...novosItens]
 let novoTotal = todosItens.reduce((s,it)=> s + (it.qtd * it.preco), 0)
 
@@ -3334,10 +3338,8 @@ if(!confirm("Finalizar este pedido? O cliente já pagou?")) return
 
 try{
 let p = pedidosMap[docId]
-let itensLimpos = (p?.itens || []).map(it=>{ let copy={...it}; delete copy._novo; return copy })
 await updateDoc(doc(db,"pedidos",docId),{
-finalizado: true,
-itens: itensLimpos
+finalizado: true
 })
 mostrarToast("Pedido finalizado!")
 }catch(e){
@@ -4254,6 +4256,55 @@ document.body.appendChild(overlay)
 }
 
 /* =========================
+ADICIONAIS DE PORÇÃO (Fritas / Polenta)
+========================= */
+
+const ADICIONAIS_PORCAO = ["Calabresa","Bacon","Cheddar","Catupiry","Mussarela"]
+const PRECO_ADICIONAL_PORCAO = 6
+
+function itemTemAdicionaisPorcao(nomeBase){
+return /^(Fritas|Polenta)(\s*\(Meia\))?$/i.test(nomeBase.trim())
+}
+
+function mostrarModalAdicionaisPorcao(nomeBase, preco){
+
+let overlay = document.createElement("div")
+overlay.className = "modalOverlay"
+
+let listHtml = ADICIONAIS_PORCAO.map(a =>
+`<label class="adicionalLabel"><input type="checkbox" value="${a}" class="adicionalPorcaoCheck"> ${a} (+R$ ${PRECO_ADICIONAL_PORCAO.toFixed(2)})</label>`
+).join("")
+
+overlay.innerHTML = `
+<div class="modalBox" style="max-height:80vh;overflow-y:auto">
+<h3>${escHtml(nomeBase)}</h3>
+<p style="font-size:13px;color:#7a6a5a;margin-bottom:10px">Adicionais opcionais — R$ ${PRECO_ADICIONAL_PORCAO.toFixed(2)} cada</p>
+<div class="adicionaisGrid">${listHtml}</div>
+<button class="modalBtnTam modalBtnG" id="btnConfirmAdcPorcao">Confirmar</button>
+<button class="modalBtnTam modalBtnCancelar" id="btnCancelAdcPorcao">Sem adicionais</button>
+</div>
+`
+
+overlay.querySelector("#btnConfirmAdcPorcao").onclick = ()=>{
+let selecionados = [...overlay.querySelectorAll(".adicionalPorcaoCheck:checked")].map(c=>c.value)
+let precoFinal = preco + (selecionados.length * PRECO_ADICIONAL_PORCAO)
+let nomeFinal = nomeBase
+if(selecionados.length > 0){
+nomeFinal += " + " + selecionados.join(", ")
+}
+document.body.removeChild(overlay)
+pedirObservacao(nomeFinal, precoFinal)
+}
+
+overlay.querySelector("#btnCancelAdcPorcao").onclick = ()=>{
+document.body.removeChild(overlay)
+pedirObservacao(nomeBase, preco)
+}
+
+document.body.appendChild(overlay)
+}
+
+/* =========================
 PEDIR OBSERVAÇÃO DO ITEM
 ========================= */
 
@@ -4341,7 +4392,11 @@ if(tamanhos["P"] && tamanhos["G"]){
 mostrarModalTamanho(nomeBase, tamanhos)
 } else {
 let preco = tamanhos["Único"] || tamanhos["P"] || tamanhos["G"] || tamanhos[Object.keys(tamanhos)[0]]
+if(itemTemAdicionaisPorcao(nomeBase)){
+mostrarModalAdicionaisPorcao(nomeBase, preco)
+} else {
 pedirObservacao(nomeBase, preco)
+}
 }
 }
 
