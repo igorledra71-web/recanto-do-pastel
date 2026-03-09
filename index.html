@@ -1242,6 +1242,13 @@ font-size:.9rem;font-weight:600;cursor:pointer;
 transition:background .2s;
 }
 .btnFinalizarComanda:hover{background:#2ecc71}
+.btnTrocarMesa{
+width:100%;padding:10px;margin-top:6px;
+background:#3498db;color:#fff;border:none;border-radius:8px;
+font-size:.9rem;font-weight:600;cursor:pointer;
+transition:background .2s;
+}
+.btnTrocarMesa:hover{background:#2980b9}
 .itemNovoBadge{
 display:inline-block;background:#e74c3c;color:#fff;
 font-size:.65rem;font-weight:700;padding:1px 6px;
@@ -1301,6 +1308,49 @@ padding:6px 14px;font-size:.8rem;font-weight:600;cursor:pointer;
 transition:background .15s;
 }
 .editBtnRemover:hover{background:#e74c3c}
+
+.btnPagamentoParcial{
+width:100%;padding:10px;margin-top:6px;
+background:#f39c12;color:#fff;border:none;border-radius:8px;
+font-size:.9rem;font-weight:600;cursor:pointer;
+transition:background .2s;
+}
+.btnPagamentoParcial:hover{background:#e67e22}
+
+.ppItem{
+background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;
+box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;
+gap:10px;flex-wrap:wrap;
+}
+.ppItem.pago{
+opacity:.6;
+}
+.ppItem.pago .ppItemNome{
+text-decoration:line-through;
+}
+.ppItem.pago .ppItemPreco{
+text-decoration:line-through;
+}
+.ppItemCheck{
+width:22px;height:22px;accent-color:#27ae60;cursor:pointer;
+}
+.ppItemNome{
+flex:1;min-width:120px;font-weight:600;color:var(--text);font-size:.95rem;
+}
+.ppItemPreco{
+color:var(--accent);font-weight:700;font-size:.95rem;min-width:80px;text-align:right;
+}
+.ppItemObs{
+width:100%;font-size:.8rem;color:#7a6a5a;margin-top:2px;padding-left:32px;
+}
+.ppTotais{
+text-align:center;margin:16px 0;font-size:1.1rem;font-weight:700;color:var(--text);
+}
+.ppTotais .ppPago{color:#27ae60}
+.ppTotais .ppRestante{color:#e74c3c;font-size:1.2rem}
+.pedidoRestante{
+margin-top:4px;font-weight:700;color:#e67e22;font-size:13px;
+}
 </style>
 </head>
 <body>
@@ -1435,6 +1485,10 @@ Total: R$ <span id="checkoutTotal">0.00</span>
 
 <div id="boxTroco" style="display:none">
 <input id="troco" placeholder="Troco para quanto?">
+</div>
+
+<div id="checkoutTotalPagamento" style="background:white;border-radius:14px;padding:16px 20px;border:2px solid var(--accent);text-align:center;font-size:18px;font-weight:900;color:var(--text);box-shadow:0 2px 12px rgba(196,99,42,.12)">
+Total: R$ <span id="checkoutTotalPag">0.00</span>
 </div>
 
 <!-- =========================
@@ -1670,6 +1724,24 @@ TELA REMOVER ABA
 </div>
 
 <!-- =========================
+TELA PAGAMENTO PARCIAL
+========================= -->
+
+<div id="telaPagamentoParcial" class="tela">
+
+<h2 style="margin-bottom:6px">Pagamento Parcial</h2>
+<div id="ppPedidoInfo" style="margin-bottom:14px;color:var(--text);font-size:.95rem"></div>
+
+<div id="ppItens" style="width:100%;max-width:760px"></div>
+
+<div id="ppTotais" class="ppTotais"></div>
+
+<button class="btnFinalizarCarrinho" onclick="salvarPagamentoParcial()" style="max-width:760px">SALVAR PAGAMENTO</button>
+<button class="btnVoltar" style="position:static;margin-top:10px" onclick="voltarDePagamentoParcial()">← Voltar</button>
+
+</div>
+
+<!-- =========================
 INÍCIO SCRIPT
 ========================= -->
 
@@ -1807,7 +1879,7 @@ BOTÕES PRINCIPAIS
 
 window.voltarTela = ()=>{
 let telaAtual = document.querySelector(".tela.ativa")
-let telasAdmin = ["telaMesas","telaPedidosLocal","uiNovoProduto","telaEditorItens","uiRemoverAba","telaRelatorioPorData","telaEditarPedido"]
+let telasAdmin = ["telaMesas","telaPedidosLocal","uiNovoProduto","telaEditorItens","uiRemoverAba","telaRelatorioPorData","telaEditarPedido","telaPagamentoParcial"]
 /* Se garçom está no cardápio/checkout de mesa, voltar pra mesas */
 if(mesaSelecionada && telaAtual && (telaAtual.id === "telaCardapio" || telaAtual.id === "telaCheckout")){
 carrinho = []
@@ -1980,7 +2052,9 @@ let cardapio = {
 {nome:"Fritas",preco:26,desc:"Porção inteira de batata frita"},
 {nome:"Tilápia",preco:50,desc:"Porção inteira de tilápia frita"},
 {nome:"Bolinho de Bacalhau",preco:42,desc:"Porção inteira de bolinho de bacalhau"},
-{nome:"Camarão",preco:70,desc:"Porção inteira de camarão"}
+{nome:"Camarão",preco:70,desc:"Porção inteira de camarão"},
+{nome:"Arroz",preco:8,desc:"Porção de arroz"},
+{nome:"Salada",preco:8,desc:"Porção de salada"}
 ],
 
 "Porções Meia":[
@@ -2166,6 +2240,7 @@ grupos[nomeGrupo][base]["desc"] = item.desc || ""
 if(item.num) grupos[nomeGrupo][base]["num"] = item.num
 if(item.vis) grupos[nomeGrupo][base]["_vis"] = item.vis
 if(nomeGrupo.startsWith("Pastéis")) grupos[nomeGrupo][base]["_isPastel"] = true
+grupos[nomeGrupo][base]["_categoria"] = nomeGrupo
 })
 
 listaG.forEach(item=>{
@@ -2174,6 +2249,7 @@ if(!grupos[nomeGrupo][base]) grupos[nomeGrupo][base] = {}
 grupos[nomeGrupo][base]["G"] = item.preco
 if(!grupos[nomeGrupo][base]["desc"]) grupos[nomeGrupo][base]["desc"] = item.desc || ""
 if(nomeGrupo.startsWith("Pastéis")) grupos[nomeGrupo][base]["_isPastel"] = true
+grupos[nomeGrupo][base]["_categoria"] = nomeGrupo
 })
 
 processados.add(aba)
@@ -2192,6 +2268,7 @@ grupos[aba][item.nome]["Único"] = item.preco
 grupos[aba][item.nome]["desc"] = item.desc || ""
 grupos[aba][item.nome]["pratoFeito"] = item.pratoFeito || false
 if(item.vis) grupos[aba][item.nome]["_vis"] = item.vis
+grupos[aba][item.nome]["_categoria"] = aba
 })
 
 processados.add(aba)
@@ -2255,6 +2332,11 @@ btn.onclick = ()=>{
 categoriaAtual = tamanhos._categoria || ""
 if(tamanhos.pratoFeito){
 mostrarModalPratoFeito(nomeBase, tamanhos["Único"] || tamanhos[Object.keys(tamanhos).filter(t=>t!=="desc"&&t!=="pratoFeito")[0]])
+return
+}
+if(categoriaAtual === "Lanches"){
+let preco = tamanhos["Único"] || tamanhos[Object.keys(tamanhos).filter(t=>t!=="desc"&&t!=="_categoria"&&t!=="_vis")[0]]
+mostrarModalAdicionaisLanche(nomeBase, preco)
 return
 }
 if(tamanhos["P"] && tamanhos["G"]){
@@ -2560,6 +2642,10 @@ qs("checkoutItens").appendChild(freteDiv)
 if(qs("checkoutTotal")){
 qs("checkoutTotal").innerText =
 totalGeral().toFixed(2)
+}
+
+if(qs("checkoutTotalPag")){
+qs("checkoutTotalPag").innerText = totalGeral().toFixed(2)
 }
 
 }
@@ -2990,9 +3076,14 @@ overlay.innerHTML = `<div class="modalPratoFeito">
 <h3>🍽️ ${nomeItem}</h3>
 <div class="pfDesc">Arroz, salada, fritas e ovo.<br>Escolha a proteína (adicional de +R$8 por proteína extra):</div>
 
-<label class="pfOption"><input type="checkbox" value="Frango" class="pfCheck"> 🍗 Frango</label>
-<label class="pfOption"><input type="checkbox" value="Bife" class="pfCheck"> 🥩 Bife</label>
-<label class="pfOption"><input type="checkbox" value="Peixe" class="pfCheck"> 🐟 Peixe</label>
+<label class="pfOption"><input type="checkbox" value="Frango" data-tipo="proteina" class="pfCheck"> 🍗 Frango</label>
+<label class="pfOption"><input type="checkbox" value="Bife" data-tipo="proteina" class="pfCheck"> 🥩 Bife</label>
+<label class="pfOption"><input type="checkbox" value="Peixe" data-tipo="proteina" class="pfCheck"> 🐟 Peixe</label>
+
+<div class="pfDesc" style="margin-top:12px;margin-bottom:8px;font-weight:700;color:var(--text)">Extras:</div>
+
+<label class="pfOption"><input type="checkbox" value="Ovos" data-tipo="extra" data-preco="3" class="pfCheck"> 🥚 Ovos <span style="margin-left:auto;color:var(--accent);font-size:13px;font-weight:900">+R$3</span></label>
+<label class="pfOption"><input type="checkbox" value="Batata Frita" data-tipo="extra" data-preco="3" class="pfCheck"> 🍟 Batata Frita <span style="margin-left:auto;color:var(--accent);font-size:13px;font-weight:900">+R$3</span></label>
 
 <div class="pfPrecoExtra" id="pfPrecoInfo">Valor: R$ ${precoBase.toFixed(2)}</div>
 
@@ -3007,26 +3098,35 @@ let precoInfo = overlay.querySelector("#pfPrecoInfo")
 let btnConfirmar = overlay.querySelector("#pfConfirmar")
 
 function atualizarPrecoPF(){
-let selecionados = [...checks].filter(c=>c.checked).length
-let extra = selecionados > 1 ? (selecionados - 1) * 8 : 0
-let total = precoBase + extra
-precoInfo.textContent = "Valor: R$ " + total.toFixed(2) + (extra > 0 ? " (+" + extra.toFixed(2) + " extra)" : "")
+let proteinasSel = [...checks].filter(c=>c.checked && c.dataset.tipo==="proteina").length
+let extraProteina = proteinasSel > 1 ? (proteinasSel - 1) * 8 : 0
+let extraExtras = [...checks].filter(c=>c.checked && c.dataset.tipo==="extra").reduce((s,c)=>s + parseFloat(c.dataset.preco), 0)
+let total = precoBase + extraProteina + extraExtras
+let detalhes = []
+if(extraProteina > 0) detalhes.push("proteína extra +R$" + extraProteina.toFixed(2))
+if(extraExtras > 0) detalhes.push("extras +R$" + extraExtras.toFixed(2))
+precoInfo.textContent = "Valor: R$ " + total.toFixed(2) + (detalhes.length ? " (" + detalhes.join(", ") + ")" : "")
 }
 
 checks.forEach(c=>c.addEventListener("change", atualizarPrecoPF))
 
 btnConfirmar.onclick = ()=>{
-let selecionados = [...checks].filter(c=>c.checked)
-if(!selecionados.length){
+let proteinasSel = [...checks].filter(c=>c.checked && c.dataset.tipo==="proteina")
+if(!proteinasSel.length){
 alert("Escolha pelo menos uma proteína")
 return
 }
-let nomes = selecionados.map(c=>c.value)
-let extra = selecionados.length > 1 ? (selecionados.length - 1) * 8 : 0
-let precoFinal = precoBase + extra
-let obsProteinas = "Proteína: " + nomes.join(", ")
+let nomesProteinas = proteinasSel.map(c=>c.value)
+let extraProteina = proteinasSel.length > 1 ? (proteinasSel.length - 1) * 8 : 0
+let extrasSel = [...checks].filter(c=>c.checked && c.dataset.tipo==="extra")
+let extraExtras = extrasSel.reduce((s,c)=>s + parseFloat(c.dataset.preco), 0)
+let nomesExtras = extrasSel.map(c=>c.value)
+let precoFinal = precoBase + extraProteina + extraExtras
+let obsParts = ["Proteína: " + nomesProteinas.join(", ")]
+if(nomesExtras.length) obsParts.push("Extras: " + nomesExtras.join(", "))
+let obsCompleta = obsParts.join(" | ")
 
-addCarrinho({nome:nomeItem, preco:precoFinal, obs:obsProteinas})
+addCarrinho({nome:nomeItem, preco:precoFinal, obs:obsCompleta})
 overlay.remove()
 mostrarToast(nomeItem + " adicionado!")
 }
@@ -3120,10 +3220,17 @@ if(p.troco) infoHtml += `💵 Troco para: R$ ${escHtml(p.troco)}<br>`
 infoHtml += `🕐 ${dataStr}`
 
 let itensHtml = ""
+let totalPago = 0
 ;(p.itens || []).forEach(i=>{
 let nomeItem = escHtml(i.nome)
 let obsItem = escHtml(i.obs)
-itensHtml += `• ${i.qtd}x ${nomeItem} - R$ ${(i.qtd * i.preco).toFixed(2)}<br>`
+let itemTotal = i.qtd * i.preco
+if(i._pago){
+itensHtml += `<span style="text-decoration:line-through;opacity:.5">• ${i.qtd}x ${nomeItem} - R$ ${itemTotal.toFixed(2)} ✅</span><br>`
+totalPago += itemTotal
+} else {
+itensHtml += `• ${i.qtd}x ${nomeItem} - R$ ${itemTotal.toFixed(2)}<br>`
+}
 if(obsItem) itensHtml += `&nbsp;&nbsp;📝 ${obsItem}<br>`
 })
 
@@ -3136,9 +3243,16 @@ btnHtml = `<button class="btnDeliveryCaminho" data-tel="${telLimpo}" data-nome="
 }
 
 let btnLocal = ""
+let restanteHtml = ""
 if(p.modo === "local" && !p.finalizado){
 btnLocal = `<button class="btnAdicionarComanda" onclick="adicionarItensComanda('${docId}')">➕ Adicionar Itens</button>`
+btnLocal += `<button class="btnPagamentoParcial" onclick="abrirPagamentoParcial('${docId}')">💰 Pagamento Parcial</button>`
 btnLocal += `<button class="btnFinalizarComanda" onclick="finalizarComanda('${docId}')">✅ Finalizar Pedido</button>`
+btnLocal += `<button class="btnTrocarMesa" onclick="trocarMesa('${docId}')">🔄 Trocar Mesa</button>`
+if(totalPago > 0){
+let restante = Number(p.total) - totalPago
+restanteHtml = `<div class="pedidoRestante">💸 Pago: R$ ${totalPago.toFixed(2)} | Restante: R$ ${restante.toFixed(2)}</div>`
+}
 }
 
 return `<div class="pedidoCard">
@@ -3146,6 +3260,7 @@ return `<div class="pedidoCard">
 <div class="pedidoInfo">${infoHtml}</div>
 <div class="pedidoItens">${itensHtml}</div>
 <div class="pedidoTotal">💰 R$ ${Number(p.total).toFixed(2)}</div>
+${restanteHtml}
 ${btnHtml}
 ${btnLocal}
 <button class="btnEditarPedido" onclick="abrirEditarPedido('${docId}')">✏️ Editar Pedido</button>
@@ -3266,6 +3381,110 @@ mostrar(editPedidoTelaAnterior || "telaAdmin")
 window.cancelarEdicaoPedido = ()=>{
 editPedidoDocId = null
 mostrar(editPedidoTelaAnterior || "telaAdmin")
+}
+
+window.trocarMesa = async (docId)=>{
+let p = pedidosMap[docId]
+if(!p){ alert("Pedido não encontrado"); return }
+let mesaAtual = p.cliente?.mesa || ""
+let novaMesa = prompt("Digite o novo número da mesa:", mesaAtual)
+if(novaMesa === null || novaMesa.trim() === "") return
+novaMesa = novaMesa.trim()
+try{
+let clienteAtualizado = {...(p.cliente || {}), mesa: novaMesa}
+await updateDoc(doc(db,"pedidos",docId),{
+cliente: clienteAtualizado
+})
+mostrarToast("Mesa alterada para " + novaMesa + "!")
+}catch(e){
+console.log("Erro ao trocar mesa:",e)
+alert("Erro ao trocar mesa.")
+}
+}
+
+let ppDocId = null
+let ppItens = []
+let ppTelaAnterior = null
+
+window.abrirPagamentoParcial = (docId)=>{
+let p = pedidosMap[docId]
+if(!p){ alert("Pedido não encontrado"); return }
+
+ppDocId = docId
+ppItens = (p.itens || []).map(it=>({...it}))
+ppTelaAnterior = document.querySelector(".tela.ativa")?.id || "telaAdmin"
+
+let info = "🍽️ Mesa " + escHtml(p.cliente?.mesa || "") + " — " + escHtml(p.cliente?.nome || "")
+qs("ppPedidoInfo").innerHTML = info
+
+renderPagamentoParcial()
+mostrar("telaPagamentoParcial")
+}
+
+function renderPagamentoParcial(){
+let box = qs("ppItens")
+if(!box) return
+box.innerHTML = ""
+
+ppItens.forEach((it, idx)=>{
+let el = document.createElement("div")
+el.className = "ppItem" + (it._pago ? " pago" : "")
+
+let obsHtml = it.obs ? '<div class="ppItemObs">📝 ' + escHtml(it.obs) + '</div>' : ""
+let checked = it._pago ? "checked" : ""
+
+el.innerHTML = '<input type="checkbox" class="ppItemCheck" data-idx="' + idx + '" ' + checked + '>'
++ '<div class="ppItemNome">' + it.qtd + 'x ' + escHtml(it.nome) + obsHtml + '</div>'
++ '<div class="ppItemPreco">R$ ' + (it.qtd * it.preco).toFixed(2) + '</div>'
+
+box.appendChild(el)
+})
+
+box.onclick = (e)=>{
+let cb = e.target.closest(".ppItemCheck")
+if(!cb) return
+let idx = parseInt(cb.dataset.idx)
+if(isNaN(idx)) return
+ppItens[idx]._pago = cb.checked
+renderPagamentoParcialTotais()
+cb.closest(".ppItem").className = "ppItem" + (cb.checked ? " pago" : "")
+}
+
+renderPagamentoParcialTotais()
+}
+
+function renderPagamentoParcialTotais(){
+let total = ppItens.reduce((s,it)=> s + (it.qtd * it.preco), 0)
+let pago = ppItens.filter(it=>it._pago).reduce((s,it)=> s + (it.qtd * it.preco), 0)
+let restante = total - pago
+
+let box = qs("ppTotais")
+if(!box) return
+box.innerHTML = '<div>Total: R$ ' + total.toFixed(2) + '</div>'
++ '<div class="ppPago">✅ Pago: R$ ' + pago.toFixed(2) + '</div>'
++ '<div class="ppRestante">💸 Restante: R$ ' + restante.toFixed(2) + '</div>'
+}
+
+window.salvarPagamentoParcial = async ()=>{
+if(!ppDocId) return
+
+try{
+await updateDoc(doc(db,"pedidos",ppDocId),{
+itens: ppItens
+})
+mostrarToast("Pagamento atualizado!")
+}catch(e){
+console.log("Erro ao salvar pagamento parcial:",e)
+alert("Erro ao salvar pagamento.")
+}
+
+ppDocId = null
+mostrar(ppTelaAnterior || "telaAdmin")
+}
+
+window.voltarDePagamentoParcial = ()=>{
+ppDocId = null
+mostrar(ppTelaAnterior || "telaAdmin")
 }
 
 window.cancelarPedido = async (docId)=>{
@@ -3422,7 +3641,7 @@ audioNotificacao.play().catch(()=>{})
 }
 
 /* Auto-imprimir novos pedidos no computador da loja */
-if(pedidosParaImprimir.length > 0){
+if(pedidosParaImprimir.length > 0 && !isMobileDevice()){
 let fila = pedidosParaImprimir.slice()
 let idx = 0
 function imprimirFila(){
@@ -3446,6 +3665,60 @@ primeiraCarga = false
 /* =========================
 IMPRESSÃO DE CUPOM
 ========================= */
+
+function isMobileDevice(){
+return /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent) || window.innerWidth < 768
+}
+
+async function enviarParaImpressora(html){
+try{
+await addDoc(collection(db,"filaImpressao"),{
+html: html,
+timestamp: new Date().toISOString()
+})
+mostrarToast("Enviado para impressora da loja!")
+}catch(e){
+console.log("Erro ao enviar para impressora:",e)
+alert("Erro ao enviar para impressora.")
+}
+}
+
+let filaRemotaProcessando = false
+let filaRemotaPendente = []
+
+if(!isMobileDevice()){
+onSnapshot(collection(db,"filaImpressao"), snap => {
+snap.docChanges().forEach(change => {
+if(change.type === "added"){
+filaRemotaPendente.push({ id: change.doc.id, data: change.doc.data() })
+}
+})
+processarFilaRemota()
+}, err => { console.log("Erro listener filaImpressao:", err) })
+}
+
+async function processarFilaRemota(){
+if(filaRemotaProcessando || !filaRemotaPendente.length) return
+filaRemotaProcessando = true
+
+while(filaRemotaPendente.length > 0){
+let job = filaRemotaPendente.shift()
+try{
+await deleteDoc(doc(db,"filaImpressao",job.id))
+}catch(e){
+continue
+}
+let div = document.getElementById("cupomImpressao")
+if(div && job.data.html){
+div.innerHTML = job.data.html
+await new Promise(r => setTimeout(r, 300))
+window.print()
+await new Promise(r => setTimeout(r, 2000))
+}
+}
+
+filaRemotaProcessando = false
+}
 
 function imprimirCupom(pedido){
 
@@ -3508,6 +3781,10 @@ html += '<div class="cupomLinha" style="font-size:11px">Recanto do Pastel</div>'
 
 div.innerHTML = html
 
+if(isMobileDevice()){
+enviarParaImpressora(html)
+return
+}
 setTimeout(()=>{
 window.print()
 },300)
@@ -3558,6 +3835,10 @@ html += '<div class="cupomLinha" style="font-size:11px">Recanto do Pastel</div>'
 
 div.innerHTML = html
 
+if(isMobileDevice()){
+enviarParaImpressora(html)
+return
+}
 setTimeout(()=>{
 window.print()
 },300)
@@ -4175,7 +4456,9 @@ Cancelar
 
 overlay.querySelector('[data-tam="P"]').onclick = ()=>{
 document.body.removeChild(overlay)
-if(tamanhos._isPastel && !nomeBase.includes("Especial") && !nomeBase.includes("Camarão")){
+if(tamanhos._isPastel && nomeBase.includes("Especial")){
+mostrarModalEspecial("P", tamanhos["P"])
+} else if(tamanhos._isPastel && !nomeBase.includes("Camarão")){
 mostrarModalAdicionais(nomeBase, "P", tamanhos["P"])
 } else {
 pedirObservacao(nomeBase + " P", tamanhos["P"])
@@ -4184,7 +4467,9 @@ pedirObservacao(nomeBase + " P", tamanhos["P"])
 
 overlay.querySelector('[data-tam="G"]').onclick = ()=>{
 document.body.removeChild(overlay)
-if(tamanhos._isPastel && !nomeBase.includes("Especial") && !nomeBase.includes("Camarão")){
+if(tamanhos._isPastel && nomeBase.includes("Especial")){
+mostrarModalEspecial("G", tamanhos["G"])
+} else if(tamanhos._isPastel && !nomeBase.includes("Camarão")){
 mostrarModalAdicionais(nomeBase, "G", tamanhos["G"])
 } else {
 pedirObservacao(nomeBase + " G", tamanhos["G"])
@@ -4209,7 +4494,7 @@ const ADICIONAIS_PASTEL = [
 "Coração de Frango","Presunto","Ovo","Ervilha","Tomate",
 "Palmito","Azeitona","Catupiry","Batata Palha","Brócolis",
 "Cenoura Ralada","Salsicha","Orégano","Cheddar","Cebola","Alho",
-"Mussarela","Milho"
+"Mussarela","Milho","Morango","Banana","Flocos","M&M","Brigadeiro"
 ]
 
 const PRECO_COM_ADICIONAIS = { P: 18, G: 24 }
@@ -4256,8 +4541,136 @@ document.body.appendChild(overlay)
 }
 
 /* =========================
+ESPECIAL - SELEÇÃO DE SABORES
+========================= */
+
+const PRECO_NORMAL_PASTEL = { P: 17, G: 22 }
+const PRECO_ESPECIAL_PASTEL = { P: 18, G: 24 }
+const MAX_SABORES_ESPECIAL = 5
+
+function mostrarModalEspecial(tamanho, precoOriginal){
+
+let overlay = document.createElement("div")
+overlay.className = "modalOverlay"
+
+let listHtml = ADICIONAIS_PASTEL.map(a =>
+`<label class="adicionalLabel"><input type="checkbox" value="${a}" class="especialCheck"> ${a}</label>`
+).join("")
+
+overlay.innerHTML = `
+<div class="modalBox" style="max-height:80vh;overflow-y:auto">
+<h3>Especial ${tamanho}</h3>
+<p style="font-size:13px;color:#7a6a5a;margin-bottom:4px">Escolha até ${MAX_SABORES_ESPECIAL} sabores</p>
+<p id="especialContador" style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:10px">0 de ${MAX_SABORES_ESPECIAL} selecionados</p>
+<p id="especialPrecoInfo" style="font-size:12px;color:#7a6a5a;margin-bottom:10px">1-3 sabores: R$ ${PRECO_NORMAL_PASTEL[tamanho].toFixed(2)} | 4-5 sabores: R$ ${PRECO_ESPECIAL_PASTEL[tamanho].toFixed(2)}</p>
+<div class="adicionaisGrid">${listHtml}</div>
+<button class="modalBtnTam modalBtnG" id="btnConfirmEspecial">Confirmar</button>
+<button class="modalBtnTam modalBtnCancelar" id="btnCancelEspecial">Cancelar</button>
+</div>
+`
+
+let checks = overlay.querySelectorAll(".especialCheck")
+let contadorEl = overlay.querySelector("#especialContador")
+
+checks.forEach(cb => {
+cb.addEventListener("change", ()=>{
+let total = [...checks].filter(c=>c.checked).length
+if(total > MAX_SABORES_ESPECIAL){
+cb.checked = false
+total = MAX_SABORES_ESPECIAL
+}
+contadorEl.textContent = total + " de " + MAX_SABORES_ESPECIAL + " selecionados"
+})
+})
+
+overlay.querySelector("#btnConfirmEspecial").onclick = ()=>{
+let selecionados = [...checks].filter(c=>c.checked).map(c=>c.value)
+if(selecionados.length === 0){
+alert("Selecione pelo menos 1 sabor.")
+return
+}
+let precoFinal = selecionados.length >= 4 ? PRECO_ESPECIAL_PASTEL[tamanho] : PRECO_NORMAL_PASTEL[tamanho]
+let nomeFinal = "Especial " + tamanho + " (" + selecionados.join(", ") + ")"
+document.body.removeChild(overlay)
+pedirObservacao(nomeFinal, precoFinal)
+}
+
+overlay.querySelector("#btnCancelEspecial").onclick = ()=>{
+document.body.removeChild(overlay)
+}
+
+document.body.appendChild(overlay)
+}
+
+/* =========================
 ADICIONAIS DE PORÇÃO (Fritas / Polenta)
 ========================= */
+
+const ADICIONAIS_LANCHE = [
+{nome:"Milho",preco:2},
+{nome:"Ervilha",preco:2},
+{nome:"Presunto e Queijo",preco:2},
+{nome:"Ovo",preco:3},
+{nome:"Cheddar",preco:3},
+{nome:"Catupiry",preco:3},
+{nome:"Bacon",preco:4},
+{nome:"Calabresa",preco:4},
+{nome:"Coração",preco:4},
+{nome:"Salsicha",preco:4}
+]
+
+function mostrarModalAdicionaisLanche(nomeBase, precoBase){
+
+let overlay = document.createElement("div")
+overlay.className = "modalOverlay"
+
+let listHtml = ADICIONAIS_LANCHE.map((a,i) =>
+`<label class="adicionalLabel"><input type="checkbox" value="${a.nome}" data-preco="${a.preco}" class="adicionalLancheCheck"> ${a.nome} (+R$ ${a.preco.toFixed(2)})</label>`
+).join("")
+
+overlay.innerHTML = `
+<div class="modalBox" style="max-height:80vh;overflow-y:auto">
+<h3>${nomeBase}</h3>
+<p style="font-size:13px;color:#7a6a5a;margin-bottom:10px">Adicionais (opcionais)</p>
+<div class="adicionaisGrid">${listHtml}</div>
+<p style="font-size:15px;font-weight:800;color:var(--text);margin:10px 0" id="totalLanche">Total: R$ ${precoBase.toFixed(2)}</p>
+<button class="modalBtnTam modalBtnG" id="btnConfirmLanche">Confirmar</button>
+<button class="modalBtnTam modalBtnCancelar" id="btnCancelLanche">Sem adicionais</button>
+</div>
+`
+
+let checks = overlay.querySelectorAll(".adicionalLancheCheck")
+let totalEl = overlay.querySelector("#totalLanche")
+
+checks.forEach(c=>{
+c.addEventListener("change",()=>{
+let extra = 0
+checks.forEach(ch=>{
+if(ch.checked) extra += parseFloat(ch.dataset.preco)
+})
+totalEl.textContent = "Total: R$ " + (precoBase + extra).toFixed(2)
+})
+})
+
+overlay.querySelector("#btnConfirmLanche").onclick = ()=>{
+let selecionados = [...checks].filter(c=>c.checked)
+let precoFinal = precoBase
+let nomeFinal = nomeBase
+if(selecionados.length > 0){
+selecionados.forEach(c=>{ precoFinal += parseFloat(c.dataset.preco) })
+nomeFinal += " + " + selecionados.map(c=>c.value).join(", ")
+}
+document.body.removeChild(overlay)
+pedirObservacao(nomeFinal, precoFinal)
+}
+
+overlay.querySelector("#btnCancelLanche").onclick = ()=>{
+document.body.removeChild(overlay)
+pedirObservacao(nomeBase, precoBase)
+}
+
+document.body.appendChild(overlay)
+}
 
 const ADICIONAIS_PORCAO = ["Calabresa","Bacon","Cheddar","Catupiry","Mussarela"]
 const PRECO_ADICIONAL_PORCAO = 6
@@ -4388,6 +4801,16 @@ btn.className = "btnAdd"
 btn.textContent = "Adicionar"
 
 btn.onclick = ()=>{
+categoriaAtual = tamanhos._categoria || ""
+if(tamanhos.pratoFeito){
+mostrarModalPratoFeito(nomeBase, tamanhos["Único"] || tamanhos[Object.keys(tamanhos).filter(t=>t!=="desc"&&t!=="pratoFeito"&&t!=="_categoria"&&t!=="_vis")[0]])
+return
+}
+if(categoriaAtual === "Lanches"){
+let preco = tamanhos["Único"] || tamanhos[Object.keys(tamanhos).filter(t=>t!=="desc"&&t!=="_categoria"&&t!=="_vis")[0]]
+mostrarModalAdicionaisLanche(nomeBase, preco)
+return
+}
 if(tamanhos["P"] && tamanhos["G"]){
 mostrarModalTamanho(nomeBase, tamanhos)
 } else {
