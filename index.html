@@ -957,6 +957,23 @@ width:100%;
 max-width:500px;
 }
 
+.tipoEntregaBtn{
+flex:1;
+padding:12px;
+border-radius:12px;
+border:2px solid var(--accent);
+background:#fff;
+color:var(--accent);
+font-weight:700;
+font-size:15px;
+cursor:pointer;
+transition:all .18s;
+}
+.tipoEntregaBtn.ativo{
+background:var(--accent);
+color:#fff;
+}
+
 .mesaBtn{
 background:#4a3f34;
 border:2px solid #5a4f44;
@@ -1053,6 +1070,10 @@ RESPONSIVE
 /* =========================
 IMPRESSÃO CUPOM TÉRMICO (80mm)
 ========================= */
+@page {
+size:80mm auto;
+margin:0;
+}
 @media print {
 body, html {
 margin:0 !important;
@@ -1064,9 +1085,9 @@ display:none !important;
 }
 #cupomImpressao {
 display:block !important;
-width:72mm;
-margin:0 auto;
-padding:2mm;
+width:80mm;
+margin:0;
+padding:3mm 2mm 8mm 2mm;
 font-family:'Courier New',monospace;
 font-size:14px;
 color:#000;
@@ -1467,6 +1488,12 @@ Total: R$ <span id="checkoutTotal">0.00</span>
 
 <input type="hidden" id="tipoPedido" value="entrega">
 
+<!-- Entrega ou Retirada -->
+<div style="display:flex;gap:10px;margin-bottom:6px">
+<button id="btnEntrega" class="tipoEntregaBtn ativo" onclick="selecionarTipoEntrega('entrega')">🛵 Entrega</button>
+<button id="btnRetirada" class="tipoEntregaBtn" onclick="selecionarTipoEntrega('retirada')">🏪 Retirada</button>
+</div>
+
 <input id="nome" placeholder="Nome do cliente">
 <input id="telefone" placeholder="Telefone">
 
@@ -1485,6 +1512,22 @@ Total: R$ <span id="checkoutTotal">0.00</span>
 
 <div id="boxTroco" style="display:none">
 <input id="troco" placeholder="Troco para quanto?">
+</div>
+
+<!-- Divisão de conta -->
+<div id="boxDivisao" style="background:#fff8f0;border:1.5px dashed var(--accent);border-radius:12px;padding:14px 16px;margin-top:4px">
+<div style="font-weight:700;margin-bottom:8px;color:var(--text)">💰 Dividir conta?</div>
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<label style="font-size:14px;color:var(--text)">Pessoas:</label>
+<div style="display:flex;align-items:center;gap:6px">
+<button onclick="alterarDivisao(-1)" style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
+<span id="numPessoas" style="font-size:18px;font-weight:900;min-width:24px;text-align:center">1</span>
+<button onclick="alterarDivisao(1)" style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+</div>
+</div>
+<div id="txtPorPessoa" style="display:none;margin-top:10px;font-size:16px;font-weight:700;color:var(--accent);text-align:center">
+Valor por pessoa: R$ <span id="valorPorPessoa">0.00</span>
+</div>
 </div>
 
 <div id="checkoutTotalPagamento" style="background:white;border-radius:14px;padding:16px 20px;border:2px solid var(--accent);text-align:center;font-size:18px;font-weight:900;color:var(--text);box-shadow:0 2px 12px rgba(196,99,42,.12)">
@@ -2648,7 +2691,58 @@ if(qs("checkoutTotalPag")){
 qs("checkoutTotalPag").innerText = totalGeral().toFixed(2)
 }
 
+atualizarDivisao()
+
 }
+
+/* =========================
+TIPO ENTREGA (ENTREGA / RETIRADA)
+========================= */
+
+let tipoEntregaSelecionado = "entrega"
+
+window.selecionarTipoEntrega = (tipo)=>{
+tipoEntregaSelecionado = tipo
+let btnE = qs("btnEntrega")
+let btnR = qs("btnRetirada")
+if(btnE) btnE.classList.toggle("ativo", tipo === "entrega")
+if(btnR) btnR.classList.toggle("ativo", tipo === "retirada")
+let boxEnd = qs("boxEndereco")
+if(boxEnd) boxEnd.style.display = tipo === "entrega" ? "block" : "none"
+if(tipo === "retirada"){
+valorFrete = 0
+modoPedido = "delivery"
+}
+renderCarrinho()
+renderCheckoutResumo()
+}
+
+/* =========================
+DIVISÃO DE CONTA
+========================= */
+
+let numPessoasDivisao = 1
+
+window.alterarDivisao = (delta)=>{
+numPessoasDivisao = Math.max(1, numPessoasDivisao + delta)
+atualizarDivisao()
+}
+
+function atualizarDivisao(){
+let el = qs("numPessoas")
+let txtEl = qs("txtPorPessoa")
+let valEl = qs("valorPorPessoa")
+if(!el) return
+el.innerText = numPessoasDivisao
+if(numPessoasDivisao > 1){
+let porPessoa = totalGeral() / numPessoasDivisao
+if(txtEl) txtEl.style.display = "block"
+if(valEl) valEl.innerText = porPessoa.toFixed(2)
+} else {
+if(txtEl) txtEl.style.display = "none"
+}
+}
+
 /* =========================
 IR PARA CHECKOUT
 ========================= */
@@ -2666,6 +2760,12 @@ fecharCarrinho()
 
 mostrar("telaCheckout")
 
+tipoEntregaSelecionado = "entrega"
+numPessoasDivisao = 1
+let btnE = qs("btnEntrega")
+let btnR = qs("btnRetirada")
+if(btnE) btnE.classList.add("ativo")
+if(btnR) btnR.classList.remove("ativo")
 if(qs("boxEndereco")) qs("boxEndereco").style.display="block"
 
 renderCheckoutResumo()
@@ -2823,11 +2923,14 @@ let msg = `🥟 *RECANTO DO PASTEL*\n\n`
 
 msg += `👤 Cliente: ${pedido.cliente.nome}\n`
 msg += `📱 Telefone: ${pedido.cliente.tel}\n`
-msg += `📦 Tipo: ${pedido.modo === "delivery" ? "Delivery" : "Local"}\n`
+let tipoLabel = pedido.tipoEntrega === "retirada" ? "🏪 Retirada no local" : (pedido.modo === "delivery" ? "🛵 Delivery" : "🍽️ Local")
+msg += `📦 Tipo: ${tipoLabel}\n`
 msg += `💳 Pagamento: ${pedido.pagamento || "PIX"}\n`
 if(pedido.troco) msg += `💵 Troco para: R$ ${pedido.troco}\n`
 
-if(pedido.modo === "delivery" && pedido.endereco){
+if(pedido.tipoEntrega === "retirada"){
+msg += `📍 Cliente retira no local\n`
+} else if(pedido.modo === "delivery" && pedido.endereco){
 let e = pedido.endereco
 if(e.rua) msg += `📍 Endereço: ${e.rua}, ${e.numero || ""} - ${e.bairro || ""}\n`
 } else {
@@ -2846,6 +2949,10 @@ msg += `\n🚚 Frete: R$ ${pedido.frete.toFixed(2)}`
 }
 
 msg += `\n\n💰 *TOTAL: R$ ${pedido.total.toFixed(2)}*`
+
+if(pedido.divisao && pedido.divisao.pessoas > 1){
+msg += `\n👥 Dividido entre ${pedido.divisao.pessoas} pessoas: R$ ${pedido.divisao.porPessoa.toFixed(2)} cada`
+}
 
 return msg
 
@@ -2877,7 +2984,7 @@ return
 
 }
 
-if(tipo === "entrega" && pag === "PIX" && !pixComprovanteOK){
+if(tipoEntregaSelecionado === "entrega" && pag === "PIX" && !pixComprovanteOK){
 
 alert("Envie o comprovante PIX para finalizar")
 bloqueioFinalizacao = false
@@ -2888,16 +2995,23 @@ return
 /* Montar pedido */
 
 let mesa = qs("mesaInput")?.value || ""
-let rua = qs("rua")?.value || ""
-let bairro = qs("bairro")?.value || ""
-let numEnd = qs("numero")?.value || ""
+let rua = tipoEntregaSelecionado === "entrega" ? (qs("rua")?.value || "") : ""
+let bairro = tipoEntregaSelecionado === "entrega" ? (qs("bairro")?.value || "") : ""
+let numEnd = tipoEntregaSelecionado === "entrega" ? (qs("numero")?.value || "") : ""
+let freteFinal = tipoEntregaSelecionado === "retirada" ? 0 : valorFrete
+
+let divisaoObj = numPessoasDivisao > 1
+? {pessoas: numPessoasDivisao, porPessoa: totalGeral() / numPessoasDivisao}
+: null
 
 let pedido = {
 cliente:{nome,tel,mesa},
 endereco:{rua,bairro,numero:numEnd},
 itens:carrinho,
 total:totalGeral(),
-frete:valorFrete,
+tipoEntrega: tipoEntregaSelecionado,
+divisao: divisaoObj,
+frete:freteFinal,
 modo:modoPedido,
 pagamento:pag,
 troco: (pag === "Dinheiro") ? (qs("troco")?.value || "") : "",
@@ -3729,7 +3843,7 @@ let dataObj = new Date(pedido.data)
 let dataStr = dataObj.toLocaleDateString("pt-BR")
 let horaStr = dataObj.toLocaleTimeString("pt-BR")
 
-let modoTxt = pedido.modo === "delivery" ? "DELIVERY" : "LOCAL"
+let modoTxt = pedido.tipoEntrega === "retirada" ? "RETIRADA" : (pedido.modo === "delivery" ? "DELIVERY" : "LOCAL")
 
 let html = ""
 
@@ -3751,7 +3865,9 @@ if(pedido.modo === "delivery"){
 html += '<div class="cupomSep"></div>'
 html += '<div class="cupomInfo">Cliente: ' + escHtml(pedido.cliente.nome || "") + '</div>'
 html += '<div class="cupomInfo">Tel: ' + escHtml(pedido.cliente.tel || "") + '</div>'
-if(pedido.endereco){
+if(pedido.tipoEntrega === "retirada"){
+html += '<div class="cupomInfo" style="font-weight:700">Retira no local</div>'
+} else if(pedido.endereco){
 let e = pedido.endereco
 if(e.rua) html += '<div class="cupomInfo">End: ' + escHtml(e.rua) + ', ' + escHtml(e.numero || "") + '</div>'
 if(e.bairro) html += '<div class="cupomInfo">Bairro: ' + escHtml(e.bairro) + '</div>'
@@ -3774,6 +3890,12 @@ html += '<div class="cupomItem">Frete: R$ ' + pedido.frete.toFixed(2) + '</div>'
 }
 
 html += '<div class="cupomLinha cupomTotal">TOTAL: R$ ' + Number(pedido.total).toFixed(2) + '</div>'
+
+if(pedido.divisao && pedido.divisao.pessoas > 1){
+html += '<div class="cupomSep"></div>'
+html += '<div class="cupomInfo" style="text-align:center;font-weight:700">Dividido entre ' + pedido.divisao.pessoas + ' pessoas</div>'
+html += '<div class="cupomLinha" style="font-size:16px;font-weight:900;color:#000">R$ ' + Number(pedido.divisao.porPessoa).toFixed(2) + ' por pessoa</div>'
+}
 
 html += '<div class="cupomSep"></div>'
 html += '<div class="cupomLinha" style="font-size:11px;margin-top:6px">Obrigado pela preferencia!</div>'
@@ -4398,17 +4520,34 @@ let snap = await getDocs(collection(db,"cardapio"))
 
 if(snap.empty) return
 
-let novoCardapio = {}
+let fbCardapio = {}
 
 snap.forEach(doc => {
-
 let d = doc.data()
-
-novoCardapio[d.nomeAba] = d.itens || []
-
+fbCardapio[d.nomeAba] = d.itens || []
 })
 
-cardapio = novoCardapio
+/* Mesclar: Firebase tem prioridade, mas itens locais que não existem
+   no Firebase são adicionados automaticamente (novos itens do código) */
+let cardapioBase = cardapio
+let merged = {...fbCardapio}
+
+Object.keys(cardapioBase).forEach(aba => {
+let localItens = cardapioBase[aba]
+if(!Array.isArray(localItens)) return
+if(!merged[aba]){
+/* Categoria não está no Firebase, usa local inteira */
+merged[aba] = localItens
+} else {
+/* Categoria existe no Firebase — adiciona itens locais ausentes (por nome) */
+let fbNomes = new Set(merged[aba].map(i => i.nome))
+localItens.forEach(li => {
+if(!fbNomes.has(li.nome)) merged[aba].push(li)
+})
+}
+})
+
+cardapio = merged
 
 }catch(e){
 console.log("Erro carregar cardápio:",e)
