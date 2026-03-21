@@ -1626,6 +1626,7 @@ Local
 <button class="adminBtn" onclick="abrirNovoProdutoUI()">Adicionar Produto</button>
 <button class="adminBtn" onclick="abrirEditorItens()">Editar / Remover Itens</button>
 <button class="adminBtn" onclick="abrirRemoverAbaUI()">Remover Aba</button>
+<button class="adminBtn" onclick="abrirGerenciarAdicionais()">Gerenciar Adicionais</button>
 </div>
 
 </div>
@@ -1717,6 +1718,58 @@ TELA EDITOR DE ITENS
 <div id="listaEditor" style="width:100%;max-width:760px"></div>
 
 <button class="btnVoltar" style="position:static;margin-top:16px" onclick="mostrar('telaAdmin')">&larr; Voltar ao Admin</button>
+
+</div>
+
+<!-- =========================
+TELA GERENCIAR ADICIONAIS (ADMIN)
+========================= -->
+
+<div id="telaGerenciarAdicionais" class="tela">
+
+<h2 style="margin-bottom:16px">Gerenciar Adicionais</h2>
+
+<div id="listaAdicionaisAdmin" style="width:100%;max-width:760px"></div>
+
+<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+<button class="adminBtn" onclick="abrirFormNovoAdicional()">+ Novo Adicional</button>
+<button class="btnVoltar" style="position:static" onclick="mostrar('telaAdmin')">← Voltar ao Admin</button>
+</div>
+
+<!-- Formulario Novo/Editar Adicional -->
+<div id="formAdicionaDiv" style="display:none;margin-top:20px;background:var(--card);border-radius:12px;padding:16px;max-width:760px;width:100%">
+<h3 id="formAdicionaTitle" style="margin-bottom:12px">Novo Adicional</h3>
+<div style="display:flex;flex-direction:column;gap:10px">
+<label style="font-weight:600">Nome do adicional</label>
+<input id="inputAdcNome" class="inputCampo" placeholder="Ex: Bacon, Cheddar..." />
+<label style="font-weight:600">Preço (R$)</label>
+<input id="inputAdcPreco" class="inputCampo" type="number" step="0.01" min="0" placeholder="Ex: 3.00" />
+<label style="font-weight:600">Grupo de adicionais</label>
+<select id="selectAdcGrupo" class="inputCampo"></select>
+<input type="hidden" id="inputAdcGrupoId" />
+<label style="font-weight:600">Categorias/abas do cardápio (separadas por vírgula)</label>
+<input id="inputAdcCategorias" class="inputCampo" placeholder="Ex: Lanches, Porções Inteira" />
+<div id="grupoNovoFields" style="display:none;flex-direction:column;gap:8px">
+<label style="font-weight:600">Nome do novo grupo</label>
+<input id="inputAdcGrupoNome" class="inputCampo" placeholder="Ex: Molhos" />
+<label style="font-weight:600">Tipo de preço do grupo</label>
+<select id="selectAdcTipo" class="inputCampo">
+<option value="precoIndividual">Preço individual por adicional</option>
+<option value="precoFixo">Preço fixo para todos</option>
+</select>
+<div id="precoFixoField" style="display:none">
+<label style="font-weight:600">Preço fixo do grupo (R$)</label>
+<input id="inputAdcPrecoFixo" class="inputCampo" type="number" step="0.01" min="0" placeholder="Ex: 6.00" />
+</div>
+</div>
+<label style="font-weight:600">Restringir a produtos específicos (separados por vírgula, deixe vazio para todos)</label>
+<input id="inputAdcProdutos" class="inputCampo" placeholder="Ex: Fritas, Polenta (ou vazio para todos os itens da aba)" />
+<div style="display:flex;gap:10px;margin-top:6px">
+<button class="adminBtn" onclick="salvarAdicionaisForm()">Salvar</button>
+<button class="adminBtn editorBtnRemover" onclick="cancelarFormAdicional()">Cancelar</button>
+</div>
+</div>
+</div>
 
 </div>
 
@@ -1842,7 +1895,8 @@ onSnapshot,
 getDocs,
 deleteDoc,
 doc,
-updateDoc
+updateDoc,
+setDoc
 }
 from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
@@ -1922,7 +1976,7 @@ BOTÕES PRINCIPAIS
 
 window.voltarTela = ()=>{
 let telaAtual = document.querySelector(".tela.ativa")
-let telasAdmin = ["telaMesas","telaPedidosLocal","uiNovoProduto","telaEditorItens","uiRemoverAba","telaRelatorioPorData","telaEditarPedido","telaPagamentoParcial"]
+let telasAdmin = ["telaMesas","telaPedidosLocal","uiNovoProduto","telaEditorItens","uiRemoverAba","telaRelatorioPorData","telaEditarPedido","telaPagamentoParcial","telaGerenciarAdicionais"]
 /* Se garçom está no cardápio/checkout de mesa, voltar pra mesas */
 if(mesaSelecionada && telaAtual && (telaAtual.id === "telaCardapio" || telaAtual.id === "telaCheckout")){
 carrinho = []
@@ -2377,9 +2431,15 @@ if(tamanhos.pratoFeito){
 mostrarModalPratoFeito(nomeBase, tamanhos["Único"] || tamanhos[Object.keys(tamanhos).filter(t=>t!=="desc"&&t!=="pratoFeito")[0]])
 return
 }
-if(categoriaAtual === "Lanches"){
+let gruposAdc = getGruposParaItem(categoriaAtual, nomeBase)
+if(gruposAdc.length > 0){
 let preco = tamanhos["Único"] || tamanhos[Object.keys(tamanhos).filter(t=>t!=="desc"&&t!=="_categoria"&&t!=="_vis")[0]]
+let gAdc = gruposAdc[0]
+if(gAdc.tipo === "precoFixo"){
+mostrarModalAdicionaisPorcao(nomeBase, preco)
+} else {
 mostrarModalAdicionaisLanche(nomeBase, preco)
+}
 return
 }
 if(tamanhos["P"] && tamanhos["G"]){
@@ -4746,31 +4806,166 @@ document.body.appendChild(overlay)
 ADICIONAIS DE PORÇÃO (Fritas / Polenta)
 ========================= */
 
-const ADICIONAIS_LANCHE = [
-{nome:"Milho",preco:2},
-{nome:"Ervilha",preco:2},
-{nome:"Presunto e Queijo",preco:2},
-{nome:"Ovo",preco:3},
-{nome:"Cheddar",preco:3},
-{nome:"Catupiry",preco:3},
-{nome:"Bacon",preco:4},
-{nome:"Calabresa",preco:4},
-{nome:"Coração",preco:4},
-{nome:"Salsicha",preco:4}
+/* =========================
+ADICIONAIS - DADOS DINAMICOS DO FIRESTORE
+========================= */
+
+/* Estrutura em memoria dos grupos de adicionais */
+let adicionaisGrupos = []
+let adicionaisUnsubscribe = null
+
+/* Dados iniciais (usados apenas para seed no Firestore) */
+const ADICIONAIS_SEED = [
+{
+id: "lanche",
+nome: "Lanches",
+tipo: "precoIndividual",
+itens: [
+{nome:"Milho",preco:2,produtos:[]},
+{nome:"Ervilha",preco:2,produtos:[]},
+{nome:"Presunto e Queijo",preco:2,produtos:[]},
+{nome:"Ovo",preco:3,produtos:[]},
+{nome:"Cheddar",preco:3,produtos:[]},
+{nome:"Catupiry",preco:3,produtos:[]},
+{nome:"Bacon",preco:4,produtos:[]},
+{nome:"Calabresa",preco:4,produtos:[]},
+{nome:"Coração",preco:4,produtos:[]},
+{nome:"Salsicha",preco:4,produtos:[]}
+],
+categorias: ["Lanches"]
+},
+{
+id: "porcao",
+nome: "Porções",
+tipo: "precoFixo",
+precoFixo: 6,
+itens: [
+{nome:"Calabresa",preco:6,produtos:["Fritas","Fritas (Meia)","Polenta","Polenta (Meia)"]},
+{nome:"Bacon",preco:6,produtos:["Fritas","Fritas (Meia)","Polenta","Polenta (Meia)"]},
+{nome:"Cheddar",preco:6,produtos:["Fritas","Fritas (Meia)","Polenta","Polenta (Meia)"]},
+{nome:"Catupiry",preco:6,produtos:["Fritas","Fritas (Meia)","Polenta","Polenta (Meia)"]},
+{nome:"Mussarela",preco:6,produtos:["Fritas","Fritas (Meia)","Polenta","Polenta (Meia)"]}
+],
+categorias: ["Porções Inteira","Porções Meia"]
+}
 ]
 
+function iniciarAdicionaisRealtime(){
+if(adicionaisUnsubscribe) adicionaisUnsubscribe()
+adicionaisUnsubscribe = onSnapshot(collection(db,"adicionaisGrupos"), snap => {
+if(snap.empty){
+seedAdicionaisFirebase()
+return
+}
+adicionaisGrupos = []
+snap.forEach(d => {
+adicionaisGrupos.push({id: d.id, ...d.data()})
+})
+if(document.getElementById("listaAdicionaisAdmin")){
+renderListaAdicionaisAdmin()
+}
+})
+}
+
+async function carregarAdicionaisFirebase(){
+try{
+let snap = await getDocs(collection(db,"adicionaisGrupos"))
+if(snap.empty){
+await seedAdicionaisFirebase()
+} else {
+adicionaisGrupos = []
+snap.forEach(d => {
+adicionaisGrupos.push({id: d.id, ...d.data()})
+})
+}
+iniciarAdicionaisRealtime()
+}catch(e){
+console.log("Erro carregar adicionais:",e)
+}
+}
+
+async function seedAdicionaisFirebase(){
+try{
+for(let grupo of ADICIONAIS_SEED){
+let {id, ...dados} = grupo
+await setDoc(doc(db,"adicionaisGrupos",id),dados)
+}
+adicionaisGrupos = ADICIONAIS_SEED.map(g=>({...g}))
+}catch(e){
+console.log("Erro seed adicionais:",e)
+}
+}
+
+function getGrupoAdicionais(grupoId){
+return adicionaisGrupos.find(g => g.id === grupoId) || null
+}
+
+/* Returns which grupo(s) apply to a given item name in a given categoria */
+function getGruposParaItem(categoriaAtualNome, nomeItem){
+return adicionaisGrupos.filter(g => {
+let cats = Array.isArray(g.categorias) ? g.categorias : []
+let matchCat = cats.some(c => c.toLowerCase() === categoriaAtualNome.toLowerCase())
+if(!matchCat) return false
+/* Check if there are item-level or group-level product restrictions */
+let itens = g.itens || []
+let itemsComRestricao = itens.filter(it => Array.isArray(it.produtos) && it.produtos.length > 0)
+if(itemsComRestricao.length === 0) return true
+/* At least one item has product restriction - apply to this product only if listed */
+return itens.some(it => {
+if(!Array.isArray(it.produtos) || it.produtos.length === 0) return true
+return it.produtos.some(p => p.toLowerCase() === nomeItem.trim().toLowerCase())
+})
+})
+}
+
+function itemTemAdicionaisPorcao(nomeBase){
+return adicionaisGrupos.some(g => {
+let cats = Array.isArray(g.categorias) ? g.categorias : []
+let isCatPorcao = cats.some(c => c.toLowerCase().includes("porç"))
+if(!isCatPorcao) return false
+let itens = g.itens || []
+let comRestricao = itens.filter(it => Array.isArray(it.produtos) && it.produtos.length > 0)
+if(comRestricao.length === 0) return false
+return comRestricao.some(it =>
+it.produtos.some(p => p.toLowerCase() === nomeBase.trim().toLowerCase())
+)
+})
+}
+
+function getGrupoLanche(){
+return adicionaisGrupos.find(g => {
+let cats = Array.isArray(g.categorias) ? g.categorias : []
+return cats.some(c => c.toLowerCase() === "lanches")
+}) || null
+}
+
+function isItemLanche(categoriaAtualNome){
+return adicionaisGrupos.some(g => {
+let cats = Array.isArray(g.categorias) ? g.categorias : []
+return cats.some(c => c.toLowerCase() === categoriaAtualNome.toLowerCase()) && g.tipo === "precoIndividual"
+})
+}
+
 function mostrarModalAdicionaisLanche(nomeBase, precoBase){
+
+let gruposMatch = getGruposParaItem(categoriaAtual || "Lanches", nomeBase)
+let grupoLanche = gruposMatch.length ? gruposMatch[0] : (getGrupoLanche() || null)
+let allItensLanche = grupoLanche ? (grupoLanche.itens || []) : []
+let itens = allItensLanche.filter(it => {
+if(!Array.isArray(it.produtos) || it.produtos.length === 0) return true
+return it.produtos.some(p => p.toLowerCase() === nomeBase.trim().toLowerCase())
+})
 
 let overlay = document.createElement("div")
 overlay.className = "modalOverlay"
 
-let listHtml = ADICIONAIS_LANCHE.map((a,i) =>
-`<label class="adicionalLabel"><input type="checkbox" value="${a.nome}" data-preco="${a.preco}" class="adicionalLancheCheck"> ${a.nome} (+R$ ${a.preco.toFixed(2)})</label>`
+let listHtml = itens.map((a,i) =>
+`<label class="adicionalLabel"><input type="checkbox" value="${escHtml(a.nome)}" data-preco="${a.preco}" class="adicionalLancheCheck"> ${escHtml(a.nome)} (+R$ ${parseFloat(a.preco).toFixed(2)})</label>`
 ).join("")
 
 overlay.innerHTML = `
 <div class="modalBox" style="max-height:80vh;overflow-y:auto">
-<h3>${nomeBase}</h3>
+<h3>${escHtml(nomeBase)}</h3>
 <p style="font-size:13px;color:#7a6a5a;margin-bottom:10px">Adicionais (opcionais)</p>
 <div class="adicionaisGrid">${listHtml}</div>
 <p style="font-size:15px;font-weight:800;color:var(--text);margin:10px 0" id="totalLanche">Total: R$ ${precoBase.toFixed(2)}</p>
@@ -4812,26 +5007,44 @@ pedirObservacao(nomeBase, precoBase)
 document.body.appendChild(overlay)
 }
 
-const ADICIONAIS_PORCAO = ["Calabresa","Bacon","Cheddar","Catupiry","Mussarela"]
-const PRECO_ADICIONAL_PORCAO = 6
-
-function itemTemAdicionaisPorcao(nomeBase){
-return /^(Fritas|Polenta)(\s*\(Meia\))?$/i.test(nomeBase.trim())
-}
-
 function mostrarModalAdicionaisPorcao(nomeBase, preco){
+
+/* find the grupo that applies to this product */
+let grupoPorcao = adicionaisGrupos.find(g => {
+let cats = Array.isArray(g.categorias) ? g.categorias : []
+let normCat = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+let isCat = cats.some(c => normCat(c).includes("porca") || normCat(c).includes("porc"))
+if(!isCat) return false
+let itens = g.itens || []
+let comRestricao = itens.filter(it => Array.isArray(it.produtos) && it.produtos.length > 0)
+if(comRestricao.length === 0) return true
+return comRestricao.some(it =>
+it.produtos.some(p => p.toLowerCase() === nomeBase.trim().toLowerCase())
+)
+}) || null
+
+/* Get itens filtered for this product */
+let itens = []
+if(grupoPorcao){
+let allItens = grupoPorcao.itens || []
+let precoBase = grupoPorcao.tipo === "precoFixo" && grupoPorcao.precoFixo ? grupoPorcao.precoFixo : null
+itens = allItens.filter(it => {
+if(!Array.isArray(it.produtos) || it.produtos.length === 0) return true
+return it.produtos.some(p => p.toLowerCase() === nomeBase.trim().toLowerCase())
+}).map(it => precoBase !== null ? {...it, preco: precoBase} : it)
+}
 
 let overlay = document.createElement("div")
 overlay.className = "modalOverlay"
 
-let listHtml = ADICIONAIS_PORCAO.map(a =>
-`<label class="adicionalLabel"><input type="checkbox" value="${a}" class="adicionalPorcaoCheck"> ${a} (+R$ ${PRECO_ADICIONAL_PORCAO.toFixed(2)})</label>`
+let listHtml = itens.map(a =>
+`<label class="adicionalLabel"><input type="checkbox" value="${escHtml(a.nome)}" data-preco="${parseFloat(a.preco)}" class="adicionalPorcaoCheck"> ${escHtml(a.nome)} (+R$ ${parseFloat(a.preco).toFixed(2)})</label>`
 ).join("")
 
 overlay.innerHTML = `
 <div class="modalBox" style="max-height:80vh;overflow-y:auto">
 <h3>${escHtml(nomeBase)}</h3>
-<p style="font-size:13px;color:#7a6a5a;margin-bottom:10px">Adicionais opcionais — R$ ${PRECO_ADICIONAL_PORCAO.toFixed(2)} cada</p>
+<p style="font-size:13px;color:#7a6a5a;margin-bottom:10px">Adicionais opcionais</p>
 <div class="adicionaisGrid">${listHtml}</div>
 <button class="modalBtnTam modalBtnG" id="btnConfirmAdcPorcao">Confirmar</button>
 <button class="modalBtnTam modalBtnCancelar" id="btnCancelAdcPorcao">Sem adicionais</button>
@@ -4839,11 +5052,11 @@ overlay.innerHTML = `
 `
 
 overlay.querySelector("#btnConfirmAdcPorcao").onclick = ()=>{
-let selecionados = [...overlay.querySelectorAll(".adicionalPorcaoCheck:checked")].map(c=>c.value)
-let precoFinal = preco + (selecionados.length * PRECO_ADICIONAL_PORCAO)
+let selecionados = [...overlay.querySelectorAll(".adicionalPorcaoCheck:checked")]
+let precoFinal = preco + selecionados.reduce((acc,c) => acc + parseFloat(c.dataset.preco), 0)
 let nomeFinal = nomeBase
 if(selecionados.length > 0){
-nomeFinal += " + " + selecionados.join(", ")
+nomeFinal += " + " + selecionados.map(c=>c.value).join(", ")
 }
 document.body.removeChild(overlay)
 pedirObservacao(nomeFinal, precoFinal)
@@ -4856,6 +5069,229 @@ pedirObservacao(nomeBase, preco)
 
 document.body.appendChild(overlay)
 }
+
+/* =========================
+ADMIN - GERENCIAR ADICIONAIS
+========================= */
+
+let adicionaisEditId = null
+let adicionaisEditItemIdx = null
+
+window.abrirGerenciarAdicionais = ()=>{
+renderListaAdicionaisAdmin()
+mostrar("telaGerenciarAdicionais")
+}
+
+function renderListaAdicionaisAdmin(){
+let lista = document.getElementById("listaAdicionaisAdmin")
+if(!lista) return
+lista.innerHTML = ""
+
+adicionaisGrupos.forEach(grupo => {
+let header = document.createElement("button")
+header.className = "editorAbaHeader"
+let categStr = Array.isArray(grupo.categorias) && grupo.categorias.length ? ` <small style="font-weight:400;font-size:11px;color:#aaa">(${grupo.categorias.join(", ")})</small>` : ""
+header.innerHTML = `<b>${escHtml(grupo.nome)}</b>${categStr} <span class='editorSeta'>&#9658;</span>`
+
+let container = document.createElement("div")
+container.className = "editorAbaItens"
+
+let itens = grupo.itens || []
+itens.forEach((item, idx) => {
+let prodStr = Array.isArray(item.produtos) && item.produtos.length ? ` <small style="color:#aaa;font-size:11px">→ ${item.produtos.join(", ")}</small>` : ""
+let el = document.createElement("div")
+el.className = "adminBox editorItem"
+el.innerHTML = `
+<span class="editorProdNome" style="color:#f0e6da">${escHtml(item.nome)} — R$ ${parseFloat(item.preco).toFixed(2)}${prodStr}</span>
+<div class="editorBtns">
+<button class="adminBtn" data-grupo="${escHtml(grupo.id)}" data-idx="${idx}" onclick="editarAdicionalItem(this.dataset.grupo, +this.dataset.idx)">Editar</button>
+<button class="adminBtn editorBtnRemover" data-grupo="${escHtml(grupo.id)}" data-idx="${idx}" onclick="removerAdicionalItem(this.dataset.grupo, +this.dataset.idx)">Remover</button>
+</div>
+`
+container.appendChild(el)
+})
+
+if(itens.length === 0){
+let vazio = document.createElement("p")
+vazio.style.cssText = "color:#999;font-size:13px;padding:8px"
+vazio.textContent = "Nenhum adicional neste grupo."
+container.appendChild(vazio)
+}
+
+header.onclick = ()=>{
+header.classList.toggle("aberta")
+container.classList.toggle("visivel")
+}
+
+lista.appendChild(header)
+lista.appendChild(container)
+})
+}
+
+window.editarAdicionalItem = (grupoId, idx)=>{
+let grupo = getGrupoAdicionais(grupoId)
+if(!grupo) return
+let item = grupo.itens[idx]
+if(!item) return
+
+adicionaisEditId = grupoId
+adicionaisEditItemIdx = idx
+
+let formDiv = document.getElementById("formAdicionaDiv")
+let title = document.getElementById("formAdicionaTitle")
+title.textContent = "Editar Adicional"
+document.getElementById("inputAdcNome").value = item.nome
+document.getElementById("inputAdcPreco").value = item.preco
+document.getElementById("inputAdcGrupoId").value = grupoId
+document.getElementById("inputAdcGrupoNome").value = grupo.nome
+document.getElementById("inputAdcCategorias").value = Array.isArray(grupo.categorias) ? grupo.categorias.join(", ") : ""
+document.getElementById("inputAdcProdutos").value = Array.isArray(item.produtos) ? item.produtos.join(", ") : ""
+formDiv.style.display = ""
+formDiv.scrollIntoView({behavior:"smooth"})
+}
+
+window.removerAdicionalItem = async (grupoId, idx)=>{
+if(!confirm("Remover este adicional de todos os lugares?")) return
+let grupo = getGrupoAdicionais(grupoId)
+if(!grupo) return
+let itemRemovido = grupo.itens[idx]
+let nomeAdc = itemRemovido.nome
+/* Remove this adicional by name from ALL groups */
+let gruposAfetados = []
+let backups = []
+adicionaisGrupos.forEach(g => {
+let antes = g.itens.filter(it => it.nome.toLowerCase() === nomeAdc.toLowerCase())
+if(antes.length > 0){
+gruposAfetados.push(g)
+backups.push({g, itens: [...g.itens]})
+g.itens = g.itens.filter(it => it.nome.toLowerCase() !== nomeAdc.toLowerCase())
+}
+})
+try{
+for(let g of gruposAfetados){
+let {id, ...dados} = g
+await setDoc(doc(db,"adicionaisGrupos",id), dados)
+}
+mostrarToast("Adicional removido!")
+}catch(e){
+alert("Erro ao remover: " + e.message)
+/* Restore all affected groups */
+backups.forEach(b => { b.g.itens = b.itens })
+}
+}
+
+window.abrirFormNovoAdicional = ()=>{
+adicionaisEditId = null
+adicionaisEditItemIdx = null
+let formDiv = document.getElementById("formAdicionaDiv")
+let title = document.getElementById("formAdicionaTitle")
+title.textContent = "Novo Adicional"
+document.getElementById("inputAdcNome").value = ""
+document.getElementById("inputAdcPreco").value = ""
+document.getElementById("inputAdcGrupoId").value = adicionaisGrupos.length ? adicionaisGrupos[0].id : ""
+document.getElementById("inputAdcGrupoNome").value = adicionaisGrupos.length ? adicionaisGrupos[0].nome : ""
+document.getElementById("inputAdcCategorias").value = adicionaisGrupos.length && Array.isArray(adicionaisGrupos[0].categorias) ? adicionaisGrupos[0].categorias.join(", ") : ""
+document.getElementById("inputAdcProdutos").value = ""
+/* Populate grupo select */
+let sel = document.getElementById("selectAdcGrupo")
+sel.innerHTML = adicionaisGrupos.map(g => `<option value="${escHtml(g.id)}">${escHtml(g.nome)}</option>`).join("") + `<option value="__novo__">+ Criar novo grupo</option>`
+sel.onchange = ()=>{
+let val = sel.value
+if(val === "__novo__"){
+document.getElementById("inputAdcGrupoId").value = ""
+document.getElementById("inputAdcGrupoNome").value = ""
+document.getElementById("inputAdcCategorias").value = ""
+document.getElementById("grupoNovoFields").style.display = ""
+} else {
+let g = getGrupoAdicionais(val)
+document.getElementById("inputAdcGrupoId").value = val
+document.getElementById("inputAdcGrupoNome").value = g ? g.nome : ""
+document.getElementById("inputAdcCategorias").value = g && Array.isArray(g.categorias) ? g.categorias.join(", ") : ""
+document.getElementById("grupoNovoFields").style.display = "none"
+}
+}
+document.getElementById("grupoNovoFields").style.display = "none"
+let tipoSel = document.getElementById("selectAdcTipo")
+if(tipoSel){
+tipoSel.value = "precoIndividual"
+let precoFixoField = document.getElementById("precoFixoField")
+tipoSel.onchange = ()=>{
+if(precoFixoField) precoFixoField.style.display = tipoSel.value === "precoFixo" ? "" : "none"
+}
+if(precoFixoField) precoFixoField.style.display = "none"
+}
+formDiv.style.display = ""
+formDiv.scrollIntoView({behavior:"smooth"})
+}
+
+window.cancelarFormAdicional = ()=>{
+let formDiv = document.getElementById("formAdicionaDiv")
+formDiv.style.display = "none"
+adicionaisEditId = null
+adicionaisEditItemIdx = null
+}
+
+window.salvarAdicionaisForm = async ()=>{
+let nome = (document.getElementById("inputAdcNome").value || "").trim()
+let precoStr = (document.getElementById("inputAdcPreco").value || "").trim()
+let produtosStr = (document.getElementById("inputAdcProdutos").value || "").trim()
+let produtos = produtosStr ? produtosStr.split(",").map(s=>s.trim()).filter(Boolean) : []
+
+if(!nome){ alert("Informe o nome do adicional."); return }
+let preco = parseFloat(precoStr)
+if(isNaN(preco) || preco < 0){ alert("Informe um preço válido."); return }
+
+let grupoId = document.getElementById("inputAdcGrupoId").value || ""
+let grupoNome = (document.getElementById("inputAdcGrupoNome").value || "").trim()
+let categoriasStr = (document.getElementById("inputAdcCategorias").value || "").trim()
+let categorias = categoriasStr ? categoriasStr.split(",").map(s=>s.trim()).filter(Boolean) : []
+
+if(!grupoId){
+/* create new group */
+if(!grupoNome){ alert("Informe o nome do novo grupo."); return }
+grupoId = grupoNome.toLowerCase().replace(/\s+/g,"_").replace(/[^a-z0-9_]/g,"")
+let tipoEl = document.getElementById("selectAdcTipo")
+let tipoGrupo = tipoEl ? tipoEl.value : "precoIndividual"
+let precoFixoGrupo = null
+if(tipoGrupo === "precoFixo"){
+let pfEl = document.getElementById("inputAdcPrecoFixo")
+precoFixoGrupo = pfEl ? parseFloat(pfEl.value) : null
+if(!precoFixoGrupo || isNaN(precoFixoGrupo)){ alert("Informe o pre\xc3\xa7o fixo do grupo."); return }
+}
+let novoGrupo = {nome: grupoNome, tipo: tipoGrupo, itens: [], categorias}
+if(precoFixoGrupo !== null) novoGrupo.precoFixo = precoFixoGrupo
+try{
+await setDoc(doc(db,"adicionaisGrupos",grupoId), novoGrupo)
+adicionaisGrupos.push({id: grupoId, ...novoGrupo})
+}catch(e){
+alert("Erro ao criar grupo: " + e.message); return
+}
+}
+
+let grupo = getGrupoAdicionais(grupoId)
+if(!grupo){ alert("Grupo não encontrado."); return }
+
+/* Update categorias if changed */
+grupo.categorias = categorias.length ? categorias : (grupo.categorias || [])
+
+let novoItem = {nome, preco, produtos}
+
+if(adicionaisEditId !== null && adicionaisEditItemIdx !== null){
+grupo.itens[adicionaisEditItemIdx] = novoItem
+} else {
+grupo.itens.push(novoItem)
+}
+
+try{
+let {id, ...dados} = grupo
+await setDoc(doc(db,"adicionaisGrupos",grupoId), dados)
+cancelarFormAdicional()
+mostrarToast("Adicional salvo!")
+}catch(e){
+alert("Erro ao salvar: " + e.message)
+}
+}
+
 
 /* =========================
 PEDIR OBSERVAÇÃO DO ITEM
@@ -4946,9 +5382,15 @@ if(tamanhos.pratoFeito){
 mostrarModalPratoFeito(nomeBase, tamanhos["Único"] || tamanhos[Object.keys(tamanhos).filter(t=>t!=="desc"&&t!=="pratoFeito"&&t!=="_categoria"&&t!=="_vis")[0]])
 return
 }
-if(categoriaAtual === "Lanches"){
+let gruposAdc = getGruposParaItem(categoriaAtual, nomeBase)
+if(gruposAdc.length > 0){
 let preco = tamanhos["Único"] || tamanhos[Object.keys(tamanhos).filter(t=>t!=="desc"&&t!=="_categoria"&&t!=="_vis")[0]]
+let gAdc = gruposAdc[0]
+if(gAdc.tipo === "precoFixo"){
+mostrarModalAdicionaisPorcao(nomeBase, preco)
+} else {
 mostrarModalAdicionaisLanche(nomeBase, preco)
+}
 return
 }
 if(tamanhos["P"] && tamanhos["G"]){
@@ -5001,6 +5443,8 @@ INIT FINAL DO SISTEMA
 async function initSistema(){
 
 await carregarCardapioFirebase()
+
+await carregarAdicionaisFirebase()
 
 renderAbas()
 
