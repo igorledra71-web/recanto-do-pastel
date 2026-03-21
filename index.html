@@ -3025,6 +3025,7 @@ try{
 await addDoc(collection(db,"pedidos"),pedido)
 }catch(e){
 console.log("Erro ao salvar:",e)
+alert("Aviso: o pedido não foi registrado no sistema por falha de conexão, mas o WhatsApp será enviado normalmente para a loja.")
 }
 
 /* Enviar WhatsApp */
@@ -3057,6 +3058,7 @@ let btn = document.createElement("button")
 btn.className = "mesaBtn"
 btn.innerHTML = `<span class="mesaIcon">🍽️</span>Mesa ${i}`
 btn.onclick = ()=>{
+comandaDocId = null
 mesaSelecionada = i
 modoPedido = "local"
 carrinho = []
@@ -3102,15 +3104,15 @@ finalizado:false
 
 try{
 await addDoc(collection(db,"pedidos"),pedido)
-}catch(e){
-console.log("Erro ao salvar:",e)
-}
-
 alert("Pedido da Mesa " + mesaSelecionada + " enviado!\n\n🖨️ O pedido será impresso automaticamente na impressora da loja.")
 carrinho = []
 renderCarrinho()
 mesaSelecionada = null
 mostrar("telaAdmin")
+}catch(e){
+console.log("Erro ao salvar:",e)
+alert("Erro ao enviar pedido da Mesa " + mesaSelecionada + ". Verifique a conexão e tente novamente.")
+}
 }
 
 /* =========================
@@ -3654,16 +3656,15 @@ total: novoTotal
 mostrarToast("Itens adicionados à comanda!")
 let pedidoParaImprimir = pedidosMap[comandaDocId] || {cliente:{mesa:mesaSelecionada},modo:"local"}
 imprimirCupomAdicionais(pedidoParaImprimir, novosItens)
-}catch(e){
-console.log("Erro ao atualizar comanda:",e)
-alert("Erro ao atualizar comanda.")
-}
-
 carrinho = []
 renderCarrinho()
 comandaDocId = null
 mesaSelecionada = null
 mostrar("telaAdmin")
+}catch(e){
+console.log("Erro ao atualizar comanda:",e)
+alert("Erro ao atualizar comanda.")
+}
 }
 
 window.finalizarComanda = async (docId)=>{
