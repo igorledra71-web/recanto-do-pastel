@@ -1074,6 +1074,10 @@ IMPRESSÃO CUPOM TÉRMICO (80mm)
 size:80mm auto;
 margin:0;
 }
+@page {
+size: 80mm auto;
+margin: 0;
+}
 @media print {
 body, html {
 margin:0 !important;
@@ -1087,7 +1091,9 @@ display:none !important;
 display:block !important;
 width:80mm;
 margin:0;
-padding:3mm 2mm 8mm 2mm;
+padding:3mm 2mm 25mm 2mm;
+page-break-inside:avoid;
+break-inside:avoid-page;
 font-family:'Courier New',monospace;
 font-size:14px;
 color:#000;
@@ -3886,7 +3892,7 @@ continue
 let div = document.getElementById("cupomImpressao")
 if(div && job.data.html){
 div.innerHTML = job.data.html
-await new Promise(r => setTimeout(r, 300))
+await new Promise(r => setTimeout(r, 600))
 window.print()
 await new Promise(r => setTimeout(r, 2000))
 }
@@ -3970,7 +3976,7 @@ return
 }
 setTimeout(()=>{
 window.print()
-},300)
+},600)
 
 }
 
@@ -4024,7 +4030,7 @@ return
 }
 setTimeout(()=>{
 window.print()
-},300)
+},600)
 
 }
 
