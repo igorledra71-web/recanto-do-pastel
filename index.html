@@ -1074,22 +1074,18 @@ IMPRESSÃO CUPOM TÉRMICO (80mm)
 size:80mm auto;
 margin:0;
 }
-@page {
-size: 80mm auto;
-margin: 0;
-}
 @media print {
 body, html {
 margin:0 !important;
 padding:0 !important;
 background:#fff !important;
 }
-.tela, #carrinho, .btnVoltar, .btnAdmin, header, footer, nav {
+.tela, #carrinho, .btnVoltar, .btnAdmin, .btnConfig, .btnRecarregar, header, footer, nav {
 display:none !important;
 }
 #cupomImpressao {
 display:block !important;
-width:80mm;
+width:76mm;
 margin:0;
 padding:3mm 2mm 25mm 2mm;
 page-break-inside:avoid;
@@ -1122,6 +1118,22 @@ padding:4px 0;
 text-align:left;
 font-size:14px;
 padding:2px 0;
+}
+.cupomItemLinha {
+display:flex;
+justify-content:space-between;
+align-items:baseline;
+font-size:13px;
+padding:2px 0;
+gap:4px;
+}
+.cupomItemNome {
+flex:1;
+word-break:break-word;
+}
+.cupomItemPreco {
+white-space:nowrap;
+font-weight:700;
 }
 .cupomObs {
 text-align:left;
@@ -3893,12 +3905,43 @@ let div = document.getElementById("cupomImpressao")
 if(div && job.data.html){
 div.innerHTML = job.data.html
 await new Promise(r => setTimeout(r, 600))
-window.print()
+dispararImpressao()
 await new Promise(r => setTimeout(r, 2000))
 }
 }
 
 filaRemotaProcessando = false
+}
+
+/* =========================
+IMPRESSAO COM ALTURA DINAMICA
+========================= */
+
+function dispararImpressao(){
+let div = document.getElementById("cupomImpressao")
+if(!div) return
+/* Mostra temporariamente fora da tela para medir altura real */
+div.style.display = "block"
+div.style.position = "fixed"
+div.style.left = "-9999px"
+div.style.width = "302px" /* 80mm em 96dpi */
+div.style.visibility = "hidden"
+let alturaPixels = div.scrollHeight
+let alturaMM = Math.ceil(alturaPixels * 0.2646) + 30 /* +30mm margem para guilhotina */
+/* Restaura estado */
+div.style.display = ""
+div.style.position = ""
+div.style.left = ""
+div.style.width = ""
+div.style.visibility = ""
+/* Injeta tamanho de pagina exato */
+let old = document.getElementById("_printPageStyle")
+if(old) old.remove()
+let style = document.createElement("style")
+style.id = "_printPageStyle"
+style.textContent = "@page { size: 80mm " + alturaMM + "mm; margin: 0; }"
+document.head.appendChild(style)
+window.print()
 }
 
 function imprimirCupom(pedido){
@@ -3946,8 +3989,7 @@ if(pedido.troco) html += '<div class="cupomInfo">Troco para: R$ ' + escHtml(pedi
 html += '<div class="cupomLinha cupomSub">ITENS</div>'
 
 ;(pedido.itens || []).forEach(i => {
-html += '<div class="cupomItem">' + i.qtd + 'x ' + escHtml(i.nome) + '</div>'
-html += '<div class="cupomItem" style="text-align:right">R$ ' + (i.qtd * i.preco).toFixed(2) + '</div>'
+html += '<div class="cupomItemLinha"><span class="cupomItemNome">' + i.qtd + 'x ' + escHtml(i.nome) + '</span><span class="cupomItemPreco">R$ ' + (i.qtd * i.preco).toFixed(2) + '</span></div>'
 if(i.obs) html += '<div class="cupomObs">  -> ' + escHtml(i.nome) + ': ' + escHtml(i.obs) + '</div>'
 })
 
@@ -3975,7 +4017,7 @@ enviarParaImpressora(html)
 return
 }
 setTimeout(()=>{
-window.print()
+dispararImpressao()
 },600)
 
 }
@@ -4010,8 +4052,7 @@ html += '<div class="cupomLinha cupomSub">NOVOS ITENS</div>'
 
 let subtotal = 0
 novosItens.forEach(i => {
-html += '<div class="cupomItem">' + i.qtd + 'x ' + escHtml(i.nome) + '</div>'
-html += '<div class="cupomItem" style="text-align:right">R$ ' + (i.qtd * i.preco).toFixed(2) + '</div>'
+html += '<div class="cupomItemLinha"><span class="cupomItemNome">' + i.qtd + 'x ' + escHtml(i.nome) + '</span><span class="cupomItemPreco">R$ ' + (i.qtd * i.preco).toFixed(2) + '</span></div>'
 if(i.obs) html += '<div class="cupomObs">  -> ' + escHtml(i.nome) + ': ' + escHtml(i.obs) + '</div>'
 subtotal += i.qtd * i.preco
 })
@@ -4029,7 +4070,7 @@ enviarParaImpressora(html)
 return
 }
 setTimeout(()=>{
-window.print()
+dispararImpressao()
 },600)
 
 }
